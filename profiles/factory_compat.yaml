@@ -1,0 +1,395 @@
+# Factory-Compatible Agent Readiness Profile
+# Evaluates repositories against the 9 Pillars / 5 Levels model
+
+name: factory_compat
+version: "1.0.0"
+description: >
+  Default profile for evaluating repository maturity for AI agent readiness.
+  Based on the 9 Pillars model with 5 maturity levels (L1-L5).
+
+checks:
+  # =============================================================================
+  # PILLAR: Documentation (docs)
+  # =============================================================================
+
+  - id: docs.readme
+    name: README exists
+    description: Repository has a README file
+    type: file_exists
+    pillar: docs
+    level: L1
+    required: true
+    path: README.md
+
+  - id: docs.readme_sections
+    name: README has essential sections
+    description: README contains getting started, installation, and usage info
+    type: file_exists
+    pillar: docs
+    level: L2
+    required: false
+    path: README.md
+    content_regex: "(installation|getting started|usage|quick start)"
+    case_sensitive: false
+
+  - id: docs.contributing
+    name: Contributing guide
+    description: Repository has contributing guidelines
+    type: file_exists
+    pillar: docs
+    level: L2
+    required: false
+    path: CONTRIBUTING.md
+
+  - id: docs.agents_md
+    name: AGENTS.md exists
+    description: Repository has agent instructions file
+    type: any_of
+    pillar: docs
+    level: L3
+    required: false
+    checks:
+      - id: docs.agents_md.standard
+        name: Standard AGENTS.md
+        description: AGENTS.md in root
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: AGENTS.md
+      - id: docs.agents_md.claude
+        name: Claude AGENTS.md
+        description: CLAUDE.md (alias for AGENTS.md)
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: CLAUDE.md
+
+  - id: docs.changelog
+    name: Changelog exists
+    description: Repository maintains a changelog
+    type: any_of
+    pillar: docs
+    level: L3
+    required: false
+    checks:
+      - id: docs.changelog.standard
+        name: Standard CHANGELOG
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: CHANGELOG.md
+      - id: docs.changelog.history
+        name: HISTORY.md
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: HISTORY.md
+
+  # =============================================================================
+  # PILLAR: Code Style (style)
+  # =============================================================================
+
+  - id: style.editorconfig
+    name: EditorConfig
+    description: EditorConfig file for consistent formatting
+    type: file_exists
+    pillar: style
+    level: L1
+    required: false
+    path: .editorconfig
+
+  - id: style.linter_config
+    name: Linter configuration
+    description: ESLint, Prettier, or similar linter config exists
+    type: any_of
+    pillar: style
+    level: L2
+    required: false
+    checks:
+      - id: style.eslint
+        type: path_glob
+        name: ESLint config
+        pillar: style
+        level: L2
+        required: false
+        pattern: ".eslint*"
+      - id: style.prettier
+        type: path_glob
+        name: Prettier config
+        pillar: style
+        level: L2
+        required: false
+        pattern: ".prettier*"
+      - id: style.biome
+        type: file_exists
+        name: Biome config
+        pillar: style
+        level: L2
+        required: false
+        path: biome.json
+
+  - id: style.typescript
+    name: TypeScript configuration
+    description: TypeScript config for type safety
+    type: file_exists
+    pillar: style
+    level: L2
+    required: false
+    path: tsconfig.json
+
+  # =============================================================================
+  # PILLAR: Build System (build)
+  # =============================================================================
+
+  - id: build.package_json
+    name: Package manifest
+    description: package.json exists with build scripts
+    type: file_exists
+    pillar: build
+    level: L1
+    required: true
+    path: package.json
+
+  - id: build.scripts
+    name: Build scripts defined
+    description: Build and test scripts are defined
+    type: build_command_detect
+    pillar: build
+    level: L2
+    required: false
+    commands: ["build", "test"]
+    files: ["package.json", "Makefile"]
+
+  - id: build.lock_file
+    name: Lock file exists
+    description: Dependency lock file for reproducible builds
+    type: any_of
+    pillar: build
+    level: L2
+    required: false
+    checks:
+      - id: build.npm_lock
+        type: file_exists
+        name: npm lock
+        pillar: build
+        level: L2
+        required: false
+        path: package-lock.json
+      - id: build.yarn_lock
+        type: file_exists
+        name: yarn lock
+        pillar: build
+        level: L2
+        required: false
+        path: yarn.lock
+      - id: build.pnpm_lock
+        type: file_exists
+        name: pnpm lock
+        pillar: build
+        level: L2
+        required: false
+        path: pnpm-lock.yaml
+
+  # =============================================================================
+  # PILLAR: Testing (test)
+  # =============================================================================
+
+  - id: test.test_files
+    name: Test files exist
+    description: Project has test files
+    type: path_glob
+    pillar: test
+    level: L1
+    required: false
+    pattern: "**/*.{test,spec}.{js,ts,jsx,tsx}"
+    min_matches: 1
+
+  - id: test.config
+    name: Test configuration
+    description: Test framework configuration exists
+    type: any_of
+    pillar: test
+    level: L2
+    required: false
+    checks:
+      - id: test.jest_config
+        type: path_glob
+        name: Jest config
+        pillar: test
+        level: L2
+        required: false
+        pattern: "jest.config.*"
+      - id: test.vitest_config
+        type: path_glob
+        name: Vitest config
+        pillar: test
+        level: L2
+        required: false
+        pattern: "vitest.config.*"
+      - id: test.mocha_config
+        type: file_exists
+        name: Mocha config
+        pillar: test
+        level: L2
+        required: false
+        path: .mocharc.json
+
+  # =============================================================================
+  # PILLAR: Security (security)
+  # =============================================================================
+
+  - id: security.gitignore
+    name: .gitignore exists
+    description: Git ignore file to prevent committing sensitive files
+    type: file_exists
+    pillar: security
+    level: L1
+    required: true
+    path: .gitignore
+
+  - id: security.gitignore_secrets
+    name: .gitignore covers secrets
+    description: .gitignore includes common secret patterns
+    type: file_exists
+    pillar: security
+    level: L2
+    required: false
+    path: .gitignore
+    content_regex: "(\\.env|\\.secret|credentials)"
+
+  - id: security.dependabot
+    name: Dependabot configuration
+    description: Automated dependency updates configured
+    type: file_exists
+    pillar: security
+    level: L3
+    required: false
+    path: .github/dependabot.yml
+
+  # =============================================================================
+  # PILLAR: Observability (observability)
+  # =============================================================================
+
+  - id: observability.logging
+    name: Logging framework
+    description: Structured logging framework is used
+    type: log_framework_detect
+    pillar: observability
+    level: L3
+    required: false
+    frameworks: ["winston", "pino", "bunyan", "log4js"]
+
+  # =============================================================================
+  # PILLAR: Environment (env)
+  # =============================================================================
+
+  - id: env.dotenv_example
+    name: Environment example
+    description: .env.example or similar template exists
+    type: any_of
+    pillar: env
+    level: L2
+    required: false
+    checks:
+      - id: env.dotenv_example.standard
+        type: file_exists
+        name: .env.example
+        pillar: env
+        level: L2
+        required: false
+        path: .env.example
+      - id: env.dotenv_template
+        type: file_exists
+        name: .env.template
+        pillar: env
+        level: L2
+        required: false
+        path: .env.template
+
+  # =============================================================================
+  # PILLAR: CI/CD (ci)
+  # =============================================================================
+
+  - id: ci.github_workflow
+    name: GitHub Actions workflow
+    description: CI workflow exists for GitHub Actions
+    type: path_glob
+    pillar: ci
+    level: L1
+    required: false
+    pattern: ".github/workflows/*.{yml,yaml}"
+    min_matches: 1
+
+  - id: ci.push_trigger
+    name: CI triggers on push
+    description: CI workflow runs on push events
+    type: github_workflow_event
+    pillar: ci
+    level: L2
+    required: false
+    event: push
+
+  - id: ci.pr_trigger
+    name: CI triggers on PR
+    description: CI workflow runs on pull request events
+    type: github_workflow_event
+    pillar: ci
+    level: L2
+    required: false
+    event: pull_request
+
+  - id: ci.checkout_action
+    name: Uses checkout action
+    description: Workflow uses actions/checkout
+    type: github_action_present
+    pillar: ci
+    level: L2
+    required: false
+    action: actions/checkout
+    action_pattern: "actions/checkout@v\\d+"
+
+  # =============================================================================
+  # PILLAR: Monorepo (monorepo)
+  # =============================================================================
+
+  - id: monorepo.workspaces
+    name: Workspace configuration
+    description: npm/yarn/pnpm workspaces or similar configured
+    type: any_of
+    pillar: monorepo
+    level: L3
+    required: false
+    checks:
+      - id: monorepo.npm_workspaces
+        type: file_exists
+        name: npm workspaces
+        pillar: monorepo
+        level: L3
+        required: false
+        path: package.json
+        content_regex: '"workspaces"'
+      - id: monorepo.pnpm_workspaces
+        type: file_exists
+        name: pnpm workspaces
+        pillar: monorepo
+        level: L3
+        required: false
+        path: pnpm-workspace.yaml
+      - id: monorepo.lerna
+        type: file_exists
+        name: Lerna config
+        pillar: monorepo
+        level: L3
+        required: false
+        path: lerna.json
+      - id: monorepo.nx
+        type: file_exists
+        name: Nx config
+        pillar: monorepo
+        level: L3
+        required: false
+        path: nx.json

@@ -1,0 +1,211 @@
+/**
+ * Markdown/Terminal output formatter
+ *
+ * Displays scan results in a readable terminal format
+ */
+
+import chalk from 'chalk';
+import type { ScanResult, Level, ActionPriority } from '../types.js';
+import { LEVELS } from '../types.js';
+
+const LEVEL_COLORS: Record<Level | 'none', (text: string) => string> = {
+  L1: chalk.red,
+  L2: chalk.yellow,
+  L3: chalk.cyan,
+  L4: chalk.blue,
+  L5: chalk.green,
+  none: chalk.gray,
+};
+
+const PRIORITY_COLORS: Record<ActionPriority, (text: string) => string> = {
+  critical: chalk.red.bold,
+  high: chalk.red,
+  medium: chalk.yellow,
+  low: chalk.gray,
+};
+
+/**
+ * Output scan results to terminal
+ */
+export function outputMarkdown(result: ScanResult, verbose: boolean): void {
+  console.log('');
+
+  // Header
+  printHeader(result);
+
+  // Level badge
+  printLevelBadge(result);
+
+  // Pillar summary
+  printPillarSummary(result);
+
+  // Level breakdown
+  if (verbose) {
+    printLevelBreakdown(result);
+  }
+
+  // Action items
+  if (result.action_items.length > 0) {
+    printActionItems(result, verbose);
+  }
+
+  // Monorepo apps
+  if (result.is_monorepo && result.apps && result.apps.length > 0) {
+    printMonorepoApps(result);
+  }
+
+  console.log('');
+}
+
+function printHeader(result: ScanResult): void {
+  console.log(chalk.bold('Agent Readiness Report'));
+  console.log(chalk.dim('─'.repeat(50)));
+  console.log(`${chalk.dim('Repository:')} ${result.repo}`);
+  console.log(`${chalk.dim('Commit:')}     ${result.commit}`);
+  console.log(`${chalk.dim('Profile:')}    ${result.profile} v${result.profile_version}`);
+  console.log(`${chalk.dim('Time:')}       ${new Date(result.timestamp).toLocaleString()}`);
+  console.log('');
+}
+
+function printLevelBadge(result: ScanResult): void {
+  const level = result.level || 'none';
+  const colorFn = LEVEL_COLORS[level];
+  const levelName = result.level || 'Not Achieved';
+
+  const badge = `┌─────────────────────────────────────────────────┐
+│                                                 │
+│          ${colorFn(`Level: ${levelName}`)}                          │
+│          ${chalk.dim(`Score: ${result.overall_score}%`)}                            │
+│                                                 │
+└─────────────────────────────────────────────────┘`;
+
+  console.log(badge);
+  console.log('');
+
+  if (result.level && result.progress_to_next < 1) {
+    const nextLevel = getNextLevel(result.level);
+    if (nextLevel) {
+      const progress = Math.round(result.progress_to_next * 100);
+      const bar = createProgressBar(progress);
+      console.log(`${chalk.dim('Progress to')} ${nextLevel}: ${bar} ${progress}%`);
+      console.log('');
+    }
+  }
+}
+
+function printPillarSummary(result: ScanResult): void {
+  console.log(chalk.bold('Pillar Summary'));
+  console.log(chalk.dim('─'.repeat(50)));
+
+  const pillars = Object.values(result.pillars).filter(
+    (p) => p.checks_total > 0
+  );
+
+  for (const pillar of pillars) {
+    const levelStr = pillar.level_achieved || '-';
+    const colorFn = pillar.level_achieved
+      ? LEVEL_COLORS[pillar.level_achieved]
+      : chalk.gray;
+
+    const score = pillar.score;
+    const scoreColor = score >= 80 ? chalk.green : score >= 50 ? chalk.yellow : chalk.red;
+
+    const checkStatus = `${pillar.checks_passed}/${pillar.checks_total}`;
+
+    console.log(
+      `  ${pillar.name.padEnd(16)} ${colorFn(levelStr.padEnd(4))} ${scoreColor(
+        score.toString().padStart(3)
+      )}% ${chalk.dim(`(${checkStatus})`)}`
+    );
+  }
+
+  console.log('');
+}
+
+function printLevelBreakdown(result: ScanResult): void {
+  console.log(chalk.bold('Level Breakdown'));
+  console.log(chalk.dim('─'.repeat(50)));
+
+  const levels = LEVELS;
+
+  for (const level of levels) {
+    const summary = result.levels[level];
+    if (summary.checks_total === 0) continue;
+
+    const status = summary.achieved ? chalk.green('✓') : chalk.red('✗');
+    const colorFn = LEVEL_COLORS[level];
+
+    console.log(
+      `  ${status} ${colorFn(level)} - ${summary.score}% ` +
+        `(${summary.checks_passed}/${summary.checks_total} checks, ` +
+        `${summary.required_passed}/${summary.required_total} required)`
+    );
+  }
+
+  console.log('');
+}
+
+function printActionItems(result: ScanResult, verbose: boolean): void {
+  console.log(chalk.bold('Action Items'));
+  console.log(chalk.dim('─'.repeat(50)));
+
+  const itemsToShow = verbose ? result.action_items : result.action_items.slice(0, 5);
+
+  for (const item of itemsToShow) {
+    const priorityColor = PRIORITY_COLORS[item.priority];
+    const priorityBadge = priorityColor(`[${item.priority.toUpperCase()}]`);
+    const levelColor = LEVEL_COLORS[item.level];
+
+    console.log(
+      `  ${priorityBadge} ${levelColor(item.level)} ${item.action}`
+    );
+  }
+
+  if (!verbose && result.action_items.length > 5) {
+    console.log(
+      chalk.dim(`  ... and ${result.action_items.length - 5} more (use --verbose to see all)`)
+    );
+  }
+
+  console.log('');
+}
+
+function printMonorepoApps(result: ScanResult): void {
+  if (!result.apps) return;
+
+  console.log(chalk.bold('Monorepo Apps'));
+  console.log(chalk.dim('─'.repeat(50)));
+
+  for (const app of result.apps) {
+    if (app.error) {
+      // Show error for failed apps
+      console.log(
+        `  ${app.name.padEnd(20)} ${chalk.red('ERROR')} ${chalk.dim(app.error)}`
+      );
+    } else {
+      const level = app.level || '-';
+      const colorFn = app.level ? LEVEL_COLORS[app.level] : chalk.gray;
+
+      console.log(
+        `  ${app.name.padEnd(20)} ${colorFn(level.padEnd(4))} ${app.score}% ` +
+          chalk.dim(`(${app.checks_passed}/${app.checks_total})`)
+      );
+    }
+  }
+
+  console.log('');
+}
+
+function getNextLevel(current: Level): Level | null {
+  const levels = LEVELS;
+  const index = levels.indexOf(current);
+  return index < levels.length - 1 ? levels[index + 1] : null;
+}
+
+function createProgressBar(percent: number): string {
+  const width = 20;
+  const filled = Math.round((percent / 100) * width);
+  const empty = width - filled;
+
+  return chalk.green('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
+}

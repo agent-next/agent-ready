@@ -1,0 +1,387 @@
+{
+  "repo": "robotlearning123/nano-opencode",
+  "commit": "7080ca1bc2ee0078ab7e28e08663bb0c2de87705",
+  "timestamp": "2026-01-22T20:57:10.191Z",
+  "profile": "factory_compat",
+  "profile_version": "1.0.0",
+  "level": null,
+  "progress_to_next": 0.5,
+  "overall_score": 30,
+  "pillars": {
+    "docs": {
+      "level_achieved": "L1",
+      "score": 40,
+      "checks_passed": 2,
+      "checks_total": 5
+    },
+    "style": {
+      "level_achieved": null,
+      "score": 33,
+      "checks_passed": 1,
+      "checks_total": 3
+    },
+    "build": {
+      "level_achieved": "L5",
+      "score": 100,
+      "checks_passed": 3,
+      "checks_total": 3
+    },
+    "test": {
+      "level_achieved": "L1",
+      "score": 50,
+      "checks_passed": 1,
+      "checks_total": 2
+    },
+    "security": {
+      "level_achieved": null,
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 3
+    },
+    "observability": {
+      "level_achieved": "L2",
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 1
+    },
+    "env": {
+      "level_achieved": "L1",
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 1
+    },
+    "ci": {
+      "level_achieved": null,
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 4
+    },
+    "monorepo": {
+      "level_achieved": "L2",
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 1
+    }
+  },
+  "levels": {
+    "L1": {
+      "achieved": false,
+      "score": 50,
+      "checks_passed": 3,
+      "checks_total": 6
+    },
+    "L2": {
+      "achieved": false,
+      "score": 33,
+      "checks_passed": 4,
+      "checks_total": 12
+    },
+    "L3": {
+      "achieved": false,
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 5
+    },
+    "L4": {
+      "achieved": true,
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 0
+    },
+    "L5": {
+      "achieved": true,
+      "score": 0,
+      "checks_passed": 0,
+      "checks_total": 0
+    }
+  },
+  "failed_checks": [
+    {
+      "check_id": "docs.contributing",
+      "pillar": "docs",
+      "level": "L2",
+      "message": "File not found: CONTRIBUTING.md",
+      "required": false,
+      "suggestions": [
+        "Create CONTRIBUTING.md"
+      ]
+    },
+    {
+      "check_id": "docs.agents_md",
+      "pillar": "docs",
+      "level": "L3",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create AGENTS.md",
+        "Create CLAUDE.md"
+      ]
+    },
+    {
+      "check_id": "docs.changelog",
+      "pillar": "docs",
+      "level": "L3",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create CHANGELOG.md",
+        "Create HISTORY.md"
+      ]
+    },
+    {
+      "check_id": "style.editorconfig",
+      "pillar": "style",
+      "level": "L1",
+      "message": "File not found: .editorconfig",
+      "required": false,
+      "suggestions": [
+        "Create .editorconfig"
+      ]
+    },
+    {
+      "check_id": "style.linter_config",
+      "pillar": "style",
+      "level": "L2",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .eslint*",
+        "Create files matching pattern: .prettier*",
+        "Create biome.json"
+      ]
+    },
+    {
+      "check_id": "test.config",
+      "pillar": "test",
+      "level": "L2",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: jest.config.*",
+        "Create files matching pattern: vitest.config.*",
+        "Create .mocharc.json"
+      ]
+    },
+    {
+      "check_id": "security.gitignore",
+      "pillar": "security",
+      "level": "L1",
+      "message": "File not found: .gitignore",
+      "required": true,
+      "suggestions": [
+        "Create .gitignore"
+      ]
+    },
+    {
+      "check_id": "security.gitignore_secrets",
+      "pillar": "security",
+      "level": "L2",
+      "message": "File not found: .gitignore",
+      "required": false,
+      "suggestions": [
+        "Create .gitignore"
+      ]
+    },
+    {
+      "check_id": "security.dependabot",
+      "pillar": "security",
+      "level": "L3",
+      "message": "File not found: .github/dependabot.yml",
+      "required": false,
+      "suggestions": [
+        "Create .github/dependabot.yml"
+      ]
+    },
+    {
+      "check_id": "observability.logging",
+      "pillar": "observability",
+      "level": "L3",
+      "message": "No logging framework detected (looking for: winston, pino, bunyan, log4js)",
+      "required": false,
+      "suggestions": [
+        "Add a logging framework to your project",
+        "Node.js: npm install winston or pino",
+        "Python: pip install loguru"
+      ]
+    },
+    {
+      "check_id": "env.dotenv_example",
+      "pillar": "env",
+      "level": "L2",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .env.example",
+        "Create .env.template"
+      ]
+    },
+    {
+      "check_id": "ci.github_workflow",
+      "pillar": "ci",
+      "level": "L1",
+      "message": "Found 0 files matching '.github/workflows/*.{yml,yaml}', need at least 1",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .github/workflows/*.{yml,yaml}"
+      ]
+    },
+    {
+      "check_id": "ci.push_trigger",
+      "pillar": "ci",
+      "level": "L2",
+      "message": "No GitHub workflow files found",
+      "required": false,
+      "suggestions": [
+        "Create .github/workflows directory with workflow files"
+      ]
+    },
+    {
+      "check_id": "ci.pr_trigger",
+      "pillar": "ci",
+      "level": "L2",
+      "message": "No GitHub workflow files found",
+      "required": false,
+      "suggestions": [
+        "Create .github/workflows directory with workflow files"
+      ]
+    },
+    {
+      "check_id": "ci.checkout_action",
+      "pillar": "ci",
+      "level": "L2",
+      "message": "No GitHub workflow files found",
+      "required": false,
+      "suggestions": [
+        "Create .github/workflows directory with workflow files"
+      ]
+    },
+    {
+      "check_id": "monorepo.workspaces",
+      "pillar": "monorepo",
+      "level": "L3",
+      "message": "Only 0/4 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Update package.json to include required content",
+        "Create pnpm-workspace.yaml",
+        "Create lerna.json",
+        "Create nx.json"
+      ]
+    }
+  ],
+  "action_items": [
+    {
+      "priority": "critical",
+      "check_id": "security.gitignore",
+      "pillar": "security",
+      "level": "L1",
+      "action": "Create .gitignore"
+    },
+    {
+      "priority": "medium",
+      "check_id": "style.editorconfig",
+      "pillar": "style",
+      "level": "L1",
+      "action": "Create .editorconfig"
+    },
+    {
+      "priority": "medium",
+      "check_id": "ci.github_workflow",
+      "pillar": "ci",
+      "level": "L1",
+      "action": "Create files matching pattern: .github/workflows/*.{yml,yaml}"
+    },
+    {
+      "priority": "medium",
+      "check_id": "docs.contributing",
+      "pillar": "docs",
+      "level": "L2",
+      "action": "Create CONTRIBUTING.md"
+    },
+    {
+      "priority": "medium",
+      "check_id": "style.linter_config",
+      "pillar": "style",
+      "level": "L2",
+      "action": "Create files matching pattern: .eslint*"
+    },
+    {
+      "priority": "medium",
+      "check_id": "test.config",
+      "pillar": "test",
+      "level": "L2",
+      "action": "Create files matching pattern: jest.config.*"
+    },
+    {
+      "priority": "medium",
+      "check_id": "security.gitignore_secrets",
+      "pillar": "security",
+      "level": "L2",
+      "action": "Create .gitignore"
+    },
+    {
+      "priority": "medium",
+      "check_id": "env.dotenv_example",
+      "pillar": "env",
+      "level": "L2",
+      "action": "Create .env.example"
+    },
+    {
+      "priority": "medium",
+      "check_id": "ci.push_trigger",
+      "pillar": "ci",
+      "level": "L2",
+      "action": "Create .github/workflows directory with workflow files"
+    },
+    {
+      "priority": "medium",
+      "check_id": "ci.pr_trigger",
+      "pillar": "ci",
+      "level": "L2",
+      "action": "Create .github/workflows directory with workflow files"
+    },
+    {
+      "priority": "medium",
+      "check_id": "ci.checkout_action",
+      "pillar": "ci",
+      "level": "L2",
+      "action": "Create .github/workflows directory with workflow files"
+    },
+    {
+      "priority": "low",
+      "check_id": "docs.agents_md",
+      "pillar": "docs",
+      "level": "L3",
+      "action": "Create AGENTS.md"
+    },
+    {
+      "priority": "low",
+      "check_id": "docs.changelog",
+      "pillar": "docs",
+      "level": "L3",
+      "action": "Create CHANGELOG.md"
+    },
+    {
+      "priority": "low",
+      "check_id": "security.dependabot",
+      "pillar": "security",
+      "level": "L3",
+      "action": "Create .github/dependabot.yml"
+    },
+    {
+      "priority": "low",
+      "check_id": "observability.logging",
+      "pillar": "observability",
+      "level": "L3",
+      "action": "Add a logging framework to your project"
+    },
+    {
+      "priority": "low",
+      "check_id": "monorepo.workspaces",
+      "pillar": "monorepo",
+      "level": "L3",
+      "action": "Update package.json to include required content"
+    }
+  ],
+  "is_monorepo": false
+}

@@ -1,0 +1,16 @@
+{
+  "name": "standard-test-repo",
+  "version": "1.0.0",
+  "description": "Standard test repository",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "lint": "eslint ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "agent-readiness",
+  "version": "0.1.0",
+  "description": "Factory-compatible repo maturity scanner for AI agent readiness",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "agent-ready": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "test": "tsx --test test/*.test.ts",
+    "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "readiness",
+    "scanner",
+    "factory",
+    "devops"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "glob": "^11.0.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
