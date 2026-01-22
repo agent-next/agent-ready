@@ -16,10 +16,7 @@ import { executeLogFrameworkDetect } from './log-framework.js';
 /**
  * Execute a check and return the result
  */
-export async function executeCheck(
-  check: CheckConfig,
-  context: ScanContext
-): Promise<CheckResult> {
+export async function executeCheck(check: CheckConfig, context: ScanContext): Promise<CheckResult> {
   switch (check.type) {
     case 'file_exists':
       return executeFileExists(check, context);
@@ -42,7 +39,7 @@ export async function executeCheck(
     case 'log_framework_detect':
       return executeLogFrameworkDetect(check, context);
 
-    default:
+    default: {
       // This should never happen due to TypeScript and YAML validation,
       // but handle gracefully by preserving check properties
       const unknownCheck = check as CheckConfig & { type: string };
@@ -55,6 +52,7 @@ export async function executeCheck(
         required: unknownCheck.required,
         message: `Unknown check type: ${unknownCheck.type}`,
       };
+    }
   }
 }
 
@@ -65,9 +63,7 @@ export async function executeChecks(
   checks: CheckConfig[],
   context: ScanContext
 ): Promise<CheckResult[]> {
-  const results = await Promise.all(
-    checks.map((check) => executeCheck(check, context))
-  );
+  const results = await Promise.all(checks.map((check) => executeCheck(check, context)));
   return results;
 }
 

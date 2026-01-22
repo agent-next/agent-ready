@@ -10,10 +10,7 @@ import { writeFile } from '../utils/fs.js';
 /**
  * Write scan results to JSON file
  */
-export async function outputJson(
-  result: ScanResult,
-  outputPath: string
-): Promise<void> {
+export async function outputJson(result: ScanResult, outputPath: string): Promise<void> {
   // Create a clean output object (remove verbose data)
   const output = {
     repo: result.repo,

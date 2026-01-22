@@ -4,17 +4,10 @@
  * Passes if at least min_pass (default 1) of the nested checks pass
  */
 
-import type {
-  AnyOfCheck,
-  CheckResult,
-  ScanContext,
-} from '../types.js';
+import type { AnyOfCheck, CheckResult, ScanContext } from '../types.js';
 import { executeCheck } from './index.js';
 
-export async function executeAnyOf(
-  check: AnyOfCheck,
-  context: ScanContext
-): Promise<CheckResult> {
+export async function executeAnyOf(check: AnyOfCheck, context: ScanContext): Promise<CheckResult> {
   const minPass = check.min_pass ?? 1;
   const results: CheckResult[] = [];
   const passedChecks: string[] = [];

@@ -32,9 +32,6 @@ export function execSafe(
 /**
  * Execute git command safely
  */
-export function gitExec(
-  args: string[],
-  repoPath: string
-): ExecResult {
+export function gitExec(args: string[], repoPath: string): ExecResult {
   return execSafe('git', args, { cwd: repoPath });
 }

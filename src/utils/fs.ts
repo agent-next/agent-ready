@@ -50,10 +50,7 @@ export async function readFileCached(
 /**
  * Find files matching a glob pattern
  */
-export async function findFiles(
-  pattern: string,
-  rootPath: string
-): Promise<string[]> {
+export async function findFiles(pattern: string, rootPath: string): Promise<string[]> {
   try {
     const matches = await glob(pattern, {
       cwd: rootPath,
@@ -112,10 +109,7 @@ export async function listDirectories(dirPath: string): Promise<string[]> {
 /**
  * Write file, creating directories if needed
  */
-export async function writeFile(
-  filePath: string,
-  content: string
-): Promise<void> {
+export async function writeFile(filePath: string, content: string): Promise<void> {
   const dir = path.dirname(filePath);
   await fs.promises.mkdir(dir, { recursive: true });
   await fs.promises.writeFile(filePath, content, 'utf-8');

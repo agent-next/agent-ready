@@ -43,10 +43,7 @@ export function isUnsafeRegex(pattern: string): boolean {
 /**
  * Safely create a regex, returning null if pattern is invalid or unsafe
  */
-export function safeRegex(
-  pattern: string,
-  flags?: string
-): RegExp | null {
+export function safeRegex(pattern: string, flags?: string): RegExp | null {
   if (isUnsafeRegex(pattern)) {
     return null;
   }
@@ -76,9 +73,8 @@ export function safeRegexTest(
 
     // For very long content, limit what we test
     const maxContentLength = 1_000_000; // 1MB
-    const testContent = content.length > maxContentLength
-      ? content.substring(0, maxContentLength)
-      : content;
+    const testContent =
+      content.length > maxContentLength ? content.substring(0, maxContentLength) : content;
 
     return { matched: regex.test(testContent) };
   } catch (e) {

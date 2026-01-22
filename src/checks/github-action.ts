@@ -4,13 +4,8 @@
  * Checks if a specific GitHub Action is used in any workflow
  */
 
-import * as path from 'node:path';
 import * as yaml from 'js-yaml';
-import type {
-  GitHubActionPresentCheck,
-  CheckResult,
-  ScanContext,
-} from '../types.js';
+import type { GitHubActionPresentCheck, CheckResult, ScanContext } from '../types.js';
 import { findFilesCached, readFileCached, relativePath } from '../utils/fs.js';
 import { safeRegex } from '../utils/regex.js';
 
@@ -54,9 +49,7 @@ export async function executeGitHubActionPresent(
   const foundActions: string[] = [];
 
   // Build regex for action matching (with safety check)
-  const actionPattern = check.action_pattern
-    ? safeRegex(check.action_pattern)
-    : null;
+  const actionPattern = check.action_pattern ? safeRegex(check.action_pattern) : null;
 
   // If pattern was provided but is invalid/unsafe, fail the check
   if (check.action_pattern && !actionPattern) {
@@ -68,7 +61,10 @@ export async function executeGitHubActionPresent(
       passed: false,
       required: check.required,
       message: `Invalid or unsafe action pattern: ${check.action_pattern}`,
-      details: { pattern: check.action_pattern, error: 'Invalid or potentially unsafe regex pattern' },
+      details: {
+        pattern: check.action_pattern,
+        error: 'Invalid or potentially unsafe regex pattern',
+      },
     };
   }
 

@@ -11,8 +11,20 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "test": "tsx --test test/*.test.ts",
-    "lint": "eslint src/**/*.ts",
-    "typecheck": "tsc --noEmit"
+    "test:watch": "tsx --test --watch test/*.test.ts",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint && npm run format:check",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "keywords": [
     "ai",
@@ -31,12 +43,18 @@
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.10.2",
+    "eslint": "^9.17.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "prettier": "^3.4.2",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }

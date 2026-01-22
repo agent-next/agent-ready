@@ -83,12 +83,7 @@ async function detectMonorepo(
   }
 
   // Check for common monorepo patterns
-  const monorepoMarkers = [
-    'lerna.json',
-    'pnpm-workspace.yaml',
-    'rush.json',
-    'nx.json',
-  ];
+  const monorepoMarkers = ['lerna.json', 'pnpm-workspace.yaml', 'rush.json', 'nx.json'];
 
   for (const marker of monorepoMarkers) {
     if (await fileExists(path.join(rootPath, marker))) {

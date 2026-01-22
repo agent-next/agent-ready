@@ -8,21 +8,13 @@
  *   3. All previous levels (1 to N-1) already achieved
  */
 
-import type {
-  Level,
-  CheckResult,
-  LevelSummary,
-  PillarSummary,
-  Pillar,
-} from '../types.js';
+import type { Level, CheckResult, LevelSummary, PillarSummary, Pillar } from '../types.js';
 import { PASSING_THRESHOLD, LEVELS, PILLARS, PILLAR_NAMES } from '../types.js';
 
 /**
  * Calculate level summaries from check results
  */
-export function calculateLevelSummaries(
-  results: CheckResult[]
-): Record<Level, LevelSummary> {
+export function calculateLevelSummaries(results: CheckResult[]): Record<Level, LevelSummary> {
   const summaries: Record<Level, LevelSummary> = {} as Record<Level, LevelSummary>;
   const levels = LEVELS;
 
@@ -83,9 +75,7 @@ export function calculateLevelSummaries(
  * If stricter behavior is needed, ensure your profile defines at least
  * one check for each level you want to gate.
  */
-export function determineAchievedLevel(
-  levelSummaries: Record<Level, LevelSummary>
-): Level | null {
+export function determineAchievedLevel(levelSummaries: Record<Level, LevelSummary>): Level | null {
   const levels = LEVELS;
   let highestAchieved: Level | null = null;
 
@@ -139,9 +129,7 @@ export function calculateProgressToNext(
 /**
  * Calculate pillar summaries from check results
  */
-export function calculatePillarSummaries(
-  results: CheckResult[]
-): Record<Pillar, PillarSummary> {
+export function calculatePillarSummaries(results: CheckResult[]): Record<Pillar, PillarSummary> {
   const summaries: Record<Pillar, PillarSummary> = {} as Record<Pillar, PillarSummary>;
 
   for (const pillar of PILLARS) {

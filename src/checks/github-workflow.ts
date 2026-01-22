@@ -6,11 +6,7 @@
 
 import * as path from 'node:path';
 import * as yaml from 'js-yaml';
-import type {
-  GitHubWorkflowEventCheck,
-  CheckResult,
-  ScanContext,
-} from '../types.js';
+import type { GitHubWorkflowEventCheck, CheckResult, ScanContext } from '../types.js';
 import { findFilesCached, readFileCached, relativePath } from '../utils/fs.js';
 
 interface WorkflowConfig {
@@ -90,7 +86,7 @@ export async function executeGitHubWorkflowEvent(
       if (hasEvent) {
         matchingWorkflows.push(relativePath(workflowPath, context.root_path));
       }
-    } catch (e) {
+    } catch {
       errors.push(`Failed to parse ${path.basename(workflowPath)}`);
     }
   }

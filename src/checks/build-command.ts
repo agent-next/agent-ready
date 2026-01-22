@@ -5,12 +5,8 @@
  */
 
 import * as path from 'node:path';
-import type {
-  BuildCommandDetectCheck,
-  CheckResult,
-  ScanContext,
-} from '../types.js';
-import { readFileCached, relativePath } from '../utils/fs.js';
+import type { BuildCommandDetectCheck, CheckResult, ScanContext } from '../types.js';
+import { readFileCached } from '../utils/fs.js';
 
 const DEFAULT_FILES = ['package.json', 'Makefile', 'pyproject.toml', 'Cargo.toml'];
 

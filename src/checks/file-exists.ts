@@ -5,11 +5,7 @@
  */
 
 import * as path from 'node:path';
-import type {
-  FileExistsCheck,
-  CheckResult,
-  ScanContext,
-} from '../types.js';
+import type { FileExistsCheck, CheckResult, ScanContext } from '../types.js';
 import { fileExists as fileExistsUtil, readFileCached } from '../utils/fs.js';
 import { safeRegexTest } from '../utils/regex.js';
 

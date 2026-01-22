@@ -4,7 +4,7 @@
 
 import * as path from 'node:path';
 import chalk from 'chalk';
-import type { ScanOptions, ScanResult, Level } from '../types.js';
+import type { ScanOptions, Level } from '../types.js';
 import { scan } from '../scanner.js';
 import { outputJson } from '../output/json.js';
 import { outputMarkdown } from '../output/markdown.js';

@@ -99,11 +99,51 @@ describe('calculateLevelSummaries', () => {
 describe('determineAchievedLevel', () => {
   it('should return highest achieved level sequentially', () => {
     const summaries = {
-      L1: { level: 'L1' as Level, achieved: true, score: 100, checks_passed: 2, checks_total: 2, required_passed: 1, required_total: 1 },
-      L2: { level: 'L2' as Level, achieved: true, score: 85, checks_passed: 3, checks_total: 3, required_passed: 1, required_total: 1 },
-      L3: { level: 'L3' as Level, achieved: false, score: 50, checks_passed: 1, checks_total: 2, required_passed: 0, required_total: 1 },
-      L4: { level: 'L4' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 1, required_passed: 0, required_total: 0 },
-      L5: { level: 'L5' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 1, required_passed: 0, required_total: 0 },
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 85,
+        checks_passed: 3,
+        checks_total: 3,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: false,
+        score: 50,
+        checks_passed: 1,
+        checks_total: 2,
+        required_passed: 0,
+        required_total: 1,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 1,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 1,
+        required_passed: 0,
+        required_total: 0,
+      },
     };
 
     const level = determineAchievedLevel(summaries);
@@ -112,11 +152,51 @@ describe('determineAchievedLevel', () => {
 
   it('should return null when L1 not achieved', () => {
     const summaries = {
-      L1: { level: 'L1' as Level, achieved: false, score: 50, checks_passed: 1, checks_total: 2, required_passed: 0, required_total: 1 },
-      L2: { level: 'L2' as Level, achieved: true, score: 100, checks_passed: 2, checks_total: 2, required_passed: 1, required_total: 1 },
-      L3: { level: 'L3' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 },
-      L4: { level: 'L4' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 },
-      L5: { level: 'L5' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 },
+      L1: {
+        level: 'L1' as Level,
+        achieved: false,
+        score: 50,
+        checks_passed: 1,
+        checks_total: 2,
+        required_passed: 0,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
     };
 
     const level = determineAchievedLevel(summaries);
@@ -125,11 +205,51 @@ describe('determineAchievedLevel', () => {
 
   it('should skip levels with no checks', () => {
     const summaries = {
-      L1: { level: 'L1' as Level, achieved: true, score: 100, checks_passed: 2, checks_total: 2, required_passed: 1, required_total: 1 },
-      L2: { level: 'L2' as Level, achieved: true, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 }, // No checks
-      L3: { level: 'L3' as Level, achieved: true, score: 100, checks_passed: 1, checks_total: 1, required_passed: 0, required_total: 0 },
-      L4: { level: 'L4' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 1, required_passed: 0, required_total: 0 },
-      L5: { level: 'L5' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 },
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      }, // No checks
+      L3: {
+        level: 'L3' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 1,
+        checks_total: 1,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 1,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
     };
 
     const level = determineAchievedLevel(summaries);
@@ -140,11 +260,51 @@ describe('determineAchievedLevel', () => {
 describe('calculateProgressToNext', () => {
   it('should calculate progress correctly', () => {
     const summaries = {
-      L1: { level: 'L1' as Level, achieved: true, score: 100, checks_passed: 2, checks_total: 2, required_passed: 1, required_total: 1 },
-      L2: { level: 'L2' as Level, achieved: false, score: 60, checks_passed: 3, checks_total: 5, required_passed: 1, required_total: 1 },
-      L3: { level: 'L3' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 2, required_passed: 0, required_total: 0 },
-      L4: { level: 'L4' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 },
-      L5: { level: 'L5' as Level, achieved: false, score: 0, checks_passed: 0, checks_total: 0, required_passed: 0, required_total: 0 },
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: false,
+        score: 60,
+        checks_passed: 3,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 2,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
     };
 
     const progress = calculateProgressToNext('L1', summaries);
@@ -153,11 +313,51 @@ describe('calculateProgressToNext', () => {
 
   it('should return 1.0 when at max level', () => {
     const summaries = {
-      L1: { level: 'L1' as Level, achieved: true, score: 100, checks_passed: 1, checks_total: 1, required_passed: 1, required_total: 1 },
-      L2: { level: 'L2' as Level, achieved: true, score: 100, checks_passed: 1, checks_total: 1, required_passed: 1, required_total: 1 },
-      L3: { level: 'L3' as Level, achieved: true, score: 100, checks_passed: 1, checks_total: 1, required_passed: 1, required_total: 1 },
-      L4: { level: 'L4' as Level, achieved: true, score: 100, checks_passed: 1, checks_total: 1, required_passed: 1, required_total: 1 },
-      L5: { level: 'L5' as Level, achieved: true, score: 100, checks_passed: 1, checks_total: 1, required_passed: 1, required_total: 1 },
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 1,
+        checks_total: 1,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 1,
+        checks_total: 1,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 1,
+        checks_total: 1,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 1,
+        checks_total: 1,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 1,
+        checks_total: 1,
+        required_passed: 1,
+        required_total: 1,
+      },
     };
 
     const progress = calculateProgressToNext('L5', summaries);

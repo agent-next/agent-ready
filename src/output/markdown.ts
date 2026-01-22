@@ -97,15 +97,11 @@ function printPillarSummary(result: ScanResult): void {
   console.log(chalk.bold('Pillar Summary'));
   console.log(chalk.dim('─'.repeat(50)));
 
-  const pillars = Object.values(result.pillars).filter(
-    (p) => p.checks_total > 0
-  );
+  const pillars = Object.values(result.pillars).filter((p) => p.checks_total > 0);
 
   for (const pillar of pillars) {
     const levelStr = pillar.level_achieved || '-';
-    const colorFn = pillar.level_achieved
-      ? LEVEL_COLORS[pillar.level_achieved]
-      : chalk.gray;
+    const colorFn = pillar.level_achieved ? LEVEL_COLORS[pillar.level_achieved] : chalk.gray;
 
     const score = pillar.score;
     const scoreColor = score >= 80 ? chalk.green : score >= 50 ? chalk.yellow : chalk.red;
@@ -156,9 +152,7 @@ function printActionItems(result: ScanResult, verbose: boolean): void {
     const priorityBadge = priorityColor(`[${item.priority.toUpperCase()}]`);
     const levelColor = LEVEL_COLORS[item.level];
 
-    console.log(
-      `  ${priorityBadge} ${levelColor(item.level)} ${item.action}`
-    );
+    console.log(`  ${priorityBadge} ${levelColor(item.level)} ${item.action}`);
   }
 
   if (!verbose && result.action_items.length > 5) {
@@ -179,9 +173,7 @@ function printMonorepoApps(result: ScanResult): void {
   for (const app of result.apps) {
     if (app.error) {
       // Show error for failed apps
-      console.log(
-        `  ${app.name.padEnd(20)} ${chalk.red('ERROR')} ${chalk.dim(app.error)}`
-      );
+      console.log(`  ${app.name.padEnd(20)} ${chalk.red('ERROR')} ${chalk.dim(app.error)}`);
     } else {
       const level = app.level || '-';
       const colorFn = app.level ? LEVEL_COLORS[app.level] : chalk.gray;

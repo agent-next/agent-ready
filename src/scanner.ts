@@ -13,7 +13,6 @@ import type {
   CheckResult,
   CheckConfig,
   MonorepoApp,
-  Level,
 } from './types.js';
 import { loadProfile } from './profiles/index.js';
 import { buildScanContext } from './engine/context.js';
@@ -90,10 +89,7 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
 /**
  * Generate prioritized action items from failed checks
  */
-function generateActionItems(
-  failedChecks: CheckResult[],
-  checks: CheckConfig[]
-): ActionItem[] {
+function generateActionItems(failedChecks: CheckResult[], checks: CheckConfig[]): ActionItem[] {
   const items: ActionItem[] = [];
 
   for (const result of failedChecks) {

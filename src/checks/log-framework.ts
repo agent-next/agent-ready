@@ -4,13 +4,7 @@
  * Detects if logging frameworks are used in the project
  */
 
-import * as path from 'node:path';
-import type {
-  LogFrameworkDetectCheck,
-  CheckResult,
-  ScanContext,
-  PackageJson,
-} from '../types.js';
+import type { LogFrameworkDetectCheck, CheckResult, ScanContext } from '../types.js';
 import { readFileCached, findFilesCached, relativePath } from '../utils/fs.js';
 
 // Known logging frameworks by language/ecosystem
@@ -79,14 +73,7 @@ export async function executeLogFrameworkDetect(
   }
 
   // Search source files for framework imports
-  const sourcePatterns = [
-    '**/*.ts',
-    '**/*.js',
-    '**/*.py',
-    '**/*.go',
-    '**/*.java',
-    '**/*.rs',
-  ];
+  const sourcePatterns = ['**/*.ts', '**/*.js', '**/*.py', '**/*.go', '**/*.java', '**/*.rs'];
 
   for (const pattern of sourcePatterns) {
     const files = await findFilesCached(pattern, context.root_path, context.glob_cache);

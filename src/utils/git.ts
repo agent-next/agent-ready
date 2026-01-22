@@ -77,9 +77,7 @@ export function hasUncommittedChanges(repoPath: string): boolean {
 /**
  * Parse .gitignore patterns
  */
-export async function getGitIgnorePatterns(
-  repoPath: string
-): Promise<string[]> {
+export async function getGitIgnorePatterns(repoPath: string): Promise<string[]> {
   const gitignorePath = path.join(repoPath, '.gitignore');
   const content = await readFile(gitignorePath);
 

@@ -86,12 +86,16 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
 
   // Validate pillar is a known value
   if (!PILLARS.includes(raw.pillar as Pillar)) {
-    throw new Error(`Check '${raw.id}' has invalid pillar '${raw.pillar}'. Valid pillars: ${PILLARS.join(', ')}`);
+    throw new Error(
+      `Check '${raw.id}' has invalid pillar '${raw.pillar}'. Valid pillars: ${PILLARS.join(', ')}`
+    );
   }
 
   // Validate level is a known value
   if (!LEVELS.includes(raw.level as Level)) {
-    throw new Error(`Check '${raw.id}' has invalid level '${raw.level}'. Valid levels: ${LEVELS.join(', ')}`);
+    throw new Error(
+      `Check '${raw.id}' has invalid level '${raw.level}'. Valid levels: ${LEVELS.join(', ')}`
+    );
   }
 
   const base = {
@@ -144,7 +148,9 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
 
     case 'github_workflow_event':
       if (typeof raw.event !== 'string') {
-        throw new Error(`Check '${raw.id}' of type 'github_workflow_event' missing required 'event' field`);
+        throw new Error(
+          `Check '${raw.id}' of type 'github_workflow_event' missing required 'event' field`
+        );
       }
       return {
         ...base,
@@ -155,7 +161,9 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
 
     case 'github_action_present':
       if (typeof raw.action !== 'string') {
-        throw new Error(`Check '${raw.id}' of type 'github_action_present' missing required 'action' field`);
+        throw new Error(
+          `Check '${raw.id}' of type 'github_action_present' missing required 'action' field`
+        );
       }
       return {
         ...base,
@@ -166,7 +174,9 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
 
     case 'build_command_detect':
       if (!Array.isArray(raw.commands)) {
-        throw new Error(`Check '${raw.id}' of type 'build_command_detect' missing required 'commands' array`);
+        throw new Error(
+          `Check '${raw.id}' of type 'build_command_detect' missing required 'commands' array`
+        );
       }
       return {
         ...base,
@@ -177,7 +187,9 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
 
     case 'log_framework_detect':
       if (!Array.isArray(raw.frameworks)) {
-        throw new Error(`Check '${raw.id}' of type 'log_framework_detect' missing required 'frameworks' array`);
+        throw new Error(
+          `Check '${raw.id}' of type 'log_framework_detect' missing required 'frameworks' array`
+        );
       }
       return {
         ...base,

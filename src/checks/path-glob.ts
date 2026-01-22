@@ -4,11 +4,7 @@
  * Checks if files matching a glob pattern exist with optional content matching
  */
 
-import type {
-  PathGlobCheck,
-  CheckResult,
-  ScanContext,
-} from '../types.js';
+import type { PathGlobCheck, CheckResult, ScanContext } from '../types.js';
 import { findFilesCached, readFileCached, relativePath } from '../utils/fs.js';
 import { safeRegexTest, isUnsafeRegex } from '../utils/regex.js';
 
@@ -19,11 +15,7 @@ export async function executePathGlob(
   const minMatches = check.min_matches ?? 1;
 
   // Find files matching pattern
-  const matches = await findFilesCached(
-    check.pattern,
-    context.root_path,
-    context.glob_cache
-  );
+  const matches = await findFilesCached(check.pattern, context.root_path, context.glob_cache);
 
   if (matches.length < minMatches) {
     return {

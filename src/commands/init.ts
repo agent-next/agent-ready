@@ -4,7 +4,7 @@
 
 import * as path from 'node:path';
 import chalk from 'chalk';
-import type { InitOptions, Level, CheckConfig } from '../types.js';
+import type { InitOptions, Level } from '../types.js';
 import { directoryExists, fileExists, writeFile, readFile } from '../utils/fs.js';
 import { loadDefaultProfile } from '../profiles/index.js';
 import { getTemplates, type Template } from '../templates/index.js';
@@ -42,7 +42,9 @@ export async function initCommand(options: InitOptions): Promise<void> {
       }
     } else if (options.level) {
       // Generate templates needed for the specified level
-      const levelChecks = profile.checks.filter((c) => levelValue(c.level) <= levelValue(options.level!));
+      const levelChecks = profile.checks.filter(
+        (c) => levelValue(c.level) <= levelValue(options.level!)
+      );
       const checkIds = new Set(levelChecks.map((c) => c.id));
       templatesNeeded = templates.filter((t) => checkIds.has(t.checkId));
     }
