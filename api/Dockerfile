@@ -33,9 +33,13 @@ RUN apk add --no-cache git
 
 # Copy built files (includes both api and parent src)
 COPY --from=builder /app/api/dist ./dist
-COPY --from=builder /app/api/node_modules ./api_modules
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/api/node_modules ./node_modules
+COPY --from=builder /app/node_modules ./parent_modules
 COPY --from=builder /app/api/package.json ./
+COPY --from=builder /app/package.json ./parent.package.json
+
+# Merge parent dependencies needed at runtime
+RUN cp -r ./parent_modules/* ./node_modules/ 2>/dev/null || true
 
 # Copy profiles (needed for scanning)
 COPY --from=builder /app/profiles ./profiles
