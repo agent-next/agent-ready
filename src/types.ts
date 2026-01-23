@@ -7,26 +7,27 @@ export type Level = 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
 
 export const LEVELS: Level[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
 
+// Factory.ai official level names
 export const LEVEL_NAMES: Record<Level, string> = {
-  L1: 'Minimal',
-  L2: 'Standard',
-  L3: 'Enhanced',
-  L4: 'Advanced',
-  L5: 'Optimal',
+  L1: 'Functional',
+  L2: 'Documented',
+  L3: 'Standardized',
+  L4: 'Optimized',
+  L5: 'Autonomous',
 };
 
-// Pillar definitions (10 Pillars model - Factory-compatible)
+// Pillar definitions (Factory-compatible 9 Pillars)
+// Note: CI/CD merged into Build System per Factory spec
 export type Pillar =
   | 'docs'
   | 'style'
-  | 'build'
+  | 'build' // Includes CI/CD checks
   | 'test'
   | 'security'
   | 'observability'
   | 'env'
-  | 'ci'
-  | 'monorepo'
-  | 'task_discovery';
+  | 'task_discovery'
+  | 'product'; // Feature flags, analytics, A/B testing
 
 export const PILLARS: Pillar[] = [
   'docs',
@@ -36,22 +37,20 @@ export const PILLARS: Pillar[] = [
   'security',
   'observability',
   'env',
-  'ci',
-  'monorepo',
   'task_discovery',
+  'product',
 ];
 
 export const PILLAR_NAMES: Record<Pillar, string> = {
   docs: 'Documentation',
   style: 'Code Style',
-  build: 'Build System',
+  build: 'Build System & CI/CD',
   test: 'Testing',
   security: 'Security',
   observability: 'Observability',
   env: 'Environment',
-  ci: 'CI/CD',
-  monorepo: 'Monorepo',
   task_discovery: 'Task Discovery',
+  product: 'Product & Experimentation',
 };
 
 // Check type discriminators

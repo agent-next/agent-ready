@@ -239,7 +239,7 @@ describe('determineAchievedLevel', () => {
         checks_passed: 0,
         checks_total: 1,
         required_passed: 0,
-        required_total: 0,
+        required_total: 1, // Required check fails, blocking L4 achievement
       },
       L5: {
         level: 'L5' as Level,

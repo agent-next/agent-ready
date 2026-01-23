@@ -43,18 +43,18 @@ checks:
 
   - id: docs.agents_md
     name: AGENTS.md exists
-    description: Repository has agent instructions file
+    description: Repository has agent instructions file (required for L2 per Factory spec)
     type: any_of
     pillar: docs
-    level: L3
-    required: false
+    level: L2
+    required: true
     checks:
       - id: docs.agents_md.standard
         name: Standard AGENTS.md
         description: AGENTS.md in root
         type: file_exists
         pillar: docs
-        level: L3
+        level: L2
         required: false
         path: AGENTS.md
       - id: docs.agents_md.claude
@@ -62,7 +62,7 @@ checks:
         description: CLAUDE.md (alias for AGENTS.md)
         type: file_exists
         pillar: docs
-        level: L3
+        level: L2
         required: false
         path: CLAUDE.md
 
@@ -429,24 +429,24 @@ checks:
 
   - id: env.devcontainer
     name: Devcontainer configuration
-    description: Development container configuration for consistent environments
+    description: Development container configuration for consistent environments (Factory L2)
     type: any_of
     pillar: env
-    level: L3
+    level: L2
     required: false
     checks:
       - id: env.devcontainer_json
         type: file_exists
         name: Devcontainer config
         pillar: env
-        level: L3
+        level: L2
         required: false
         path: .devcontainer/devcontainer.json
       - id: env.devcontainer_dockerfile
         type: file_exists
         name: Devcontainer Dockerfile
         pillar: env
-        level: L3
+        level: L2
         required: false
         path: .devcontainer/Dockerfile
 
@@ -481,88 +481,46 @@ checks:
         path: compose.yml
 
   # =============================================================================
-  # PILLAR: CI/CD (ci)
+  # Build System CI/CD Checks (merged into Build per Factory spec)
   # =============================================================================
 
-  - id: ci.github_workflow
+  - id: build.github_workflow
     name: GitHub Actions workflow
     description: CI workflow exists for GitHub Actions
     type: path_glob
-    pillar: ci
+    pillar: build
     level: L1
     required: false
     pattern: ".github/workflows/*.{yml,yaml}"
     min_matches: 1
 
-  - id: ci.push_trigger
+  - id: build.push_trigger
     name: CI triggers on push
     description: CI workflow runs on push events
     type: github_workflow_event
-    pillar: ci
+    pillar: build
     level: L2
     required: false
     event: push
 
-  - id: ci.pr_trigger
+  - id: build.pr_trigger
     name: CI triggers on PR
     description: CI workflow runs on pull request events
     type: github_workflow_event
-    pillar: ci
+    pillar: build
     level: L2
     required: false
     event: pull_request
 
-  - id: ci.checkout_action
+  - id: build.checkout_action
     name: Uses checkout action
     description: Workflow uses actions/checkout
     type: github_action_present
-    pillar: ci
+    pillar: build
     level: L2
     required: false
     action: actions/checkout
     action_pattern: "actions/checkout@v\\d+"
-
-  # =============================================================================
-  # PILLAR: Monorepo (monorepo)
-  # =============================================================================
-
-  - id: monorepo.workspaces
-    name: Workspace configuration
-    description: npm/yarn/pnpm workspaces or similar configured
-    type: any_of
-    pillar: monorepo
-    level: L3
-    required: false
-    checks:
-      - id: monorepo.npm_workspaces
-        type: file_exists
-        name: npm workspaces
-        pillar: monorepo
-        level: L3
-        required: false
-        path: package.json
-        content_regex: '"workspaces"'
-      - id: monorepo.pnpm_workspaces
-        type: file_exists
-        name: pnpm workspaces
-        pillar: monorepo
-        level: L3
-        required: false
-        path: pnpm-workspace.yaml
-      - id: monorepo.lerna
-        type: file_exists
-        name: Lerna config
-        pillar: monorepo
-        level: L3
-        required: false
-        path: lerna.json
-      - id: monorepo.nx
-        type: file_exists
-        name: Nx config
-        pillar: monorepo
-        level: L3
-        required: false
-        path: nx.json
 
   # =============================================================================
   # PILLAR: Task Discovery (task_discovery)
@@ -613,3 +571,161 @@ checks:
         level: L2
         required: false
         path: PULL_REQUEST_TEMPLATE.md
+
+  # =============================================================================
+  # PILLAR: Product & Experimentation (product)
+  # =============================================================================
+
+  - id: product.feature_flags
+    name: Feature flag configuration
+    description: Feature flag system for controlled rollouts
+    type: any_of
+    pillar: product
+    level: L3
+    required: false
+    checks:
+      - id: product.launchdarkly
+        type: dependency_detect
+        name: LaunchDarkly SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "launchdarkly-node-server-sdk"
+          - "@launchdarkly/node-server-sdk"
+          - "launchdarkly-react-client-sdk"
+      - id: product.unleash
+        type: dependency_detect
+        name: Unleash client
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "unleash-client"
+          - "@unleash/proxy-client-react"
+      - id: product.flagsmith
+        type: dependency_detect
+        name: Flagsmith SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "flagsmith"
+          - "flagsmith-nodejs"
+      - id: product.growthbook
+        type: dependency_detect
+        name: GrowthBook SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "@growthbook/growthbook"
+          - "@growthbook/growthbook-react"
+      - id: product.split
+        type: dependency_detect
+        name: Split.io SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "@splitsoftware/splitio"
+          - "@splitsoftware/splitio-react"
+
+  - id: product.analytics
+    name: Analytics instrumentation
+    description: Product analytics for user behavior tracking
+    type: any_of
+    pillar: product
+    level: L3
+    required: false
+    checks:
+      - id: product.segment
+        type: dependency_detect
+        name: Segment Analytics
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "analytics-node"
+          - "@segment/analytics-node"
+          - "@segment/analytics-next"
+      - id: product.amplitude
+        type: dependency_detect
+        name: Amplitude SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "@amplitude/analytics-node"
+          - "@amplitude/analytics-browser"
+          - "amplitude-js"
+      - id: product.mixpanel
+        type: dependency_detect
+        name: Mixpanel SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "mixpanel"
+          - "mixpanel-browser"
+      - id: product.posthog
+        type: dependency_detect
+        name: PostHog SDK
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "posthog-node"
+          - "posthog-js"
+      - id: product.heap
+        type: dependency_detect
+        name: Heap Analytics
+        pillar: product
+        level: L3
+        required: false
+        packages:
+          - "@heap/heap-node"
+          - "heap-js"
+
+  - id: product.ab_testing
+    name: A/B testing infrastructure
+    description: Experimentation framework for product changes
+    type: any_of
+    pillar: product
+    level: L4
+    required: false
+    checks:
+      - id: product.optimizely
+        type: dependency_detect
+        name: Optimizely SDK
+        pillar: product
+        level: L4
+        required: false
+        packages:
+          - "@optimizely/optimizely-sdk"
+          - "@optimizely/react-sdk"
+      - id: product.ab_growthbook
+        type: dependency_detect
+        name: GrowthBook A/B
+        pillar: product
+        level: L4
+        required: false
+        packages:
+          - "@growthbook/growthbook"
+      - id: product.statsig
+        type: dependency_detect
+        name: Statsig SDK
+        pillar: product
+        level: L4
+        required: false
+        packages:
+          - "statsig-node"
+          - "statsig-react"
+      - id: product.vwo
+        type: dependency_detect
+        name: VWO SDK
+        pillar: product
+        level: L4
+        required: false
+        packages:
+          - "vwo-node-sdk"
