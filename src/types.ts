@@ -1,5 +1,5 @@
 /**
- * Core type definitions for agent-readiness scanner
+ * Core type definitions for agent-ready scanner
  */
 
 // Level definitions (Factory-compatible)

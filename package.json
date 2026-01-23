@@ -1,5 +1,5 @@
 {
-  "name": "agent-readiness",
+  "name": "agent-ready",
   "version": "0.1.0",
   "description": "Factory-compatible repo maturity scanner for AI agent readiness",
   "type": "module",
@@ -34,11 +34,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robotlearning123/agent-readiness.git"
+    "url": "git+https://github.com/robotlearning123/agent-ready.git"
   },
-  "homepage": "https://github.com/robotlearning123/agent-readiness#readme",
+  "homepage": "https://github.com/robotlearning123/agent-ready#readme",
   "bugs": {
-    "url": "https://github.com/robotlearning123/agent-readiness/issues"
+    "url": "https://github.com/robotlearning123/agent-ready/issues"
   },
   "keywords": [
     "ai",

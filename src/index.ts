@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * agent-readiness CLI entry point
+ * agent-ready CLI entry point
  *
  * Factory-compatible repo maturity scanner for AI agent readiness
  */

@@ -1,4 +1,4 @@
-# agent-readiness
+# agent-ready
 
 Factory-compatible repo maturity scanner CLI tool that evaluates repositories against the **9 Pillars / 5 Levels** model and outputs actionable readiness reports for AI agents.
 
@@ -200,7 +200,7 @@ npm run build
 ## Project Structure
 
 ```
-agent-readiness/
+agent-ready/
 ├── src/
 │   ├── index.ts              # CLI entry
 │   ├── types.ts              # Type definitions
