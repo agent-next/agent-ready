@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CHANGELOG.md for version tracking
 - Dependabot configuration for automated dependency updates
 
-## [0.1.0] - 2025-01-23
+## [0.1.0] - 2026-01-23
 
 ### Added
 - Initial release of agent-readiness CLI tool
@@ -24,7 +24,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `init` command for generating missing files
 - Security hardening: path traversal protection, ReDoS detection
 - LRU caching for performance optimization
-- Comprehensive documentation (README, CONTRIBUTING, AGENTS.md)
 
-[Unreleased]: https://github.com/robotlearning123/agent-readiness/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/robotlearning123/agent-readiness/releases/tag/v0.1.0
+[Unreleased]: https://github.com/robotlearning123/agent-readiness/compare/main...HEAD
