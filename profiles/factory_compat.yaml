@@ -15,22 +15,75 @@ checks:
   - id: docs.readme
     name: README exists
     description: Repository has a README file
-    type: file_exists
+    type: any_of
     pillar: docs
     level: L1
     required: true
-    path: README.md
+    checks:
+      - id: docs.readme_upper
+        type: file_exists
+        name: README.md (uppercase)
+        pillar: docs
+        level: L1
+        required: false
+        path: README.md
+      - id: docs.readme_mixed
+        type: file_exists
+        name: Readme.md (mixed case)
+        pillar: docs
+        level: L1
+        required: false
+        path: Readme.md
+      - id: docs.readme_lower
+        type: file_exists
+        name: readme.md (lowercase)
+        pillar: docs
+        level: L1
+        required: false
+        path: readme.md
+      - id: docs.readme_rst
+        type: file_exists
+        name: README.rst (reStructuredText)
+        pillar: docs
+        level: L1
+        required: false
+        path: README.rst
 
   - id: docs.readme_sections
     name: README has essential sections
     description: README contains getting started, installation, and usage info
-    type: file_exists
+    type: any_of
     pillar: docs
     level: L2
     required: false
-    path: README.md
-    content_regex: "(installation|getting started|usage|quick start)"
-    case_sensitive: false
+    checks:
+      - id: docs.readme_sections_upper
+        type: file_exists
+        name: README.md sections
+        pillar: docs
+        level: L2
+        required: false
+        path: README.md
+        content_regex: "(installation|getting started|usage|quick start)"
+        case_sensitive: false
+      - id: docs.readme_sections_mixed
+        type: file_exists
+        name: Readme.md sections
+        pillar: docs
+        level: L2
+        required: false
+        path: Readme.md
+        content_regex: "(installation|getting started|usage|quick start)"
+        case_sensitive: false
+      - id: docs.readme_sections_lower
+        type: file_exists
+        name: readme.md sections
+        pillar: docs
+        level: L2
+        required: false
+        path: readme.md
+        content_regex: "(installation|getting started|usage|quick start)"
+        case_sensitive: false
 
   - id: docs.contributing
     name: Contributing guide
@@ -104,7 +157,7 @@ checks:
 
   - id: style.linter_config
     name: Linter configuration
-    description: ESLint, Prettier, or similar linter config exists
+    description: Linter/formatter config exists (ESLint, Ruff, golangci-lint, etc.)
     type: any_of
     pillar: style
     level: L2
@@ -131,15 +184,80 @@ checks:
         level: L2
         required: false
         path: biome.json
+      - id: style.ruff
+        type: file_exists
+        name: Ruff config (Python)
+        pillar: style
+        level: L2
+        required: false
+        path: ruff.toml
+      - id: style.pyproject_ruff
+        type: file_exists
+        name: pyproject.toml (may contain ruff/black config)
+        pillar: style
+        level: L2
+        required: false
+        path: pyproject.toml
+        content_regex: "(ruff|black|flake8|pylint)"
+      - id: style.golangci
+        type: file_exists
+        name: golangci-lint config
+        pillar: style
+        level: L2
+        required: false
+        path: .golangci.yml
+      - id: style.rustfmt
+        type: file_exists
+        name: rustfmt config
+        pillar: style
+        level: L2
+        required: false
+        path: rustfmt.toml
+      - id: style.clippy
+        type: file_exists
+        name: clippy config
+        pillar: style
+        level: L2
+        required: false
+        path: clippy.toml
 
-  - id: style.typescript
-    name: TypeScript configuration
-    description: TypeScript config for type safety
-    type: file_exists
+  - id: style.type_checking
+    name: Type checking configuration
+    description: Type checking config (TypeScript, mypy, etc.)
+    type: any_of
     pillar: style
     level: L2
     required: false
-    path: tsconfig.json
+    checks:
+      - id: style.typescript
+        type: file_exists
+        name: TypeScript config
+        pillar: style
+        level: L2
+        required: false
+        path: tsconfig.json
+      - id: style.mypy
+        type: file_exists
+        name: mypy config (Python)
+        pillar: style
+        level: L2
+        required: false
+        path: mypy.ini
+      - id: style.pyproject_mypy
+        type: file_exists
+        name: pyproject.toml with mypy
+        pillar: style
+        level: L2
+        required: false
+        path: pyproject.toml
+        content_regex: "(mypy|pyright)"
+      - id: style.pyrightconfig
+        type: file_exists
+        name: Pyright config
+        pillar: style
+        level: L2
+        required: false
+        path: pyrightconfig.json
 
   - id: style.precommit_hooks
     name: Pre-commit hooks
@@ -175,14 +293,77 @@ checks:
   # PILLAR: Build System (build)
   # =============================================================================
 
-  - id: build.package_json
+  - id: build.package_manifest
     name: Package manifest
-    description: package.json exists with build scripts
-    type: file_exists
+    description: Package manifest exists (package.json, pyproject.toml, go.mod, Cargo.toml, etc.)
+    type: any_of
     pillar: build
     level: L1
     required: true
-    path: package.json
+    checks:
+      - id: build.package_json
+        type: file_exists
+        name: package.json (Node.js)
+        pillar: build
+        level: L1
+        required: false
+        path: package.json
+      - id: build.pyproject_toml
+        type: file_exists
+        name: pyproject.toml (Python)
+        pillar: build
+        level: L1
+        required: false
+        path: pyproject.toml
+      - id: build.setup_py
+        type: file_exists
+        name: setup.py (Python)
+        pillar: build
+        level: L1
+        required: false
+        path: setup.py
+      - id: build.go_mod
+        type: file_exists
+        name: go.mod (Go)
+        pillar: build
+        level: L1
+        required: false
+        path: go.mod
+      - id: build.cargo_toml
+        type: file_exists
+        name: Cargo.toml (Rust)
+        pillar: build
+        level: L1
+        required: false
+        path: Cargo.toml
+      - id: build.pom_xml
+        type: file_exists
+        name: pom.xml (Java/Maven)
+        pillar: build
+        level: L1
+        required: false
+        path: pom.xml
+      - id: build.build_gradle
+        type: file_exists
+        name: build.gradle (Java/Gradle)
+        pillar: build
+        level: L1
+        required: false
+        path: build.gradle
+      - id: build.gemfile
+        type: file_exists
+        name: Gemfile (Ruby)
+        pillar: build
+        level: L1
+        required: false
+        path: Gemfile
+      - id: build.makefile
+        type: file_exists
+        name: Makefile
+        pillar: build
+        level: L1
+        required: false
+        path: Makefile
 
   - id: build.scripts
     name: Build scripts defined
@@ -223,6 +404,41 @@ checks:
         level: L2
         required: false
         path: pnpm-lock.yaml
+      - id: build.cargo_lock
+        type: file_exists
+        name: Cargo.lock (Rust)
+        pillar: build
+        level: L2
+        required: false
+        path: Cargo.lock
+      - id: build.go_sum
+        type: file_exists
+        name: go.sum (Go)
+        pillar: build
+        level: L2
+        required: false
+        path: go.sum
+      - id: build.poetry_lock
+        type: file_exists
+        name: poetry.lock (Python)
+        pillar: build
+        level: L2
+        required: false
+        path: poetry.lock
+      - id: build.pipfile_lock
+        type: file_exists
+        name: Pipfile.lock (Python)
+        pillar: build
+        level: L2
+        required: false
+        path: Pipfile.lock
+      - id: build.gemfile_lock
+        type: file_exists
+        name: Gemfile.lock (Ruby)
+        pillar: build
+        level: L2
+        required: false
+        path: Gemfile.lock
 
   # =============================================================================
   # PILLAR: Testing (test)
@@ -231,12 +447,59 @@ checks:
   - id: test.test_files
     name: Test files exist
     description: Project has test files
-    type: path_glob
+    type: any_of
     pillar: test
     level: L1
     required: false
-    pattern: "**/*.{test,spec}.{js,ts,jsx,tsx}"
-    min_matches: 1
+    checks:
+      - id: test.test_files_js
+        type: path_glob
+        name: JS/TS test files
+        pillar: test
+        level: L1
+        required: false
+        pattern: "**/*.{test,spec}.{js,ts,jsx,tsx}"
+        min_matches: 1
+      - id: test.test_files_py
+        type: path_glob
+        name: Python test files
+        pillar: test
+        level: L1
+        required: false
+        pattern: "**/test_*.py"
+        min_matches: 1
+      - id: test.test_files_py_alt
+        type: path_glob
+        name: Python test files (alt)
+        pillar: test
+        level: L1
+        required: false
+        pattern: "**/*_test.py"
+        min_matches: 1
+      - id: test.test_files_go
+        type: path_glob
+        name: Go test files
+        pillar: test
+        level: L1
+        required: false
+        pattern: "**/*_test.go"
+        min_matches: 1
+      - id: test.test_files_rust
+        type: path_glob
+        name: Rust test files
+        pillar: test
+        level: L1
+        required: false
+        pattern: "**/tests/**/*.rs"
+        min_matches: 1
+      - id: test.tests_directory
+        type: path_glob
+        name: Tests directory
+        pillar: test
+        level: L1
+        required: false
+        pattern: "tests/**/*"
+        min_matches: 1
 
   - id: test.config
     name: Test configuration

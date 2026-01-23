@@ -1,0 +1,101 @@
+[
+  {
+    "repo": "express",
+    "language": "JavaScript",
+    "level": "L1",
+    "score": 32,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "next.js",
+    "language": "TypeScript",
+    "level": "L3",
+    "score": 65,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "vue",
+    "language": "TypeScript",
+    "level": "L1",
+    "score": 47,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "react",
+    "language": "JavaScript",
+    "level": "L1",
+    "score": 53,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "flask",
+    "language": "Python",
+    "level": "L1",
+    "score": 41,
+    "checksTotal": 0,
+    "checksPassed": 0,
+    "expectedLevel": 2,
+    "expectedPassRate": 37,
+    "levelMatch": false
+  },
+  {
+    "repo": "fastapi",
+    "language": "Python",
+    "level": "L1",
+    "score": 44,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "django",
+    "language": "Python",
+    "level": "L1",
+    "score": 35,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "gin",
+    "language": "Go",
+    "level": "L1",
+    "score": 50,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "cobra",
+    "language": "Go",
+    "level": "L1",
+    "score": 41,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "ripgrep",
+    "language": "Rust",
+    "level": "L1",
+    "score": 38,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "alacritty",
+    "language": "Rust",
+    "level": "L1",
+    "score": 44,
+    "checksTotal": 0,
+    "checksPassed": 0
+  },
+  {
+    "repo": "gh-cli",
+    "language": "Go",
+    "level": "L1",
+    "score": 53,
+    "checksTotal": 0,
+    "checksPassed": 0
+  }
+]
