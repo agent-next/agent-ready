@@ -10,6 +10,8 @@ updates:
       prefix: "deps"
     labels:
       - "dependencies"
+    reviewers:
+      - "robotlearning123"
     groups:
       dev-dependencies:
         dependency-type: "development"
@@ -19,6 +21,7 @@ updates:
       production-dependencies:
         dependency-type: "production"
         update-types:
+          - "minor"
           - "patch"
 
   - package-ecosystem: "github-actions"
@@ -31,3 +34,5 @@ updates:
     labels:
       - "ci"
       - "dependencies"
+    reviewers:
+      - "robotlearning123"
