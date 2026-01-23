@@ -3,6 +3,13 @@ node_modules/
 
 # Build output
 dist/
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
+src/**/*.d.ts.map
+
+# Playwright
+.playwright-mcp/
 
 # IDE
 .vscode/

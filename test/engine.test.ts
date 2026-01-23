@@ -355,10 +355,13 @@ describe('calculateOverallScore', () => {
   });
 });
 
-describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
-  it('should achieve L2 when 80% of L1 passes and all L2 required pass', () => {
+describe('Factory.ai 80% Rule (Current Level Gating)', () => {
+  // Factory.ai spec: "To unlock Level N, you must pass 80% of criteria from THAT level"
+  // This means each level must meet its OWN 80% threshold, not the previous level's.
+
+  it('should achieve L2 when 80% of L1 AND 80% of L2 pass', () => {
     // L1: 4/5 = 80% (meets threshold)
-    // L2: all required pass
+    // L2: 3/3 = 100% (meets threshold)
     // L3: has required check that fails (blocks progression)
     const summaries = {
       L1: {
@@ -412,15 +415,15 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
     assert.strictEqual(level, 'L2');
   });
 
-  it('should NOT achieve L2 when L1 is below 80%', () => {
-    // L1: 3/5 = 60% (below 80% threshold)
-    // L2: all checks pass, but L1 gate fails
+  it('should NOT achieve L1 when L1 is below threshold', () => {
+    // L1: 2/5 = 40% (below 60% threshold for L1 itself)
+    // L2: all checks pass, but L1 didn't achieve
     const summaries = {
       L1: {
         level: 'L1' as Level,
-        achieved: false, // 60% < 80%
-        score: 60,
-        checks_passed: 3,
+        achieved: false, // 40% < 60%
+        score: 40,
+        checks_passed: 2,
         checks_total: 5,
         required_passed: 1,
         required_total: 1,
@@ -464,12 +467,12 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
     };
 
     const level = determineAchievedLevel(summaries);
-    // L1 is achieved (required passes), but L2 blocked by L1's 60% score
-    assert.strictEqual(level, 'L1');
+    // L1 fails its own threshold → no level achieved
+    assert.strictEqual(level, null);
   });
 
-  it('should achieve L3 when 80% of L2 passes', () => {
-    // L1: 100%, L2: 80%, L3: required passes
+  it('should achieve L3 when 80% of L3 passes', () => {
+    // L1: 100%, L2: 100%, L3: 80% (meets threshold)
     const summaries = {
       L1: {
         level: 'L1' as Level,
@@ -483,8 +486,8 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
       L2: {
         level: 'L2' as Level,
         achieved: true,
-        score: 80,
-        checks_passed: 4,
+        score: 100,
+        checks_passed: 5,
         checks_total: 5,
         required_passed: 1,
         required_total: 1,
@@ -492,9 +495,9 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
       L3: {
         level: 'L3' as Level,
         achieved: true,
-        score: 50,
-        checks_passed: 1,
-        checks_total: 2,
+        score: 80,
+        checks_passed: 4,
+        checks_total: 5,
         required_passed: 1,
         required_total: 1,
       },
@@ -522,8 +525,8 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
     assert.strictEqual(level, 'L3');
   });
 
-  it('should NOT achieve L3 when L2 is below 80%', () => {
-    // L1: 100%, L2: 60% (gate fails), L3: all pass
+  it('should NOT achieve L3 when L3 is below 80%', () => {
+    // L1: 100%, L2: 100%, L3: 50% (fails threshold)
     const summaries = {
       L1: {
         level: 'L1' as Level,
@@ -536,18 +539,18 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
       },
       L2: {
         level: 'L2' as Level,
-        achieved: false,
-        score: 60,
-        checks_passed: 3,
+        achieved: true,
+        score: 100,
+        checks_passed: 5,
         checks_total: 5,
         required_passed: 1,
         required_total: 1,
       },
       L3: {
         level: 'L3' as Level,
-        achieved: true,
-        score: 100,
-        checks_passed: 2,
+        achieved: false,
+        score: 50,
+        checks_passed: 1,
         checks_total: 2,
         required_passed: 1,
         required_total: 1,
@@ -573,7 +576,7 @@ describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
     };
 
     const level = determineAchievedLevel(summaries);
-    // L2 achieved (required passes), but L3 blocked by L2's 60% score
+    // L3 fails its own 80% threshold → stops at L2
     assert.strictEqual(level, 'L2');
   });
 

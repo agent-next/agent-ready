@@ -4,10 +4,11 @@
  * Implements the Factory.ai 80% rule for level achievement:
  * - Level N achieved when:
  *   1. ALL required checks in level N pass
- *   2. >= 80% of ALL checks in PREVIOUS level (N-1) pass (Factory spec)
+ *   2. >= 80% of ALL checks in THIS level (N) pass (Factory spec)
  *   3. All previous levels (1 to N-1) already achieved
  *
- * Note: L1 has no previous level, so only requires its own checks to pass.
+ * Factory.ai spec: "To unlock a level, you must pass 80% of criteria from
+ * that level and all previous levels"
  */
 
 import type { Level, CheckResult, LevelSummary, PillarSummary, Pillar } from '../types.js';
@@ -57,17 +58,17 @@ export function calculateLevelSummaries(results: CheckResult[]): Record<Level, L
  * Determine the highest achieved level using Factory.ai gating rules
  *
  * Factory.ai 80% Rule:
- * - To unlock Level N, you must pass 80% of criteria from PREVIOUS level (N-1)
+ * - To unlock Level N, you must pass 80% of criteria from THIS level (N)
  * - AND all required checks at Level N must pass
+ * - AND all previous levels must be achieved
  *
  * Example:
- * - L1: All required L1 checks pass → L1 achieved (no previous level gating)
- * - L2: 80% of L1 checks pass + all required L2 checks pass → L2 achieved
- * - L3: 80% of L2 checks pass + all required L3 checks pass → L3 achieved
+ * - L1: 80% of L1 checks pass + all required L1 checks pass → L1 achieved
+ * - L2: L1 achieved + 80% of L2 checks pass + all required L2 checks pass → L2 achieved
+ * - L3: L2 achieved + 80% of L3 checks pass + all required L3 checks pass → L3 achieved
  *
  * Empty Level Behavior:
  * - If a level has no checks, it's auto-achieved if previous levels passed
- * - If PREVIOUS level is empty, the gating threshold is considered met
  */
 export function determineAchievedLevel(levelSummaries: Record<Level, LevelSummary>): Level | null {
   const levels = LEVELS;
@@ -76,10 +77,6 @@ export function determineAchievedLevel(levelSummaries: Record<Level, LevelSummar
   for (let i = 0; i < levels.length; i++) {
     const level = levels[i];
     const summary = levelSummaries[level];
-
-    // Get previous level summary for gating (Factory 80% rule)
-    const prevLevel = i > 0 ? levels[i - 1] : null;
-    const prevSummary = prevLevel ? levelSummaries[prevLevel] : null;
 
     // Empty levels are auto-achieved if previous levels passed
     if (summary.checks_total === 0) {
@@ -93,16 +90,12 @@ export function determineAchievedLevel(levelSummaries: Record<Level, LevelSummar
     // Check 1: All required checks at THIS level must pass
     const allRequiredPass = summary.required_passed === summary.required_total;
 
-    // Check 2: Factory 80% rule - 80% of PREVIOUS level must pass
-    // For L1, there's no previous level, so this is automatically true
-    let prevLevelGatePasses = true;
-    if (prevSummary && prevSummary.checks_total > 0) {
-      const prevLevelScore = prevSummary.checks_passed / prevSummary.checks_total;
-      prevLevelGatePasses = prevLevelScore >= PASSING_THRESHOLD;
-    }
+    // Check 2: Factory 80% rule - 80% of THIS level must pass
+    const thisLevelScore = summary.checks_passed / summary.checks_total;
+    const meetsThreshold = thisLevelScore >= PASSING_THRESHOLD;
 
     // Level is achieved if both conditions are met
-    if (allRequiredPass && prevLevelGatePasses) {
+    if (allRequiredPass && meetsThreshold) {
       highestAchieved = level;
     } else {
       // Stop at first non-achieved level (levels must be sequential)

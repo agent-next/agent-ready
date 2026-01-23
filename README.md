@@ -20,12 +20,26 @@ Factory-compatible repo maturity scanner CLI tool that evaluates repositories ag
 ## Installation
 
 ```bash
-# Install globally
-npm install -g agent-ready
-
-# Or use npx (no install required)
+# Use npx (no install required)
 npx agent-ready scan .
+
+# Or install globally
+npm install -g agent-ready
 ```
+
+## Claude Code Integration
+
+Install the skill for Claude Code:
+
+```bash
+# Download the skill
+curl -O https://github.com/anthropics/agent-ready/releases/download/v0.0.1/agent-ready.skill
+
+# Install in Claude Code
+claude install agent-ready.skill
+```
+
+Then use `/agent-ready` or ask Claude to "check agent readiness" in any repository.
 
 ## Quick Start
 

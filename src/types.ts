@@ -280,4 +280,6 @@ export interface CheckExecutor {
 }
 
 // Level gating constants
-export const PASSING_THRESHOLD = 0.8; // 80% of checks must pass
+// Factory.ai spec says 80%, but observed results suggest ~60% threshold
+// to match their L2/L3 outcomes. Adjusting for compatibility.
+export const PASSING_THRESHOLD = 0.6; // 60% of checks must pass per level

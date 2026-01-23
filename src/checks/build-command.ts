@@ -7,7 +7,7 @@
 import type { BuildCommandDetectCheck, CheckResult, ScanContext } from '../types.js';
 import { readFileCached, safePath } from '../utils/fs.js';
 
-const DEFAULT_FILES = ['package.json', 'Makefile', 'pyproject.toml', 'Cargo.toml'];
+const DEFAULT_FILES = ['package.json', 'Makefile', 'pyproject.toml', 'Cargo.toml', 'go.mod'];
 
 /**
  * Escape special regex characters in a string
@@ -105,11 +105,31 @@ function detectCommandsInFile(
       }
     }
   } else if (filename === 'pyproject.toml') {
-    // Look for scripts section or tool.poetry.scripts (escape command)
+    // Python projects with pyproject.toml have implicit build/test capability
+    // - [build-system] means the project can be built via `pip install` or `python -m build`
+    // - pytest/unittest tests are run via `pytest` or `python -m pytest`
     for (const cmd of commandsToFind) {
-      const scriptRegex = new RegExp(`${escapeRegex(cmd)}\\s*=`, 'm');
-      if (scriptRegex.test(content)) {
-        found.push(cmd);
+      if (cmd === 'build') {
+        // Build is available if build-system is defined
+        if (content.includes('[build-system]') || content.includes('[project]')) {
+          found.push(cmd);
+        }
+      } else if (cmd === 'test') {
+        // Test is available if pytest, tox, or test dependencies are configured
+        if (
+          content.includes('pytest') ||
+          content.includes('[tool.pytest') ||
+          content.includes('tests') ||
+          content.includes('tox')
+        ) {
+          found.push(cmd);
+        }
+      } else {
+        // Check for explicit script definition
+        const scriptRegex = new RegExp(`${escapeRegex(cmd)}\\s*=`, 'm');
+        if (scriptRegex.test(content)) {
+          found.push(cmd);
+        }
       }
     }
   } else if (filename === 'Cargo.toml') {
@@ -117,6 +137,30 @@ function detectCommandsInFile(
     for (const cmd of commandsToFind) {
       if (cmd === 'build' || cmd === 'test') {
         found.push(cmd);
+      }
+    }
+  } else if (filename === 'go.mod') {
+    // Go has implicit build/test via go build and go test
+    for (const cmd of commandsToFind) {
+      if (cmd === 'build' || cmd === 'test') {
+        found.push(cmd);
+      }
+    }
+  } else if (filename === 'setup.py') {
+    // Python setup.py has implicit build/test capability
+    for (const cmd of commandsToFind) {
+      if (cmd === 'build') {
+        // Any setup.py can be built
+        found.push(cmd);
+      } else if (cmd === 'test') {
+        // Check if tests are mentioned
+        if (
+          content.includes('test_suite') ||
+          content.includes('pytest') ||
+          content.includes('tests')
+        ) {
+          found.push(cmd);
+        }
       }
     }
   } else {
