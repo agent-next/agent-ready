@@ -7,13 +7,16 @@ import { profileRoutes } from './routes/profiles.js';
 import { config } from './config.js';
 
 const app = Fastify({
-  logger: {
-    level: config.logLevel,
-    transport: {
-      target: 'pino-pretty',
-      options: { colorize: true },
-    },
-  },
+  logger:
+    config.nodeEnv === 'production'
+      ? { level: config.logLevel }
+      : {
+          level: config.logLevel,
+          transport: {
+            target: 'pino-pretty',
+            options: { colorize: true },
+          },
+        },
 });
 
 // CORS for frontend
