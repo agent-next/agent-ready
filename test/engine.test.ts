@@ -11,21 +11,7 @@ import {
   calculateProgressToNext,
   calculateOverallScore,
 } from '../src/engine/level-gate.js';
-import type { CheckResult, CheckConfig, Level } from '../src/types.js';
-
-// Helper to create check configs
-function makeCheck(id: string, level: Level, required: boolean): CheckConfig {
-  return {
-    id,
-    name: id,
-    description: 'Test',
-    type: 'file_exists',
-    pillar: 'docs',
-    level,
-    required,
-    path: 'test.md',
-  } as CheckConfig;
-}
+import type { CheckResult, Level } from '../src/types.js';
 
 // Helper to create check results
 function makeResult(id: string, level: Level, passed: boolean, required: boolean): CheckResult {
@@ -42,13 +28,6 @@ function makeResult(id: string, level: Level, passed: boolean, required: boolean
 
 describe('calculateLevelSummaries', () => {
   it('should calculate correct summaries for each level', () => {
-    const checks: CheckConfig[] = [
-      makeCheck('c1', 'L1', true),
-      makeCheck('c2', 'L1', false),
-      makeCheck('c3', 'L2', true),
-      makeCheck('c4', 'L2', false),
-    ];
-
     const results: CheckResult[] = [
       makeResult('c1', 'L1', true, true),
       makeResult('c2', 'L1', true, false),
@@ -56,7 +35,7 @@ describe('calculateLevelSummaries', () => {
       makeResult('c4', 'L2', false, false),
     ];
 
-    const summaries = calculateLevelSummaries(results, checks);
+    const summaries = calculateLevelSummaries(results);
 
     // L1: 2/2 passed = 100%
     assert.strictEqual(summaries.L1.checks_passed, 2);
@@ -72,14 +51,6 @@ describe('calculateLevelSummaries', () => {
   });
 
   it('should mark level as not achieved when required check fails', () => {
-    const checks: CheckConfig[] = [
-      makeCheck('c1', 'L1', true),
-      makeCheck('c2', 'L1', false),
-      makeCheck('c3', 'L1', false),
-      makeCheck('c4', 'L1', false),
-      makeCheck('c5', 'L1', false),
-    ];
-
     // 4/5 pass (80%) but required fails
     const results: CheckResult[] = [
       makeResult('c1', 'L1', false, true), // Required fails
@@ -89,7 +60,7 @@ describe('calculateLevelSummaries', () => {
       makeResult('c5', 'L1', true, false),
     ];
 
-    const summaries = calculateLevelSummaries(results, checks);
+    const summaries = calculateLevelSummaries(results);
 
     assert.strictEqual(summaries.L1.score, 80);
     assert.strictEqual(summaries.L1.achieved, false); // Required failed
@@ -381,5 +352,338 @@ describe('calculateOverallScore', () => {
   it('should return 0 for empty results', () => {
     const score = calculateOverallScore([]);
     assert.strictEqual(score, 0);
+  });
+});
+
+describe('Factory.ai 80% Rule (Previous Level Gating)', () => {
+  it('should achieve L2 when 80% of L1 passes and all L2 required pass', () => {
+    // L1: 4/5 = 80% (meets threshold)
+    // L2: all required pass
+    // L3: has required check that fails (blocks progression)
+    const summaries = {
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 80,
+        checks_passed: 4,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 3,
+        checks_total: 3,
+        required_passed: 2,
+        required_total: 2,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 2,
+        required_passed: 0,
+        required_total: 1, // Required check fails, blocking L3
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+    };
+
+    const level = determineAchievedLevel(summaries);
+    assert.strictEqual(level, 'L2');
+  });
+
+  it('should NOT achieve L2 when L1 is below 80%', () => {
+    // L1: 3/5 = 60% (below 80% threshold)
+    // L2: all checks pass, but L1 gate fails
+    const summaries = {
+      L1: {
+        level: 'L1' as Level,
+        achieved: false, // 60% < 80%
+        score: 60,
+        checks_passed: 3,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 3,
+        checks_total: 3,
+        required_passed: 2,
+        required_total: 2,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+    };
+
+    const level = determineAchievedLevel(summaries);
+    // L1 is achieved (required passes), but L2 blocked by L1's 60% score
+    assert.strictEqual(level, 'L1');
+  });
+
+  it('should achieve L3 when 80% of L2 passes', () => {
+    // L1: 100%, L2: 80%, L3: required passes
+    const summaries = {
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 5,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 80,
+        checks_passed: 4,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: true,
+        score: 50,
+        checks_passed: 1,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 1,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+    };
+
+    const level = determineAchievedLevel(summaries);
+    assert.strictEqual(level, 'L3');
+  });
+
+  it('should NOT achieve L3 when L2 is below 80%', () => {
+    // L1: 100%, L2: 60% (gate fails), L3: all pass
+    const summaries = {
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 5,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: false,
+        score: 60,
+        checks_passed: 3,
+        checks_total: 5,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+    };
+
+    const level = determineAchievedLevel(summaries);
+    // L2 achieved (required passes), but L3 blocked by L2's 60% score
+    assert.strictEqual(level, 'L2');
+  });
+
+  it('should pass gate when previous level is empty', () => {
+    // L1: 100%, L2: empty (auto-pass gate), L3: required passes
+    // L4 has a required check that fails to block further progression
+    const summaries = {
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: true,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0, // Empty level
+        required_passed: 0,
+        required_total: 0,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: true,
+        score: 100,
+        checks_passed: 2,
+        checks_total: 2,
+        required_passed: 1,
+        required_total: 1,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 1,
+        required_passed: 0,
+        required_total: 1, // Required check fails, blocking L4
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+    };
+
+    const level = determineAchievedLevel(summaries);
+    // L2 empty = auto-achieved, L3 gate passes (L2 empty = gate passes)
+    assert.strictEqual(level, 'L3');
+  });
+
+  it('L1 has no previous level gate requirement', () => {
+    // L1 only requires its own checks to pass
+    const summaries = {
+      L1: {
+        level: 'L1' as Level,
+        achieved: true,
+        score: 80,
+        checks_passed: 4,
+        checks_total: 5,
+        required_passed: 2,
+        required_total: 2,
+      },
+      L2: {
+        level: 'L2' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 3,
+        required_passed: 0,
+        required_total: 1,
+      },
+      L3: {
+        level: 'L3' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L4: {
+        level: 'L4' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+      L5: {
+        level: 'L5' as Level,
+        achieved: false,
+        score: 0,
+        checks_passed: 0,
+        checks_total: 0,
+        required_passed: 0,
+        required_total: 0,
+      },
+    };
+
+    const level = determineAchievedLevel(summaries);
+    assert.strictEqual(level, 'L1'); // L1 achieved with no previous level
   });
 });
