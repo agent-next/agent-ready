@@ -1,92 +1,92 @@
 {
-  "repo": "robotlearning123/nano-opencode",
-  "commit": "7080ca1bc2ee0078ab7e28e08663bb0c2de87705",
-  "timestamp": "2026-01-22T20:57:10.191Z",
+  "repo": "robotlearning123/agent-ready",
+  "commit": "8ff8b19220e1772edc8efe67b701d89602a3ae9d",
+  "timestamp": "2026-01-23T19:22:32.570Z",
   "profile": "factory_compat",
   "profile_version": "1.0.0",
-  "level": null,
-  "progress_to_next": 0.5,
-  "overall_score": 30,
+  "level": "L3",
+  "progress_to_next": 0,
+  "overall_score": 71,
   "pillars": {
     "docs": {
-      "level_achieved": "L1",
-      "score": 40,
-      "checks_passed": 2,
+      "level_achieved": "L5",
+      "score": 100,
+      "checks_passed": 5,
       "checks_total": 5
     },
     "style": {
-      "level_achieved": null,
-      "score": 33,
-      "checks_passed": 1,
-      "checks_total": 3
+      "level_achieved": "L5",
+      "score": 100,
+      "checks_passed": 4,
+      "checks_total": 4
     },
     "build": {
       "level_achieved": "L5",
       "score": 100,
-      "checks_passed": 3,
-      "checks_total": 3
+      "checks_passed": 7,
+      "checks_total": 7
     },
     "test": {
-      "level_achieved": "L1",
-      "score": 50,
+      "level_achieved": "L2",
+      "score": 33,
       "checks_passed": 1,
-      "checks_total": 2
+      "checks_total": 3
     },
     "security": {
-      "level_achieved": null,
+      "level_achieved": "L5",
+      "score": 75,
+      "checks_passed": 3,
+      "checks_total": 4
+    },
+    "observability": {
+      "level_achieved": "L3",
       "score": 0,
       "checks_passed": 0,
       "checks_total": 3
     },
-    "observability": {
-      "level_achieved": "L2",
-      "score": 0,
-      "checks_passed": 0,
-      "checks_total": 1
-    },
     "env": {
-      "level_achieved": "L1",
-      "score": 0,
-      "checks_passed": 0,
-      "checks_total": 1
+      "level_achieved": "L5",
+      "score": 67,
+      "checks_passed": 2,
+      "checks_total": 3
     },
-    "ci": {
-      "level_achieved": null,
-      "score": 0,
-      "checks_passed": 0,
-      "checks_total": 4
+    "task_discovery": {
+      "level_achieved": "L5",
+      "score": 100,
+      "checks_passed": 2,
+      "checks_total": 2
     },
-    "monorepo": {
-      "level_achieved": "L2",
+    "product": {
+      "level_achieved": "L3",
       "score": 0,
       "checks_passed": 0,
-      "checks_total": 1
+      "checks_total": 3
     }
   },
   "levels": {
     "L1": {
-      "achieved": false,
-      "score": 50,
-      "checks_passed": 3,
+      "achieved": true,
+      "score": 100,
+      "checks_passed": 6,
       "checks_total": 6
     },
     "L2": {
-      "achieved": false,
-      "score": 33,
-      "checks_passed": 4,
-      "checks_total": 12
+      "achieved": true,
+      "score": 94,
+      "checks_passed": 16,
+      "checks_total": 17
     },
     "L3": {
       "achieved": false,
-      "score": 0,
-      "checks_passed": 0,
-      "checks_total": 5
+      "score": 25,
+      "checks_passed": 2,
+      "checks_total": 8
     },
     "L4": {
-      "achieved": true,
+      "achieved": false,
       "score": 0,
       "checks_passed": 0,
-      "checks_total": 0
+      "checks_total": 3
     },
     "L5": {
       "achieved": true,
@@ -96,60 +96,6 @@
     }
   },
   "failed_checks": [
-    {
-      "check_id": "docs.contributing",
-      "pillar": "docs",
-      "level": "L2",
-      "message": "File not found: CONTRIBUTING.md",
-      "required": false,
-      "suggestions": [
-        "Create CONTRIBUTING.md"
-      ]
-    },
-    {
-      "check_id": "docs.agents_md",
-      "pillar": "docs",
-      "level": "L3",
-      "message": "Only 0/2 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create AGENTS.md",
-        "Create CLAUDE.md"
-      ]
-    },
-    {
-      "check_id": "docs.changelog",
-      "pillar": "docs",
-      "level": "L3",
-      "message": "Only 0/2 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create CHANGELOG.md",
-        "Create HISTORY.md"
-      ]
-    },
-    {
-      "check_id": "style.editorconfig",
-      "pillar": "style",
-      "level": "L1",
-      "message": "File not found: .editorconfig",
-      "required": false,
-      "suggestions": [
-        "Create .editorconfig"
-      ]
-    },
-    {
-      "check_id": "style.linter_config",
-      "pillar": "style",
-      "level": "L2",
-      "message": "Only 0/3 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create files matching pattern: .eslint*",
-        "Create files matching pattern: .prettier*",
-        "Create biome.json"
-      ]
-    },
     {
       "check_id": "test.config",
       "pillar": "test",
@@ -163,33 +109,26 @@
       ]
     },
     {
-      "check_id": "security.gitignore",
-      "pillar": "security",
-      "level": "L1",
-      "message": "File not found: .gitignore",
-      "required": true,
-      "suggestions": [
-        "Create .gitignore"
-      ]
-    },
-    {
-      "check_id": "security.gitignore_secrets",
-      "pillar": "security",
-      "level": "L2",
-      "message": "File not found: .gitignore",
+      "check_id": "test.integration_tests",
+      "pillar": "test",
+      "level": "L3",
+      "message": "Only 0/2 alternatives passed (need 1)",
       "required": false,
       "suggestions": [
-        "Create .gitignore"
+        "Create files matching pattern: **/integration/**/*.{test,spec}.{js,ts,jsx,tsx}",
+        "Create files matching pattern: **/*.integration.{test,spec}.{js,ts,jsx,tsx}"
       ]
     },
     {
-      "check_id": "security.dependabot",
+      "check_id": "security.codeowners",
       "pillar": "security",
       "level": "L3",
-      "message": "File not found: .github/dependabot.yml",
+      "message": "Only 0/3 alternatives passed (need 1)",
       "required": false,
       "suggestions": [
-        "Create .github/dependabot.yml"
+        "Create .github/CODEOWNERS",
+        "Create CODEOWNERS",
+        "Create docs/CODEOWNERS"
       ]
     },
     {
@@ -205,106 +144,80 @@
       ]
     },
     {
-      "check_id": "env.dotenv_example",
+      "check_id": "observability.tracing",
+      "pillar": "observability",
+      "level": "L4",
+      "message": "No matching dependencies found (looking for: @opentelemetry/sdk-trace-node, @opentelemetry/api, dd-trace, jaeger-client, @sentry/tracing, opentelemetry-sdk, ddtrace)",
+      "required": false,
+      "suggestions": [
+        "Install one of: @opentelemetry/sdk-trace-node, @opentelemetry/api, dd-trace, jaeger-client, @sentry/tracing, opentelemetry-sdk, ddtrace"
+      ]
+    },
+    {
+      "check_id": "observability.metrics",
+      "pillar": "observability",
+      "level": "L4",
+      "message": "No matching dependencies found (looking for: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client)",
+      "required": false,
+      "suggestions": [
+        "Install one of: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client"
+      ]
+    },
+    {
+      "check_id": "env.docker_compose",
       "pillar": "env",
-      "level": "L2",
-      "message": "Only 0/2 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create .env.example",
-        "Create .env.template"
-      ]
-    },
-    {
-      "check_id": "ci.github_workflow",
-      "pillar": "ci",
-      "level": "L1",
-      "message": "Found 0 files matching '.github/workflows/*.{yml,yaml}', need at least 1",
-      "required": false,
-      "suggestions": [
-        "Create files matching pattern: .github/workflows/*.{yml,yaml}"
-      ]
-    },
-    {
-      "check_id": "ci.push_trigger",
-      "pillar": "ci",
-      "level": "L2",
-      "message": "No GitHub workflow files found",
-      "required": false,
-      "suggestions": [
-        "Create .github/workflows directory with workflow files"
-      ]
-    },
-    {
-      "check_id": "ci.pr_trigger",
-      "pillar": "ci",
-      "level": "L2",
-      "message": "No GitHub workflow files found",
-      "required": false,
-      "suggestions": [
-        "Create .github/workflows directory with workflow files"
-      ]
-    },
-    {
-      "check_id": "ci.checkout_action",
-      "pillar": "ci",
-      "level": "L2",
-      "message": "No GitHub workflow files found",
-      "required": false,
-      "suggestions": [
-        "Create .github/workflows directory with workflow files"
-      ]
-    },
-    {
-      "check_id": "monorepo.workspaces",
-      "pillar": "monorepo",
       "level": "L3",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create docker-compose.yml",
+        "Create docker-compose.yaml",
+        "Create compose.yml"
+      ]
+    },
+    {
+      "check_id": "product.feature_flags",
+      "pillar": "product",
+      "level": "L3",
+      "message": "Only 0/5 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Install one of: launchdarkly-node-server-sdk, @launchdarkly/node-server-sdk, launchdarkly-react-client-sdk",
+        "Install one of: unleash-client, @unleash/proxy-client-react",
+        "Install one of: flagsmith, flagsmith-nodejs",
+        "Install one of: @growthbook/growthbook, @growthbook/growthbook-react",
+        "Install one of: @splitsoftware/splitio, @splitsoftware/splitio-react"
+      ]
+    },
+    {
+      "check_id": "product.analytics",
+      "pillar": "product",
+      "level": "L3",
+      "message": "Only 0/5 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Install one of: analytics-node, @segment/analytics-node, @segment/analytics-next",
+        "Install one of: @amplitude/analytics-node, @amplitude/analytics-browser, amplitude-js",
+        "Install one of: mixpanel, mixpanel-browser",
+        "Install one of: posthog-node, posthog-js",
+        "Install one of: @heap/heap-node, heap-js"
+      ]
+    },
+    {
+      "check_id": "product.ab_testing",
+      "pillar": "product",
+      "level": "L4",
       "message": "Only 0/4 alternatives passed (need 1)",
       "required": false,
       "suggestions": [
-        "Update package.json to include required content",
-        "Create pnpm-workspace.yaml",
-        "Create lerna.json",
-        "Create nx.json"
+        "Install one of: @optimizely/optimizely-sdk, @optimizely/react-sdk",
+        "Install one of: @growthbook/growthbook",
+        "Install one of: statsig-node, statsig-react",
+        "Install one of: vwo-node-sdk"
       ]
     }
   ],
   "action_items": [
-    {
-      "priority": "critical",
-      "check_id": "security.gitignore",
-      "pillar": "security",
-      "level": "L1",
-      "action": "Create .gitignore"
-    },
-    {
-      "priority": "medium",
-      "check_id": "style.editorconfig",
-      "pillar": "style",
-      "level": "L1",
-      "action": "Create .editorconfig"
-    },
-    {
-      "priority": "medium",
-      "check_id": "ci.github_workflow",
-      "pillar": "ci",
-      "level": "L1",
-      "action": "Create files matching pattern: .github/workflows/*.{yml,yaml}"
-    },
-    {
-      "priority": "medium",
-      "check_id": "docs.contributing",
-      "pillar": "docs",
-      "level": "L2",
-      "action": "Create CONTRIBUTING.md"
-    },
-    {
-      "priority": "medium",
-      "check_id": "style.linter_config",
-      "pillar": "style",
-      "level": "L2",
-      "action": "Create files matching pattern: .eslint*"
-    },
     {
       "priority": "medium",
       "check_id": "test.config",
@@ -313,60 +226,18 @@
       "action": "Create files matching pattern: jest.config.*"
     },
     {
-      "priority": "medium",
-      "check_id": "security.gitignore_secrets",
-      "pillar": "security",
-      "level": "L2",
-      "action": "Create .gitignore"
-    },
-    {
-      "priority": "medium",
-      "check_id": "env.dotenv_example",
-      "pillar": "env",
-      "level": "L2",
-      "action": "Create .env.example"
-    },
-    {
-      "priority": "medium",
-      "check_id": "ci.push_trigger",
-      "pillar": "ci",
-      "level": "L2",
-      "action": "Create .github/workflows directory with workflow files"
-    },
-    {
-      "priority": "medium",
-      "check_id": "ci.pr_trigger",
-      "pillar": "ci",
-      "level": "L2",
-      "action": "Create .github/workflows directory with workflow files"
-    },
-    {
-      "priority": "medium",
-      "check_id": "ci.checkout_action",
-      "pillar": "ci",
-      "level": "L2",
-      "action": "Create .github/workflows directory with workflow files"
-    },
-    {
       "priority": "low",
-      "check_id": "docs.agents_md",
-      "pillar": "docs",
+      "check_id": "test.integration_tests",
+      "pillar": "test",
       "level": "L3",
-      "action": "Create AGENTS.md"
+      "action": "Create files matching pattern: **/integration/**/*.{test,spec}.{js,ts,jsx,tsx}"
     },
     {
       "priority": "low",
-      "check_id": "docs.changelog",
-      "pillar": "docs",
-      "level": "L3",
-      "action": "Create CHANGELOG.md"
-    },
-    {
-      "priority": "low",
-      "check_id": "security.dependabot",
+      "check_id": "security.codeowners",
       "pillar": "security",
       "level": "L3",
-      "action": "Create .github/dependabot.yml"
+      "action": "Create .github/CODEOWNERS"
     },
     {
       "priority": "low",
@@ -377,10 +248,45 @@
     },
     {
       "priority": "low",
-      "check_id": "monorepo.workspaces",
-      "pillar": "monorepo",
+      "check_id": "env.docker_compose",
+      "pillar": "env",
       "level": "L3",
-      "action": "Update package.json to include required content"
+      "action": "Create docker-compose.yml"
+    },
+    {
+      "priority": "low",
+      "check_id": "product.feature_flags",
+      "pillar": "product",
+      "level": "L3",
+      "action": "Install one of: launchdarkly-node-server-sdk, @launchdarkly/node-server-sdk, launchdarkly-react-client-sdk"
+    },
+    {
+      "priority": "low",
+      "check_id": "product.analytics",
+      "pillar": "product",
+      "level": "L3",
+      "action": "Install one of: analytics-node, @segment/analytics-node, @segment/analytics-next"
+    },
+    {
+      "priority": "low",
+      "check_id": "observability.tracing",
+      "pillar": "observability",
+      "level": "L4",
+      "action": "Install one of: @opentelemetry/sdk-trace-node, @opentelemetry/api, dd-trace, jaeger-client, @sentry/tracing, opentelemetry-sdk, ddtrace"
+    },
+    {
+      "priority": "low",
+      "check_id": "observability.metrics",
+      "pillar": "observability",
+      "level": "L4",
+      "action": "Install one of: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client"
+    },
+    {
+      "priority": "low",
+      "check_id": "product.ab_testing",
+      "pillar": "product",
+      "level": "L4",
+      "action": "Install one of: @optimizely/optimizely-sdk, @optimizely/react-sdk"
     }
   ],
   "is_monorepo": false
