@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>agent-ready - Repository Readiness Scanner for AI Agents</title>
+    <meta name="description" content="Evaluate your repository's maturity for AI agent development using the Factory.ai-compatible 9 Pillars / 5 Levels model.">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #eab308;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--primary); }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 32px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover { color: var(--text); }
+
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover { border-color: var(--primary); }
+
+        .code-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 40px auto;
+            max-width: 500px;
+            text-align: left;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 1rem;
+        }
+
+        .code-block .prompt { color: var(--success); }
+        .code-block .cmd { color: var(--text); }
+
+        section { padding: 80px 0; }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .level-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .level-card:hover { border-color: var(--primary); }
+
+        .level-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+        }
+
+        .level-card h3 { margin-bottom: 8px; }
+        .level-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .pillar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .pillar-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .pillar-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .pillar-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+        .features {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .feature h3 { margin-bottom: 12px; }
+        .feature p { color: var(--text-muted); }
+
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+
+        footer a { color: var(--primary); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .header-content { flex-direction: column; gap: 16px; }
+            nav a { margin-left: 16px; }
+            nav a:first-child { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="/" class="logo">agent<span>-ready</span></a>
+            <nav>
+                <a href="#levels">Levels</a>
+                <a href="#pillars">Pillars</a>
+                <a href="#features">Features</a>
+                <a href="https://github.com/anthropics/agent-ready">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Is Your Repo Ready for AI Agents?</h1>
+                <p>Evaluate repository maturity for AI agent development using the Factory.ai-compatible 9 Pillars / 5 Levels model.</p>
+                <div class="cta-group">
+                    <a href="https://github.com/anthropics/agent-ready" class="btn btn-primary">Get Started</a>
+                    <a href="#pillars" class="btn btn-secondary">Learn More</a>
+                </div>
+                <div class="code-block">
+                    <span class="prompt">$</span> <span class="cmd">npx agent-ready scan .</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="levels">
+            <div class="container">
+                <div class="section-title">
+                    <h2>5 Maturity Levels</h2>
+                    <p>Progress from basic functionality to fully autonomous AI agent support</p>
+                </div>
+                <div class="levels-grid">
+                    <div class="level-card">
+                        <span class="level-badge">L1</span>
+                        <h3>Functional</h3>
+                        <p>Code runs but requires manual setup and lacks automation</p>
+                    </div>
+                    <div class="level-card">
+                        <span class="level-badge">L2</span>
+                        <h3>Documented</h3>
+                        <p>Basic docs exist, workflows written down, AGENTS.md present</p>
+                    </div>
+                    <div class="level-card">
+                        <span class="level-badge">L3</span>
+                        <h3>Standardized</h3>
+                        <p>Clear processes defined and enforced through automation</p>
+                    </div>
+                    <div class="level-card">
+                        <span class="level-badge">L4</span>
+                        <h3>Optimized</h3>
+                        <p>Fast feedback loops, data-driven improvement systems</p>
+                    </div>
+                    <div class="level-card">
+                        <span class="level-badge">L5</span>
+                        <h3>Autonomous</h3>
+                        <p>Self-improving with sophisticated orchestration</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pillars">
+            <div class="container">
+                <div class="section-title">
+                    <h2>9 Technical Pillars</h2>
+                    <p>Comprehensive evaluation across all aspects of repository quality</p>
+                </div>
+                <div class="pillars-grid">
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">📖</span> Documentation</h3>
+                        <p>README, AGENTS.md, CONTRIBUTING guides for discoverability</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">✨</span> Style & Validation</h3>
+                        <p>Linters, formatters, type checkers catch errors instantly</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">🔨</span> Build System</h3>
+                        <p>Deterministic builds, pinned dependencies, CI/CD pipelines</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">🧪</span> Testing</h3>
+                        <p>Fast unit and integration tests, runnable locally</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">🔒</span> Security</h3>
+                        <p>Secret scanning, CODEOWNERS, dependabot configuration</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">📊</span> Observability</h3>
+                        <p>Structured logging, distributed tracing, metrics collection</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">🛠️</span> Dev Environment</h3>
+                        <p>Reproducible environments with devcontainer, docker-compose</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">🎯</span> Task Discovery</h3>
+                        <p>Issue templates, PR templates, labeling systems</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3><span class="pillar-icon">🚀</span> Product</h3>
+                        <p>Feature flags, analytics, A/B testing infrastructure</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Features</h2>
+                    <p>Everything you need to prepare your codebase for AI agents</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature">
+                        <h3>Multi-Language Support</h3>
+                        <p>JavaScript, TypeScript, Python, Go, Rust, Java, and Ruby with language-specific patterns.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Factory.ai Compatible</h3>
+                        <p>Based on the industry-standard 9 Pillars / 5 Levels model for agent readiness.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Actionable Reports</h3>
+                        <p>Prioritized action items tell you exactly what to fix to reach the next level.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Monorepo Support</h3>
+                        <p>Evaluate individual apps within monorepos with app-scope scanning.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>JSON Output</h3>
+                        <p>Machine-readable readiness.json for CI/CD integration and automation.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Zero Config</h3>
+                        <p>Works out of the box with sensible defaults. No setup required.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Built for AI agents, by AI agents. <a href="https://github.com/anthropics/agent-ready">View on GitHub</a></p>
+        </div>
+    </footer>
+</body>
+</html>
