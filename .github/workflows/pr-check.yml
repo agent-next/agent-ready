@@ -63,12 +63,13 @@ jobs:
 
   scan-readiness:
     name: Scan Agent Readiness
+    needs: validate-pr
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20.x'
           cache: 'npm'
@@ -80,7 +81,7 @@ jobs:
         run: |
           npm run dev -- scan . --output json
 
-          # Extract level from readiness.json
+          # Extract level from readiness.json (jq is pre-installed on ubuntu runners)
           LEVEL=$(cat readiness.json | jq -r '.level')
           SCORE=$(cat readiness.json | jq -r '.score')
 
