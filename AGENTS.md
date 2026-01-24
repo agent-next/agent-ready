@@ -88,16 +88,16 @@ agent-readiness/
 ### 5 Levels
 | Level | Name | Threshold |
 |-------|------|-----------|
-| L1 | Functional | 60% of L1 checks |
-| L2 | Documented | 60% of L2 checks |
-| L3 | Standardized | 60% of L3 checks |
-| L4 | Optimized | 60% of L4 checks |
-| L5 | Autonomous | 60% of L5 checks |
+| L1 | Functional | 80% of L1 checks |
+| L2 | Documented | 80% of L2 checks |
+| L3 | Standardized | 80% of L3 checks |
+| L4 | Optimized | 80% of L4 checks |
+| L5 | Autonomous | 80% of L5 checks |
 
 ### Gating Rule
 Level N achieved when:
 1. ALL required checks at level N pass
-2. ≥60% of ALL checks at level N pass
+2. ≥80% of ALL checks at level N pass
 3. All previous levels achieved
 
 ## Code Conventions
@@ -171,7 +171,7 @@ npm run dev -- scan . --verbose          # Full output
 |------|---------|
 | `src/types.ts` | All TypeScript interfaces |
 | `src/checks/index.ts` | Check registry |
-| `src/engine/level-gate.ts` | 60% gating logic |
+| `src/engine/level-gate.ts` | 80% gating logic |
 | `profiles/factory_compat.yaml` | Default profile |
 | `test/VALIDATION_REPORT.md` | Factory.ai comparison |
 

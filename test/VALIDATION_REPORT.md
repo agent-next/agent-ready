@@ -9,7 +9,7 @@
 | Pillars | 9 pillars | 9 pillars (exact names) | ✅ |
 | Levels | 5 levels (L1-L5) | 5 levels | ✅ |
 | Level Names | Functional→Autonomous | Exact match | ✅ |
-| Gating Rule | 80% threshold | 60% (adjusted for compatibility) | ⚠️ |
+| Gating Rule | 80% threshold | 80% threshold | ✅ |
 | Evaluation | Binary pass/fail | Pass/fail | ✅ |
 | Monorepo | App-scope checks | Supported | ✅ |
 
@@ -30,7 +30,7 @@
 ## Factory.ai Comparison Results
 
 **Test Date:** 2026-01-23
-**Passing Threshold:** 60% per level (adjusted from 80%)
+**Passing Threshold:** 80% per level (Factory.ai compatible)
 
 ### Level Comparison with Factory.ai (After L3 Fixes)
 
@@ -59,7 +59,7 @@ The original profile had L3 checks that were too strict for library projects:
 **Results After Fixes:**
 - L3 progress improved from 13-25% to 50% for Gin and gh-cli
 - Now 3/6 L3 checks passing (was 1-2/8)
-- Need 60% (4/6) to achieve L3
+- Need 80% (5/6) to achieve L3
 
 **Remaining L3 Checks (6 total):**
 | Check | Gin | gh-cli | Notes |
@@ -87,7 +87,7 @@ From [Factory.ai Agent Readiness Docs](https://docs.factory.ai/web/agent-readine
 
 ### Known Adjustments
 
-1. **Threshold:** Reduced from 80% to 60% to better match Factory.ai outcomes
+1. **Threshold:** 80% per level (Factory.ai compatible)
 2. **L3 Rebalancing:** Moved product.feature_flags and product.analytics to L4
 3. **Multi-language support:** Added Python, Go, Rust, Java, Ruby patterns
 4. **Integration tests:** Added Python, Go, E2E patterns (was JS/TS only)
@@ -165,7 +165,7 @@ To match Factory.ai results more closely:
 2. ⚠️ **Express gap:** Express is L2 in Factory.ai but L1 in ours (needs L2 check investigation)
 3. ✅ Multi-language support verified
 4. ✅ Factory.ai pillar/level spec compliance verified
-5. ✅ Gating logic implemented (threshold adjusted to 60%)
+5. ✅ Gating logic implemented (80% threshold)
 6. ⚠️ **observability.logging:** Consider recognizing stdlib logging or making optional for libraries
 7. ⚠️ **env.docker_compose:** Consider making optional for library/CLI projects
 
@@ -186,7 +186,7 @@ agent-ready v0.0.1 is **Factory.ai compatible** with documented differences:
 - Some L3 checks (logging, docker_compose) may be too strict for libraries
 
 ### Technical Decisions
-- Threshold: 60% per level (vs Factory.ai's 80% previous-level gating)
+- Threshold: 80% per level (Factory.ai compatible)
 - Product checks (feature_flags, analytics) moved to L4 for library compatibility
 - Multi-language patterns added for integration tests and logging frameworks
 

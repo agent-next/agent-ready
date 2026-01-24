@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-language support: JavaScript/TypeScript, Python, Go, Rust, Java, Ruby
 - Claude Code skill (`agent-ready.skill`) for `/agent-ready` command
 - Landing page website (`docs/index.html`)
-- 60% threshold per level (adjusted for Factory.ai compatibility)
+- 80% threshold per level (Factory.ai compatible)
 - Comprehensive test suite (22 tests)
 
 ### Multi-Language Patterns
