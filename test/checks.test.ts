@@ -16,7 +16,6 @@ import type {
   GitHubWorkflowEventCheck,
   GitHubActionPresentCheck,
   BuildCommandDetectCheck,
-  LogFrameworkDetectCheck,
   DependencyDetectCheck,
 } from '../src/types.js';
 
