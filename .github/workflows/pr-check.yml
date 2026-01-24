@@ -4,6 +4,14 @@ on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   validate-pr:
     name: Validate PR
@@ -36,6 +44,13 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
+          set -eo pipefail
+
+          if [[ -z "$BRANCH_NAME" ]]; then
+            echo "::error::BRANCH_NAME environment variable is not set"
+            exit 1
+          fi
+
           VALID_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|hotfix|release)/"
 
           if [[ ! "$BRANCH_NAME" =~ $VALID_PATTERN ]]; then
@@ -79,11 +94,32 @@ jobs:
 
       - name: Run agent-ready scan
         run: |
+          set -eo pipefail
+
           npm run dev -- scan . --output json
 
-          # Extract level from readiness.json (jq is pre-installed on ubuntu runners)
-          LEVEL=$(cat readiness.json | jq -r '.level')
-          SCORE=$(cat readiness.json | jq -r '.score')
+          # Verify the output file was created
+          if [[ ! -f readiness.json ]]; then
+            echo "::error::Scan failed to produce readiness.json output file"
+            exit 1
+          fi
+
+          # Extract values with jq (pre-installed on ubuntu runners)
+          LEVEL=$(jq -r '.level // empty' readiness.json)
+          SCORE=$(jq -r '.score // empty' readiness.json)
+
+          # Validate extracted values
+          if [[ -z "$LEVEL" ]]; then
+            echo "::error::readiness.json missing 'level' field"
+            cat readiness.json
+            exit 1
+          fi
+
+          if [[ -z "$SCORE" ]]; then
+            echo "::error::readiness.json missing 'score' field"
+            cat readiness.json
+            exit 1
+          fi
 
           echo "## Agent Readiness Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
