@@ -1,14 +1,117 @@
 [
-  {"repo": "next.js", "language": "TypeScript", "level": "L2", "score": 68, "l1": 83, "l2": 88, "l3": 25},
-  {"repo": "flask", "language": "Python", "level": "L2", "score": 62, "l1": 100, "l2": 82, "l3": 13, "factoryLevel": "L2", "factoryScore": 37, "levelMatch": true},
-  {"repo": "gh-cli", "language": "Go", "level": "L2", "score": 56, "l1": 83, "l2": 71, "l3": 25, "factoryLevel": "L3", "factoryScore": 48, "levelMatch": false},
-  {"repo": "react", "language": "JavaScript", "level": "L1", "score": 53, "l1": 100, "l2": 59, "l3": 25},
-  {"repo": "fastapi", "language": "Python", "level": "L2", "score": 53, "l1": 83, "l2": 71, "l3": 13, "factoryLevel": "L3", "factoryScore": 53, "levelMatch": false},
-  {"repo": "gin", "language": "Go", "level": "L2", "score": 53, "l1": 83, "l2": 65, "l3": 25, "factoryLevel": "L3", "factoryScore": 51, "levelMatch": false},
-  {"repo": "vue", "language": "TypeScript", "level": "L1", "score": 47, "l1": 83, "l2": 59, "l3": 13},
-  {"repo": "alacritty", "language": "Rust", "level": "L1", "score": 47, "l1": 100, "l2": 53, "l3": 13},
-  {"repo": "cobra", "language": "Go", "level": "L1", "score": 44, "l1": 83, "l2": 53, "l3": 13},
-  {"repo": "django", "language": "Python", "level": "L1", "score": 44, "l1": 100, "l2": 53, "l3": 0},
-  {"repo": "ripgrep", "language": "Rust", "level": "L1", "score": 41, "l1": 83, "l2": 47, "l3": 13},
-  {"repo": "express", "language": "JavaScript", "level": "L1", "score": 35, "l1": 83, "l2": 35, "l3": 13, "factoryLevel": "L2", "factoryScore": 28, "levelMatch": false}
+  {
+    "repo": "next.js",
+    "language": "TypeScript",
+    "level": "L2",
+    "score": 68,
+    "l1": 83,
+    "l2": 88,
+    "l3": 25
+  },
+  {
+    "repo": "flask",
+    "language": "Python",
+    "level": "L2",
+    "score": 62,
+    "l1": 100,
+    "l2": 82,
+    "l3": 13,
+    "factoryLevel": "L2",
+    "factoryScore": 37,
+    "levelMatch": true
+  },
+  {
+    "repo": "gh-cli",
+    "language": "Go",
+    "level": "L2",
+    "score": 56,
+    "l1": 83,
+    "l2": 71,
+    "l3": 25,
+    "factoryLevel": "L3",
+    "factoryScore": 48,
+    "levelMatch": false
+  },
+  {
+    "repo": "react",
+    "language": "JavaScript",
+    "level": "L1",
+    "score": 53,
+    "l1": 100,
+    "l2": 59,
+    "l3": 25
+  },
+  {
+    "repo": "fastapi",
+    "language": "Python",
+    "level": "L2",
+    "score": 53,
+    "l1": 83,
+    "l2": 71,
+    "l3": 13,
+    "factoryLevel": "L3",
+    "factoryScore": 53,
+    "levelMatch": false
+  },
+  {
+    "repo": "gin",
+    "language": "Go",
+    "level": "L2",
+    "score": 53,
+    "l1": 83,
+    "l2": 65,
+    "l3": 25,
+    "factoryLevel": "L3",
+    "factoryScore": 51,
+    "levelMatch": false
+  },
+  {
+    "repo": "vue",
+    "language": "TypeScript",
+    "level": "L1",
+    "score": 47,
+    "l1": 83,
+    "l2": 59,
+    "l3": 13
+  },
+  {
+    "repo": "alacritty",
+    "language": "Rust",
+    "level": "L1",
+    "score": 47,
+    "l1": 100,
+    "l2": 53,
+    "l3": 13
+  },
+  { "repo": "cobra", "language": "Go", "level": "L1", "score": 44, "l1": 83, "l2": 53, "l3": 13 },
+  {
+    "repo": "django",
+    "language": "Python",
+    "level": "L1",
+    "score": 44,
+    "l1": 100,
+    "l2": 53,
+    "l3": 0
+  },
+  {
+    "repo": "ripgrep",
+    "language": "Rust",
+    "level": "L1",
+    "score": 41,
+    "l1": 83,
+    "l2": 47,
+    "l3": 13
+  },
+  {
+    "repo": "express",
+    "language": "JavaScript",
+    "level": "L1",
+    "score": 35,
+    "l1": 83,
+    "l2": 35,
+    "l3": 13,
+    "factoryLevel": "L2",
+    "factoryScore": 28,
+    "levelMatch": false
+  }
 ]

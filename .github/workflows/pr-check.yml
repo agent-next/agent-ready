@@ -106,7 +106,7 @@ jobs:
 
           # Extract values with jq (pre-installed on ubuntu runners)
           LEVEL=$(jq -r '.level // empty' readiness.json)
-          SCORE=$(jq -r '.score // empty' readiness.json)
+          SCORE=$(jq -r '.overall_score // empty' readiness.json)
 
           # Validate extracted values
           if [[ -z "$LEVEL" ]]; then
@@ -116,7 +116,7 @@ jobs:
           fi
 
           if [[ -z "$SCORE" ]]; then
-            echo "::error::readiness.json missing 'score' field"
+            echo "::error::readiness.json missing 'overall_score' field"
             cat readiness.json
             exit 1
           fi
