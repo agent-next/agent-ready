@@ -9,6 +9,12 @@
 
 Factory-compatible repo maturity scanner CLI tool that evaluates repositories against the **9 Pillars / 5 Levels** model and outputs actionable readiness reports for AI agents.
 
+## Demo
+
+![agent-ready demo](./agent-ready-demo.gif)
+
+*See agent-ready in action: scan your repo and get an instant readiness report.*
+
 ## Features
 
 - **9 Pillars Assessment**: Documentation, Code Style, Build, Testing, Security, Observability, Environment, CI/CD, Monorepo

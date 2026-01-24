@@ -36,3 +36,20 @@ readiness.json
 .env.local
 .env.*.local
 
+# Video project (keep local for revisions)
+video-project/
+*.mp4
+
+# Generated images (local only, not pushed to remote)
+generated-images/
+badge-*.png
+badge-*.jpeg
+og-*.png
+og-*.jpeg
+hero-*.png
+hero-*.jpeg
+
+# Nano Banana Pro image generation (local only)
+scripts/generate-images.ts
+scripts/generate-single-image.ts
+docs/IMAGE-GENERATION.md
