@@ -1,0 +1,92 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate-pr:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            should start with a lowercase letter.
+
+      - name: Check branch naming
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          VALID_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|hotfix|release)/"
+
+          if [[ ! "$BRANCH_NAME" =~ $VALID_PATTERN ]]; then
+            echo "::error::Branch name '$BRANCH_NAME' does not follow naming convention."
+            echo ""
+            echo "Branch names must start with one of:"
+            echo "  feat/    - New features"
+            echo "  fix/     - Bug fixes"
+            echo "  docs/    - Documentation changes"
+            echo "  style/   - Code style changes"
+            echo "  refactor/- Code refactoring"
+            echo "  perf/    - Performance improvements"
+            echo "  test/    - Test additions/changes"
+            echo "  build/   - Build system changes"
+            echo "  ci/      - CI configuration"
+            echo "  chore/   - Maintenance tasks"
+            echo "  hotfix/  - Urgent fixes"
+            echo "  release/ - Release branches"
+            echo ""
+            echo "Example: feat/add-new-check"
+            exit 1
+          fi
+
+          echo "✅ Branch name '$BRANCH_NAME' follows naming convention"
+
+  scan-readiness:
+    name: Scan Agent Readiness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run agent-ready scan
+        run: |
+          npm run dev -- scan . --output json
+
+          # Extract level from readiness.json
+          LEVEL=$(cat readiness.json | jq -r '.level')
+          SCORE=$(cat readiness.json | jq -r '.score')
+
+          echo "## Agent Readiness Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Level | **$LEVEL** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Score | $SCORE% |" >> $GITHUB_STEP_SUMMARY

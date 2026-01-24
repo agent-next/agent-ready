@@ -64,12 +64,40 @@ npm run dev -- init --dry-run
 | `npm run format` | Prettier code formatting |
 | `npm run build` | Build for production |
 
-### Branch Naming
+### Branch Naming Convention
 
-- `feature/description` - New features
-- `fix/description` - Bug fixes
-- `docs/description` - Documentation updates
-- `refactor/description` - Code refactoring
+**⚠️ Direct pushes to `main` are blocked.** All changes must go through pull requests.
+
+Branch names must follow this pattern: `<type>/<description>`
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| `feat/` | New features | `feat/add-docker-check` |
+| `fix/` | Bug fixes | `fix/path-glob-windows` |
+| `docs/` | Documentation | `docs/update-readme` |
+| `style/` | Code style changes | `style/format-checks` |
+| `refactor/` | Code refactoring | `refactor/simplify-engine` |
+| `perf/` | Performance improvements | `perf/faster-glob` |
+| `test/` | Test additions | `test/add-integration` |
+| `build/` | Build system | `build/update-deps` |
+| `ci/` | CI configuration | `ci/add-coverage` |
+| `chore/` | Maintenance | `chore/cleanup` |
+| `hotfix/` | Urgent fixes | `hotfix/critical-bug` |
+| `release/` | Release branches | `release/v1.0.0` |
+
+### Creating a Branch
+
+```bash
+# Always start from latest main
+git checkout main
+git pull origin main
+
+# Create feature branch
+git checkout -b feat/my-new-feature
+
+# Make changes, then push
+git push -u origin feat/my-new-feature
+```
 
 ## Adding New Checks
 
@@ -198,13 +226,42 @@ cat readiness.json | jq '.level'
 
 ## Pull Request Process
 
+### Quick Start
+
+```bash
+# 1. Create branch from latest main
+git checkout main && git pull
+git checkout -b feat/my-feature
+
+# 2. Make changes and commit
+git add .
+git commit -m "feat: add my feature"
+
+# 3. Push and create PR
+git push -u origin feat/my-feature
+gh pr create --fill
+```
+
+### PR Requirements
+
+All PRs must pass these automated checks:
+
+| Check | Description |
+|-------|-------------|
+| **PR Title** | Must follow conventional commits (e.g., `feat: add feature`) |
+| **Branch Name** | Must match pattern `<type>/<description>` |
+| **Lint** | `npm run lint` passes |
+| **Type Check** | `npm run typecheck` passes |
+| **Tests** | `npm test` passes |
+| **Build** | `npm run build` succeeds |
+| **Agent Readiness** | Scan runs successfully |
+
 ### Before Submitting
 
-1. **Run all checks:**
+1. **Run all checks locally:**
    ```bash
+   npm run check  # Runs typecheck + lint + format:check
    npm test
-   npm run typecheck
-   npm run lint
    ```
 
 2. **Update documentation** if needed:
@@ -217,35 +274,27 @@ cat readiness.json | jq '.level'
    - Check for hardcoded values
    - Ensure error handling
 
-### PR Template
+### PR Title Format
 
-```markdown
-## Description
-Brief description of changes
+PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Documentation update
-- [ ] Refactoring
-
-## Testing
-- [ ] Tests pass locally
-- [ ] New tests added (if applicable)
-- [ ] Manual testing performed
-
-## Checklist
-- [ ] Code follows project style
-- [ ] Self-review completed
-- [ ] Documentation updated
 ```
+<type>: <description>
+```
+
+Examples:
+- `feat: add Docker check type`
+- `fix: handle missing package.json`
+- `docs: update contribution guide`
+- `refactor: simplify level gating`
 
 ### Review Process
 
 1. Create PR against `main` branch
-2. Automated checks must pass
+2. All automated checks must pass ✅
 3. At least one maintainer approval required
 4. Squash and merge preferred
+5. Delete branch after merge
 
 ## Code Style
 
