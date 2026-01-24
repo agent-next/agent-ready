@@ -5,6 +5,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { glob } from 'glob';
+import { logger } from './logger.js';
 
 /**
  * Check if a file exists
@@ -13,7 +14,8 @@ export async function fileExists(filePath: string): Promise<boolean> {
   try {
     await fs.promises.access(filePath, fs.constants.R_OK);
     return true;
-  } catch {
+  } catch (err) {
+    logger.debug({ path: filePath, err }, 'File does not exist or is not readable');
     return false;
   }
 }
@@ -24,7 +26,8 @@ export async function fileExists(filePath: string): Promise<boolean> {
 export async function readFile(filePath: string): Promise<string | null> {
   try {
     return await fs.promises.readFile(filePath, 'utf-8');
-  } catch {
+  } catch (err) {
+    logger.debug({ path: filePath, err }, 'Failed to read file');
     return null;
   }
 }
@@ -59,7 +62,8 @@ export async function findFiles(pattern: string, rootPath: string): Promise<stri
       ignore: ['**/node_modules/**', '**/dist/**', '**/.git/**'],
     });
     return matches.map((m) => path.join(rootPath, m));
-  } catch {
+  } catch (err) {
+    logger.debug({ pattern, rootPath, err }, 'Glob pattern match failed');
     return [];
   }
 }
@@ -89,7 +93,8 @@ export async function directoryExists(dirPath: string): Promise<boolean> {
   try {
     const stats = await fs.promises.stat(dirPath);
     return stats.isDirectory();
-  } catch {
+  } catch (err) {
+    logger.debug({ path: dirPath, err }, 'Directory does not exist');
     return false;
   }
 }
@@ -101,7 +106,8 @@ export async function listDirectories(dirPath: string): Promise<string[]> {
   try {
     const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
     return entries.filter((e) => e.isDirectory()).map((e) => e.name);
-  } catch {
+  } catch (err) {
+    logger.debug({ path: dirPath, err }, 'Failed to list directories');
     return [];
   }
 }

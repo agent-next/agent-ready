@@ -1,12 +1,12 @@
 {
   "repo": "robotlearning123/agent-ready",
-  "commit": "446de452b91250259b6319386adbd3ce76c213b8",
-  "timestamp": "2026-01-23T23:59:19.552Z",
+  "commit": "231844ef46429d8e22d023a8381870ad6aac8c02",
+  "timestamp": "2026-01-24T15:50:12.086Z",
   "profile": "factory_compat",
   "profile_version": "1.0.0",
   "level": "L3",
   "progress_to_next": 0,
-  "overall_score": 85,
+  "overall_score": 79,
   "pillars": {
     "docs": {
       "level_achieved": "L5",
@@ -45,9 +45,9 @@
       "checks_total": 3
     },
     "env": {
-      "level_achieved": "L5",
-      "score": 100,
-      "checks_passed": 3,
+      "level_achieved": "L2",
+      "score": 33,
+      "checks_passed": 1,
       "checks_total": 3
     },
     "task_discovery": {
@@ -72,14 +72,14 @@
     },
     "L2": {
       "achieved": true,
-      "score": 100,
-      "checks_passed": 17,
+      "score": 94,
+      "checks_passed": 16,
       "checks_total": 17
     },
     "L3": {
       "achieved": true,
-      "score": 100,
-      "checks_passed": 6,
+      "score": 83,
+      "checks_passed": 5,
       "checks_total": 6
     },
     "L4": {
@@ -114,6 +114,29 @@
       "required": false,
       "suggestions": [
         "Install one of: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client"
+      ]
+    },
+    {
+      "check_id": "env.dotenv_example",
+      "pillar": "env",
+      "level": "L2",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .env.example",
+        "Create .env.template"
+      ]
+    },
+    {
+      "check_id": "env.docker_compose",
+      "pillar": "env",
+      "level": "L3",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create docker-compose.yml",
+        "Create docker-compose.yaml",
+        "Create compose.yml"
       ]
     },
     {
@@ -159,6 +182,20 @@
     }
   ],
   "action_items": [
+    {
+      "priority": "medium",
+      "check_id": "env.dotenv_example",
+      "pillar": "env",
+      "level": "L2",
+      "action": "Create .env.example"
+    },
+    {
+      "priority": "low",
+      "check_id": "env.docker_compose",
+      "pillar": "env",
+      "level": "L3",
+      "action": "Create docker-compose.yml"
+    },
     {
       "priority": "low",
       "check_id": "observability.tracing",
