@@ -116,7 +116,7 @@ jobs:
           fi
 
           if [[ -z "$SCORE" ]]; then
-            echo "::error::readiness.json missing 'score' field"
+            echo "::error::readiness.json missing 'overall_score' field"
             cat readiness.json
             exit 1
           fi
