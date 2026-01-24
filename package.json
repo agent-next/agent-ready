@@ -3,9 +3,20 @@
   "version": "0.0.1",
   "description": "Factory-compatible repo maturity scanner for AI agent readiness",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/lib.js",
+  "types": "dist/lib.d.ts",
   "bin": {
     "agent-ready": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/lib.d.ts",
+      "import": "./dist/lib.js"
+    },
+    "./cli": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "files": [
     "dist",
