@@ -3,6 +3,7 @@
  */
 
 import { execFileSync, type ExecFileSyncOptions } from 'node:child_process';
+import { logger } from './logger.js';
 
 export interface ExecResult {
   stdout: string;
@@ -24,7 +25,8 @@ export function execSafe(
       stdio: ['pipe', 'pipe', 'pipe'],
     }) as string;
     return { stdout: stdout.trim(), success: true };
-  } catch {
+  } catch (err) {
+    logger.debug({ command, args, err }, 'Command execution failed');
     return { stdout: '', success: false };
   }
 }
