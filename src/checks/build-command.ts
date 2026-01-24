@@ -132,15 +132,8 @@ function detectCommandsInFile(
         }
       }
     }
-  } else if (filename === 'Cargo.toml') {
-    // Cargo has implicit build/test
-    for (const cmd of commandsToFind) {
-      if (cmd === 'build' || cmd === 'test') {
-        found.push(cmd);
-      }
-    }
-  } else if (filename === 'go.mod') {
-    // Go has implicit build/test via go build and go test
+  } else if (filename === 'Cargo.toml' || filename === 'go.mod') {
+    // Cargo and Go have implicit build/test commands
     for (const cmd of commandsToFind) {
       if (cmd === 'build' || cmd === 'test') {
         found.push(cmd);

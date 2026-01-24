@@ -19,9 +19,8 @@ import { PASSING_THRESHOLD, LEVELS, PILLARS, PILLAR_NAMES } from '../types.js';
  */
 export function calculateLevelSummaries(results: CheckResult[]): Record<Level, LevelSummary> {
   const summaries: Record<Level, LevelSummary> = {} as Record<Level, LevelSummary>;
-  const levels = LEVELS;
 
-  for (const level of levels) {
+  for (const level of LEVELS) {
     const levelResults = results.filter((r) => r.level === level);
 
     const totalCount = levelResults.length;
@@ -71,11 +70,10 @@ export function calculateLevelSummaries(results: CheckResult[]): Record<Level, L
  * - If a level has no checks, it's auto-achieved if previous levels passed
  */
 export function determineAchievedLevel(levelSummaries: Record<Level, LevelSummary>): Level | null {
-  const levels = LEVELS;
   let highestAchieved: Level | null = null;
 
-  for (let i = 0; i < levels.length; i++) {
-    const level = levels[i];
+  for (let i = 0; i < LEVELS.length; i++) {
+    const level = LEVELS[i];
     const summary = levelSummaries[level];
 
     // Empty levels are auto-achieved if previous levels passed
@@ -113,9 +111,8 @@ export function calculateProgressToNext(
   currentLevel: Level | null,
   levelSummaries: Record<Level, LevelSummary>
 ): number {
-  const levels = LEVELS;
-  const currentIndex = currentLevel ? levels.indexOf(currentLevel) : -1;
-  const nextLevel = levels[currentIndex + 1];
+  const currentIndex = currentLevel ? LEVELS.indexOf(currentLevel) : -1;
+  const nextLevel = LEVELS[currentIndex + 1];
 
   if (!nextLevel) {
     return 1.0; // Already at max level
@@ -163,18 +160,23 @@ export function calculatePillarSummaries(results: CheckResult[]): Record<Pillar,
 
 /**
  * Determine highest achieved level for a specific pillar
- * Uses Factory.ai 80% rule on PREVIOUS level
+ *
+ * NOTE: Uses different gating logic than determineAchievedLevel.
+ * - determineAchievedLevel: 80% of THIS level must pass (for overall repo level)
+ * - determinePillarLevel: 80% of PREVIOUS level must pass (for per-pillar level)
+ *
+ * This difference is intentional: pillar-level achievements gate on previous
+ * level completion, while overall repo level gates on current level completion.
  */
 function determinePillarLevel(results: CheckResult[]): Level | null {
-  const levels = LEVELS;
   let highestAchieved: Level | null = null;
 
-  for (let i = 0; i < levels.length; i++) {
-    const level = levels[i];
+  for (let i = 0; i < LEVELS.length; i++) {
+    const level = LEVELS[i];
     const levelResults = results.filter((r) => r.level === level);
 
     // Get previous level results for gating
-    const prevLevel = i > 0 ? levels[i - 1] : null;
+    const prevLevel = i > 0 ? LEVELS[i - 1] : null;
     const prevResults = prevLevel ? results.filter((r) => r.level === prevLevel) : [];
 
     if (levelResults.length === 0) {

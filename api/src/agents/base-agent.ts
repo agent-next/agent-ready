@@ -1,5 +1,6 @@
 import type { CheckConfig, CheckResult, ScanContext, Pillar, Level } from '../../../src/types.js';
 import { executeCheck } from '../../../src/checks/index.js';
+import { LEVELS } from '../../../src/types.js';
 
 export interface PillarAgentResult {
   pillar: Pillar;
@@ -62,9 +63,7 @@ export abstract class BaseAgent {
   }
 
   protected calculateLevelAchieved(results: CheckResult[]): Level | null {
-    const levels: Level[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
-
-    for (const level of levels) {
+    for (const level of LEVELS) {
       const levelChecks = results.filter((r) => r.level === level);
       if (levelChecks.length === 0) continue;
 
@@ -76,8 +75,8 @@ export abstract class BaseAgent {
       const passRate = passed / levelChecks.length;
       if (passRate < 0.6 || requiredPassed < requiredTotal) {
         // Return previous level or null
-        const idx = levels.indexOf(level);
-        return idx > 0 ? levels[idx - 1] : null;
+        const idx = LEVELS.indexOf(level);
+        return idx > 0 ? LEVELS[idx - 1] : null;
       }
     }
 

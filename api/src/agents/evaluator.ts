@@ -1,5 +1,6 @@
 import type { PillarAgentResult } from './base-agent.js';
 import type { Level, Pillar } from '../../../src/types.js';
+import { LEVELS } from '../../../src/types.js';
 import { i18n } from '../i18n/index.js';
 
 export interface CrossPillarInsight {
@@ -55,18 +56,16 @@ export class EvaluatorAgent {
   }
 
   private determineOverallLevel(pillarResults: PillarAgentResult[]): Level | null {
-    const levels: Level[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
-
-    for (const level of levels) {
+    for (const level of LEVELS) {
       // Check if all pillars have achieved at least this level
       const allAchieved = pillarResults.every((p) => {
         if (!p.level_achieved) return false;
-        return levels.indexOf(p.level_achieved) >= levels.indexOf(level);
+        return LEVELS.indexOf(p.level_achieved) >= LEVELS.indexOf(level);
       });
 
       if (!allAchieved) {
-        const idx = levels.indexOf(level);
-        return idx > 0 ? levels[idx - 1] : null;
+        const idx = LEVELS.indexOf(level);
+        return idx > 0 ? LEVELS[idx - 1] : null;
       }
     }
 
@@ -79,8 +78,7 @@ export class EvaluatorAgent {
   ): number {
     if (currentLevel === 'L5') return 1.0;
 
-    const levels: Level[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
-    const nextLevel = currentLevel ? levels[levels.indexOf(currentLevel) + 1] : 'L1';
+    const nextLevel = currentLevel ? LEVELS[LEVELS.indexOf(currentLevel) + 1] : 'L1';
 
     if (!nextLevel) return 1.0;
 
