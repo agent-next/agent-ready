@@ -268,18 +268,6 @@ agent-ready/
 │   ├── engine/               # Level gating logic
 │   ├── profiles/             # Profile loader
 │   └── utils/                # FS, git, YAML utilities
-├── api/                      # Online API (Multi-Agent)
-│   ├── src/
-│   │   ├── index.ts          # Fastify server
-│   │   ├── agents/           # Multi-agent system
-│   │   │   ├── orchestrator.ts
-│   │   │   ├── evaluator.ts
-│   │   │   ├── reporter.ts
-│   │   │   └── pillars/      # 9 pillar agents
-│   │   ├── routes/           # API routes
-│   │   └── i18n/             # Chinese/English
-│   ├── Dockerfile
-│   └── docker-compose.yml
 ├── profiles/
 │   └── factory_compat.yaml   # Default profile
 ├── templates/                # Init command templates

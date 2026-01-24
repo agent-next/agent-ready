@@ -59,3 +59,7 @@ export { scan } from './scanner.js';
 // Output formatters
 export { formatJson, outputJson } from './output/json.js';
 export { outputMarkdown } from './output/markdown.js';
+
+// Templates
+export type { Template } from './templates/index.js';
+export { getTemplates, getTemplateForCheck, listTemplates } from './templates/index.js';
