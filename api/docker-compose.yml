@@ -1,5 +1,5 @@
 # Agent Ready - Production Docker Compose
-# Optimized for 16GB RAM server (137.184.205.191)
+# Optimized for 16GB RAM server (agent-ready.org)
 
 version: '3.8'
 
