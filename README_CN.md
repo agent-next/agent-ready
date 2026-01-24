@@ -35,15 +35,15 @@ npm install -g agent-ready
 
 ```bash
 # 提交扫描
-curl -X POST http://137.184.205.191/api/scan \
+curl -X POST https://agent-ready.org/api/scan \
   -H "Content-Type: application/json" \
   -d '{"repo_url":"https://github.com/owner/repo","language":"zh"}'
 
 # 查询扫描状态
-curl http://137.184.205.191/api/scan/{scan_id}
+curl https://agent-ready.org/api/scan/{scan_id}
 
 # 列出可用配置
-curl http://137.184.205.191/api/profiles
+curl https://agent-ready.org/api/profiles
 ```
 
 ### API 特性
@@ -223,10 +223,10 @@ npm run build
 
 ## 在线服务
 
-- 🌐 前端界面: http://137.184.205.191/
-- 🔌 API 接口: http://137.184.205.191/api/
-- ❤️ 健康检查: http://137.184.205.191/api/health
-- 📋 配置列表: http://137.184.205.191/api/profiles
+- 🌐 前端界面: https://agent-ready.org/
+- 🔌 API 接口: https://agent-ready.org/api/
+- ❤️ 健康检查: https://agent-ready.org/api/health
+- 📋 配置列表: https://agent-ready.org/api/profiles
 
 ## 许可证
 
