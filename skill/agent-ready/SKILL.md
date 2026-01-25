@@ -1,11 +1,11 @@
 ---
 name: agent-ready
-description: Scan repositories for AI agent readiness using the Factory.ai 9 Pillars / 5 Levels model. Use this skill when users ask to check repository maturity, agent readiness, evaluate codebase quality for AI agents, or run agent-ready scans. Triggers on phrases like "check agent readiness", "scan for readiness", "evaluate repo maturity", "how ready is this repo for AI agents", or "/agent-ready".
+description: Scan repositories for AI agent readiness using the Factory.ai 9-pillar / 5-level framework. Use when (1) checking repository maturity for AI agents, (2) evaluating codebase quality, (3) generating missing config files, or (4) understanding what makes a repo agent-ready. Triggers on "check agent readiness", "scan for readiness", "evaluate repo maturity", "how ready is this repo", "what level is this repo", "/agent-ready".
 ---
 
 # Agent-Ready Scanner
 
-Evaluate repository maturity for AI agent development using the Factory.ai-compatible 9 Pillars / 5 Levels model.
+Evaluate repository maturity for AI agent collaboration using the Factory.ai-compatible 9 Pillars / 5 Levels model.
 
 ## Quick Start
 
@@ -13,55 +13,89 @@ Evaluate repository maturity for AI agent development using the Factory.ai-compa
 # Scan current directory
 npx agent-ready scan .
 
-# Scan specific path
-npx agent-ready scan /path/to/repo
+# Chinese output
+npx agent-ready scan . --lang zh
 
-# JSON output only
-npx agent-ready scan . --output json
+# Generate missing files for L2
+npx agent-ready init . --level L2
+
+# Preview what would be created
+npx agent-ready init . --level L2 --dry-run
+```
+
+## CLI Reference
+
+### scan
+```bash
+npx agent-ready scan <path> [options]
+  -o, --output <format>   json | markdown | both (default: both)
+  -l, --level <level>     Target level (L1-L5)
+  -v, --verbose           Show all checks
+  --lang <locale>         en | zh
+```
+
+### init
+```bash
+npx agent-ready init <path> [options]
+  -l, --level <level>     Generate files for level
+  -c, --check <id>        Generate for specific check
+  -n, --dry-run           Preview only
+  -f, --force             Overwrite existing
 ```
 
 ## Understanding Results
 
-### Levels (L1-L5)
-| Level | Name | Meaning |
-|-------|------|---------|
-| L1 | Functional | Code runs, needs manual setup |
-| L2 | Documented | Has docs, AGENTS.md, CI basics |
-| L3 | Standardized | Integration tests, observability |
-| L4 | Optimized | Fast feedback, deployment frequency |
-| L5 | Autonomous | Self-improving systems |
+**Levels (L1-L5):** L1=Functional, L2=Documented, L3=Standardized, L4=Optimized, L5=Autonomous
 
-### 9 Pillars
-1. **docs** - README, AGENTS.md, CONTRIBUTING
-2. **style** - Linters, formatters, type checking
-3. **build** - Package manifest, CI/CD, lock files
-4. **test** - Unit tests, integration tests
-5. **security** - .gitignore, dependabot, CODEOWNERS
-6. **observability** - Logging, tracing, metrics
-7. **env** - .env.example, devcontainer, docker-compose
-8. **task_discovery** - Issue templates, PR templates
-9. **product** - Feature flags, analytics, A/B testing
+**Pillars (9):** docs, style, build, test, security, observability, env, task_discovery, product
 
-## Output Files
+**Scoring:** 80% of checks must pass per level. See `references/levels.md` for details.
 
-After scanning, the tool creates:
-- `readiness.json` - Machine-readable results
-- Terminal output - Human-readable summary with action items
+**Action Priorities:**
+- CRITICAL - Blocking current level
+- HIGH - Required for next level
+- MEDIUM/LOW - Improvements
 
-## Action Items
+## Common Workflows
 
-The scan provides prioritized action items:
-- **HIGH** - Blocking issues for current level
-- **MEDIUM** - L2 improvements
-- **LOW** - L3+ enhancements
+**Initial assessment:**
+```bash
+npx agent-ready scan . --verbose
+```
 
-## Common Workflow
+**Reach L2 (most important for AI agents):**
+```bash
+npx agent-ready init . --level L2
+```
 
-1. Run scan to assess current state
-2. Review failed checks and action items
-3. Address HIGH priority items first
-4. Re-scan to verify improvements
+**Fix specific check:**
+```bash
+npx agent-ready init . --check docs.agents_md
+```
 
-## Multi-Language Support
+## Key File: AGENTS.md
 
-Detects patterns for: JavaScript/TypeScript, Python, Go, Rust, Java, Ruby
+The most important file for AI agent readiness:
+
+```markdown
+# AGENTS.md
+
+## Project Context
+What this project does.
+
+## Key Commands
+- `npm run build` - Build
+- `npm test` - Test
+
+## Code Conventions
+- TypeScript strict mode
+- Functional patterns
+
+## Files to Ignore
+- node_modules/, dist/, .env
+```
+
+## References
+
+- **Pillar details:** See `references/pillars.md` for each pillar's purpose, key files, and examples
+- **Level requirements:** See `references/levels.md` for per-level requirements and progression strategy

@@ -11,6 +11,7 @@ import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { scanCommand } from './commands/scan.js';
 import { initCommand } from './commands/init.js';
+import { setLocale, isValidLocale, type Locale } from './i18n/index.js';
 
 // Read version from package.json
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -35,7 +36,12 @@ program
   .option('-l, --level <level>', 'Target level to check (L1-L5)')
   .option('-v, --verbose', 'Verbose output', false)
   .option('--output-file <path>', 'Output file path for JSON results')
+  .option('--lang <locale>', 'Output language: en, zh', 'en')
   .action(async (scanPath: string, options) => {
+    // Set locale if provided
+    if (options.lang && isValidLocale(options.lang)) {
+      setLocale(options.lang as Locale);
+    }
     const resolvedPath = path.resolve(process.cwd(), scanPath);
     await scanCommand({
       path: resolvedPath,
@@ -57,7 +63,12 @@ program
   .option('-n, --dry-run', 'Show what would be created without creating', false)
   .option('-f, --force', 'Overwrite existing files', false)
   .option('-i, --interactive', 'Interactive mode with prompts', false)
+  .option('--lang <locale>', 'Output language: en, zh', 'en')
   .action(async (initPath: string, options) => {
+    // Set locale if provided
+    if (options.lang && isValidLocale(options.lang)) {
+      setLocale(options.lang as Locale);
+    }
     const resolvedPath = path.resolve(process.cwd(), initPath);
     await initCommand({
       path: resolvedPath,

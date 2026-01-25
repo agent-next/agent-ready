@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Factory-compatible repo maturity scanner for AI agent readiness",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
   "bin": {

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://claude.ai/plugins/plugin.schema.json",
+  "name": "agent-ready",
+  "version": "0.0.1",
+  "description": "Scan repositories for AI agent readiness based on Factory.ai 9-pillar framework",
+  "author": "robotlearning123",
+  "homepage": "https://github.com/robotlearning123/agent-ready"
+}

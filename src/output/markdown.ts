@@ -1,12 +1,13 @@
 /**
  * Markdown/Terminal output formatter
  *
- * Displays scan results in a readable terminal format
+ * Displays scan results in a readable terminal format with i18n support
  */
 
 import chalk from 'chalk';
 import type { ScanResult, Level, ActionPriority } from '../types.js';
 import { LEVELS } from '../types.js';
+import { t, getPillarName, getLevelName, getPriorityName } from '../i18n/index.js';
 
 const LEVEL_COLORS: Record<Level | 'none', (text: string) => string> = {
   L1: chalk.red,
@@ -58,24 +59,28 @@ export function outputMarkdown(result: ScanResult, verbose: boolean): void {
 }
 
 function printHeader(result: ScanResult): void {
-  console.log(chalk.bold('Agent Readiness Report'));
+  console.log(chalk.bold(t('output.title')));
   console.log(chalk.dim('─'.repeat(50)));
-  console.log(`${chalk.dim('Repository:')} ${result.repo}`);
-  console.log(`${chalk.dim('Commit:')}     ${result.commit}`);
-  console.log(`${chalk.dim('Profile:')}    ${result.profile} v${result.profile_version}`);
-  console.log(`${chalk.dim('Time:')}       ${new Date(result.timestamp).toLocaleString()}`);
+  console.log(`${chalk.dim(t('output.repository'))} ${result.repo}`);
+  console.log(`${chalk.dim(t('output.commit'))}     ${result.commit}`);
+  console.log(
+    `${chalk.dim(t('output.profileLabel'))}    ${result.profile} v${result.profile_version}`
+  );
+  console.log(
+    `${chalk.dim(t('output.time'))}       ${new Date(result.timestamp).toLocaleString()}`
+  );
   console.log('');
 }
 
 function printLevelBadge(result: ScanResult): void {
   const level = result.level || 'none';
   const colorFn = LEVEL_COLORS[level];
-  const levelName = result.level || 'Not Achieved';
+  const levelName = result.level ? getLevelName(result.level) : t('output.notAchieved');
 
   const badge = `┌─────────────────────────────────────────────────┐
 │                                                 │
-│          ${colorFn(`Level: ${levelName}`)}                          │
-│          ${chalk.dim(`Score: ${result.overall_score}%`)}                            │
+│          ${colorFn(t('output.level', { level: levelName }))}                          │
+│          ${chalk.dim(t('output.score', { score: result.overall_score }))}                            │
 │                                                 │
 └─────────────────────────────────────────────────┘`;
 
@@ -87,14 +92,14 @@ function printLevelBadge(result: ScanResult): void {
     if (nextLevel) {
       const progress = Math.round(result.progress_to_next * 100);
       const bar = createProgressBar(progress);
-      console.log(`${chalk.dim('Progress to')} ${nextLevel}: ${bar} ${progress}%`);
+      console.log(`${t('output.progressTo', { level: nextLevel })} ${bar} ${progress}%`);
       console.log('');
     }
   }
 }
 
 function printPillarSummary(result: ScanResult): void {
-  console.log(chalk.bold('Pillar Summary'));
+  console.log(chalk.bold(t('output.pillarSummary')));
   console.log(chalk.dim('─'.repeat(50)));
 
   const pillars = Object.values(result.pillars).filter((p) => p.checks_total > 0);
@@ -107,9 +112,10 @@ function printPillarSummary(result: ScanResult): void {
     const scoreColor = score >= 80 ? chalk.green : score >= 50 ? chalk.yellow : chalk.red;
 
     const checkStatus = `${pillar.checks_passed}/${pillar.checks_total}`;
+    const pillarName = getPillarName(pillar.pillar);
 
     console.log(
-      `  ${pillar.name.padEnd(16)} ${colorFn(levelStr.padEnd(4))} ${scoreColor(
+      `  ${pillarName.padEnd(16)} ${colorFn(levelStr.padEnd(4))} ${scoreColor(
         score.toString().padStart(3)
       )}% ${chalk.dim(`(${checkStatus})`)}`
     );
@@ -119,7 +125,7 @@ function printPillarSummary(result: ScanResult): void {
 }
 
 function printLevelBreakdown(result: ScanResult): void {
-  console.log(chalk.bold('Level Breakdown'));
+  console.log(chalk.bold(t('output.levelBreakdown')));
   console.log(chalk.dim('─'.repeat(50)));
 
   const levels = LEVELS;
@@ -133,8 +139,8 @@ function printLevelBreakdown(result: ScanResult): void {
 
     console.log(
       `  ${status} ${colorFn(level)} - ${summary.score}% ` +
-        `(${summary.checks_passed}/${summary.checks_total} checks, ` +
-        `${summary.required_passed}/${summary.required_total} required)`
+        `(${t('output.checks', { passed: summary.checks_passed, total: summary.checks_total })}, ` +
+        `${t('output.required', { passed: summary.required_passed, total: summary.required_total })})`
     );
   }
 
@@ -142,23 +148,21 @@ function printLevelBreakdown(result: ScanResult): void {
 }
 
 function printActionItems(result: ScanResult, verbose: boolean): void {
-  console.log(chalk.bold('Action Items'));
+  console.log(chalk.bold(t('output.actionItems')));
   console.log(chalk.dim('─'.repeat(50)));
 
   const itemsToShow = verbose ? result.action_items : result.action_items.slice(0, 5);
 
   for (const item of itemsToShow) {
     const priorityColor = PRIORITY_COLORS[item.priority];
-    const priorityBadge = priorityColor(`[${item.priority.toUpperCase()}]`);
+    const priorityBadge = priorityColor(`[${getPriorityName(item.priority)}]`);
     const levelColor = LEVEL_COLORS[item.level];
 
     console.log(`  ${priorityBadge} ${levelColor(item.level)} ${item.action}`);
   }
 
   if (!verbose && result.action_items.length > 5) {
-    console.log(
-      chalk.dim(`  ... and ${result.action_items.length - 5} more (use --verbose to see all)`)
-    );
+    console.log(chalk.dim(`  ${t('output.andMore', { count: result.action_items.length - 5 })}`));
   }
 
   console.log('');
@@ -167,13 +171,15 @@ function printActionItems(result: ScanResult, verbose: boolean): void {
 function printMonorepoApps(result: ScanResult): void {
   if (!result.apps) return;
 
-  console.log(chalk.bold('Monorepo Apps'));
+  console.log(chalk.bold(t('output.monorepoApps')));
   console.log(chalk.dim('─'.repeat(50)));
 
   for (const app of result.apps) {
     if (app.error) {
       // Show error for failed apps
-      console.log(`  ${app.name.padEnd(20)} ${chalk.red('ERROR')} ${chalk.dim(app.error)}`);
+      console.log(
+        `  ${app.name.padEnd(20)} ${chalk.red(t('output.errorLabel'))} ${chalk.dim(app.error)}`
+      );
     } else {
       const level = app.level || '-';
       const colorFn = app.level ? LEVEL_COLORS[app.level] : chalk.gray;

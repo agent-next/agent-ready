@@ -63,3 +63,17 @@ export { outputMarkdown } from './output/markdown.js';
 // Templates
 export type { Template } from './templates/index.js';
 export { getTemplates, getTemplateForCheck, listTemplates } from './templates/index.js';
+
+// i18n
+export type { Locale, Translations } from './i18n/index.js';
+export {
+  t,
+  setLocale,
+  getLocale,
+  getAvailableLocales,
+  isValidLocale,
+  getPillarName,
+  getLevelName,
+  getPriorityName,
+  LOCALES,
+} from './i18n/index.js';
