@@ -1,0 +1,21 @@
+{
+  "version": "0.0.1",
+  "organization": "robotlearning123",
+  "date": "January 2026",
+  "abstract": "Repository maturity scanner for AI agent collaboration. Evaluates codebases using the Factory.ai-compatible 9 Pillars / 5 Levels model. Scans for documentation, code style, build systems, testing, security, observability, environment setup, task discovery, and product experimentation. Generates missing configuration files and provides prioritized action items to improve agent readiness.",
+  "references": [
+    "https://agent-ready.org",
+    "https://github.com/robotlearning123/agent-ready",
+    "https://www.npmjs.com/package/agent-ready",
+    "https://factory.ai"
+  ],
+  "keywords": [
+    "agent-ready",
+    "ai-agent",
+    "repository-maturity",
+    "code-quality",
+    "factory-ai",
+    "9-pillars",
+    "5-levels"
+  ]
+}

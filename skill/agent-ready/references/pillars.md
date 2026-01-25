@@ -2,6 +2,18 @@
 
 Each pillar represents a dimension of repository maturity that enables AI agents to work effectively with the codebase.
 
+## Table of Contents
+
+1. [Documentation (docs)](#1-documentation-docs)
+2. [Style & Validation (style)](#2-style--validation-style)
+3. [Build System (build)](#3-build-system-build)
+4. [Testing (test)](#4-testing-test)
+5. [Security (security)](#5-security-security)
+6. [Observability (observability)](#6-observability-observability)
+7. [Development Environment (env)](#7-development-environment-env)
+8. [Task Discovery (task_discovery)](#8-task-discovery-task_discovery)
+9. [Product & Experimentation (product)](#9-product--experimentation-product)
+
 ---
 
 ## 1. Documentation (docs)

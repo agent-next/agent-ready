@@ -1,6 +1,10 @@
 ---
 name: agent-ready
 description: Scan repositories for AI agent readiness using the Factory.ai 9-pillar / 5-level framework. Use when (1) checking repository maturity for AI agents, (2) evaluating codebase quality, (3) generating missing config files, or (4) understanding what makes a repo agent-ready. Triggers on "check agent readiness", "scan for readiness", "evaluate repo maturity", "how ready is this repo", "what level is this repo", "/agent-ready".
+license: MIT
+metadata:
+  author: robotlearning123
+  version: "0.0.1"
 ---
 
 # Agent-Ready Scanner

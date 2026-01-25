@@ -2,6 +2,17 @@
 
 Each level represents a stage of repository maturity, with progressively higher requirements across all pillars.
 
+## Table of Contents
+
+1. [Level 1: Functional (L1)](#level-1-functional-l1)
+2. [Level 2: Documented (L2)](#level-2-documented-l2)
+3. [Level 3: Standardized (L3)](#level-3-standardized-l3)
+4. [Level 4: Optimized (L4)](#level-4-optimized-l4)
+5. [Level 5: Autonomous (L5)](#level-5-autonomous-l5)
+6. [Scoring Rules](#scoring-rules)
+7. [Progression Strategy](#progression-strategy)
+8. [Chinese Level Names](#chinese-level-names-中文级别名称)
+
 ---
 
 ## Level 1: Functional (L1)
