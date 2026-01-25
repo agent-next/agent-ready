@@ -9,7 +9,7 @@ import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { scan } from '../src/scanner.js';
-import type { ScanResult, Level, Pillar, ScanOptions } from '../src/types.js';
+import type { Pillar, ScanOptions } from '../src/types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

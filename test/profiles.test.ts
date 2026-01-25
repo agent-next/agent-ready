@@ -6,7 +6,7 @@ import { describe, it } from 'node:test';
 import * as assert from 'node:assert';
 
 import { loadProfile, loadDefaultProfile, listProfiles } from '../src/profiles/index.js';
-import type { Profile, Check, Level, Pillar } from '../src/types.js';
+import type { Level, Pillar } from '../src/types.js';
 
 describe('Profile loading', () => {
   describe('loadDefaultProfile', () => {

@@ -9,9 +9,9 @@
  * - output formats
  */
 
-import { describe, it, beforeAll, afterAll } from 'node:test';
+import { describe, it } from 'node:test';
 import * as assert from 'node:assert';
-import { execSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -202,7 +202,7 @@ describe('E2E: CLI init command', () => {
   it('should show what files would be created in dry-run', () => {
     const tempDir = fs.mkdtempSync('/tmp/agent-ready-init-');
     try {
-      const { stdout, status } = runCLI(['init', tempDir, '--dry-run', '--level', 'L2']);
+      const { status } = runCLI(['init', tempDir, '--dry-run', '--level', 'L2']);
       assert.strictEqual(status, 0);
       // Dry run should indicate files without creating them
       // The exact output format may vary
@@ -242,12 +242,12 @@ describe('E2E: CLI init command', () => {
 
 describe('E2E: CLI error handling', () => {
   it('should handle non-existent directory', () => {
-    const { status, stderr } = runCLI(['scan', '/path/that/does/not/exist/12345']);
+    const { status } = runCLI(['scan', '/path/that/does/not/exist/12345']);
     assert.notStrictEqual(status, 0, 'Should fail for non-existent path');
   });
 
   it('should handle invalid output format gracefully', () => {
-    const { status } = runCLI(['scan', '.', '--output', 'invalid-format']);
+    runCLI(['scan', '.', '--output', 'invalid-format']);
     // Should either fail gracefully or default to a valid format
     // The exact behavior depends on implementation
   });

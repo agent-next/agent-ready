@@ -2,7 +2,7 @@
  * Tests for output formatters
  */
 
-import { describe, it, beforeEach, mock } from 'node:test';
+import { describe, it, beforeEach } from 'node:test';
 import * as assert from 'node:assert';
 
 import { formatJson } from '../src/output/json.js';
