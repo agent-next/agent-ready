@@ -85,6 +85,83 @@ agent-ready init --dry-run
 agent-ready init --level L2
 ```
 
+## GitHub Action
+
+Use Agent Ready directly in your CI/CD pipelines:
+
+### Basic Usage
+
+```yaml
+name: Agent Ready
+
+on: [push, pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Agent Ready
+        uses: your-org/agent-ready@v1
+```
+
+### PR Gate (Require Minimum Level)
+
+```yaml
+- name: Check Agent Readiness
+  uses: your-org/agent-ready@v1
+  with:
+    fail-below-level: 'L2'    # Fail if below L2
+    comment-on-pr: 'true'      # Post results as PR comment
+```
+
+### All Inputs
+
+| Input | Description | Default |
+|-------|-------------|---------|
+| `path` | Path to scan | `.` |
+| `profile` | Profile to use | `factory_compat` |
+| `output-format` | `json`, `markdown`, or `both` | `both` |
+| `fail-below-level` | Fail if level is below (`L1`-`L5` or `none`) | `none` |
+| `verbose` | Enable verbose output | `false` |
+| `upload-artifact` | Upload results as artifact | `true` |
+| `artifact-name` | Name for artifact | `agent-ready-report` |
+| `comment-on-pr` | Post PR comment (PR events only) | `false` |
+
+### Outputs
+
+| Output | Description |
+|--------|-------------|
+| `level` | Achieved level (`L1`-`L5` or `null`) |
+| `score` | Overall score (0-100) |
+| `project-type` | Detected type (`cli`, `library`, `webapp`, `web-service`, `monorepo`) |
+| `report-json` | Path to JSON report |
+| `report-markdown` | Path to markdown report |
+| `passed` | Whether threshold was met (`true`/`false`) |
+
+### Using Outputs
+
+```yaml
+- name: Run Scan
+  id: scan
+  uses: your-org/agent-ready@v1
+
+- name: Check Results
+  env:
+    LEVEL: ${{ steps.scan.outputs.level }}
+    SCORE: ${{ steps.scan.outputs.score }}
+  run: |
+    echo "Level: $LEVEL"
+    echo "Score: ${SCORE}%"
+```
+
+See [`examples/workflows/`](./examples/workflows/) for more examples including:
+- [PR Gate](./examples/workflows/pr-gate.yml)
+- [Scheduled Scans](./examples/workflows/scheduled-scan.yml)
+- [Monorepo Scanning](./examples/workflows/monorepo-scan.yml)
+- [Release Gate](./examples/workflows/release-gate.yml)
+
 ## Usage
 
 ### Scan a Repository

@@ -5,6 +5,9 @@
 // Level definitions (Factory-compatible)
 export type Level = 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
 
+// Project types for intelligent check filtering
+export type ProjectType = 'cli' | 'web-service' | 'library' | 'webapp' | 'monorepo' | 'unknown';
+
 export const LEVELS: Level[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
 
 // Factory.ai official level names
@@ -16,20 +19,18 @@ export const LEVEL_NAMES: Record<Level, string> = {
   L5: 'Autonomous',
 };
 
-// Pillar definitions (10 Pillars in v0.0.2)
-// Note: CI/CD merged into Build System per Factory spec
-// Note: agent_config added in v0.0.2 for Agent Native configuration
 export type Pillar =
   | 'docs'
   | 'style'
-  | 'build' // Includes CI/CD checks
+  | 'build'
   | 'test'
   | 'security'
   | 'observability'
   | 'env'
   | 'task_discovery'
-  | 'product' // Feature flags, analytics, A/B testing
-  | 'agent_config'; // NEW in v0.0.2: Agent Native configuration
+  | 'product'
+  | 'agent_config'
+  | 'code_quality';
 
 export const PILLARS: Pillar[] = [
   'docs',
@@ -42,6 +43,7 @@ export const PILLARS: Pillar[] = [
   'task_discovery',
   'product',
   'agent_config',
+  'code_quality',
 ];
 
 export const PILLAR_NAMES: Record<Pillar, string> = {
@@ -55,6 +57,7 @@ export const PILLAR_NAMES: Record<Pillar, string> = {
   task_discovery: 'Task Discovery',
   product: 'Product & Experimentation',
   agent_config: 'Agent Configuration',
+  code_quality: 'Code Quality',
 };
 
 // Check type discriminators
@@ -66,7 +69,9 @@ export type CheckType =
   | 'github_action_present'
   | 'build_command_detect'
   | 'log_framework_detect'
-  | 'dependency_detect';
+  | 'dependency_detect'
+  | 'git_freshness'
+  | 'command_exists';
 
 // Base check configuration
 export interface BaseCheckConfig {
@@ -78,6 +83,13 @@ export interface BaseCheckConfig {
   required: boolean;
   weight?: number; // Default 1.0
   tags?: string[];
+  /**
+   * Project types this check applies to.
+   * If undefined or empty, applies to all project types.
+   * Use this to skip checks that don't make sense for certain project types.
+   * e.g., K8s checks only for 'web-service', feature flags only for 'webapp'/'web-service'
+   */
+  applicableTo?: ProjectType[];
 }
 
 // file_exists check
@@ -138,6 +150,20 @@ export interface DependencyDetectCheck extends BaseCheckConfig {
   config_files?: string[]; // Config files that indicate usage (e.g., 'otel.config.js')
 }
 
+// git_freshness check (v0.0.3) - documentation freshness via git history
+export interface GitFreshnessCheck extends BaseCheckConfig {
+  type: 'git_freshness';
+  path: string; // File or directory to check
+  max_days: number; // Maximum days since last modification
+}
+
+// command_exists check (v0.0.3) - VCS CLI tools detection
+export interface CommandExistsCheck extends BaseCheckConfig {
+  type: 'command_exists';
+  commands: string[]; // Commands to check (e.g., ['gh', 'git-lfs'])
+  require_all?: boolean; // If true, all commands must exist; if false, any one is sufficient
+}
+
 // Union type for all checks
 export type CheckConfig =
   | FileExistsCheck
@@ -147,7 +173,9 @@ export type CheckConfig =
   | GitHubActionPresentCheck
   | BuildCommandDetectCheck
   | LogFrameworkDetectCheck
-  | DependencyDetectCheck;
+  | DependencyDetectCheck
+  | GitFreshnessCheck
+  | CommandExistsCheck;
 
 // Check result
 export interface CheckResult {
@@ -234,6 +262,17 @@ export interface ScanResult {
   action_items: ActionItem[];
   is_monorepo: boolean;
   apps?: MonorepoApp[];
+  /** Detected project type for intelligent check filtering */
+  project_type: ProjectTypeInfo;
+  /** Number of checks skipped due to project type filtering */
+  checks_skipped_by_type: number;
+}
+
+// Project type detection result
+export interface ProjectTypeInfo {
+  type: ProjectType;
+  confidence: 'high' | 'medium' | 'low';
+  indicators: string[];
 }
 
 // Scan context (passed to checks)
@@ -246,6 +285,8 @@ export interface ScanContext {
   package_json?: PackageJson;
   is_monorepo: boolean;
   monorepo_apps: string[];
+  /** Detected project type for intelligent check filtering */
+  project_type: ProjectTypeInfo;
 }
 
 // Simplified package.json type
@@ -256,6 +297,15 @@ export interface PackageJson {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   workspaces?: string[] | { packages: string[] };
+  // For project type detection
+  bin?: string | Record<string, string>;
+  main?: string;
+  module?: string;
+  exports?: unknown;
+  types?: string;
+  typings?: string;
+  publishConfig?: Record<string, unknown>;
+  files?: string[];
 }
 
 // CLI options

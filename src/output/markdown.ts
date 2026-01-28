@@ -69,6 +69,28 @@ function printHeader(result: ScanResult): void {
   console.log(
     `${chalk.dim(t('output.time'))}       ${new Date(result.timestamp).toLocaleString()}`
   );
+
+  // Show project type info
+  const projectType = result.project_type;
+  const typeColor =
+    projectType.confidence === 'high'
+      ? chalk.green
+      : projectType.confidence === 'medium'
+        ? chalk.yellow
+        : chalk.gray;
+  console.log(
+    `${chalk.dim('Project Type:')} ${typeColor(projectType.type)} ${chalk.dim(`(${projectType.confidence} confidence)`)}`
+  );
+
+  // Show skipped checks if any
+  if (result.checks_skipped_by_type > 0) {
+    console.log(
+      chalk.dim(
+        `Skipped ${result.checks_skipped_by_type} checks not applicable to ${projectType.type} projects`
+      )
+    );
+  }
+
   console.log('');
 }
 
