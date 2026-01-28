@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] - 2026-01-28
+
+### Added
+- L0 (Starting) as explicit starting level in Level enum
+- Level range now: 'L0' | 'L1' | 'L2' | 'L3' | 'L4' | 'L5' | null
+
+### Changed
+- Level enum expanded from L1-L5 to L0-L5
+- `levels` object in scan result now includes L0 entry
+
+## [0.0.5] - 2026-01-28
+
+### Changed
+- Clarified Level format: string values 'L1'-'L5' or `null` (no level achieved)
+- Updated documentation to reference 11 pillars (added `agent_config`, `code_quality`)
+- Default profile is `factory_compat` (consistent across CLI, Backend, Website)
+
+### Fixed
+- Cross-project consistency: Level type, pillar count, and default profile now aligned
+- SPEC.md clarifies `null` means "no level achieved" (equivalent to legacy L0)
+
+## [0.0.4] - 2026-01-26
+
+### Added
+- Spec-first architecture with JSON Schema definitions
+- Test coverage tracking with 152 tests
+
 ## [0.0.1] - 2026-01-23
 
 ### Added
@@ -34,5 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 100% scan success rate
 - Factory.ai comparison documented in `test/VALIDATION_REPORT.md`
 
-[Unreleased]: https://github.com/anthropics/agent-ready/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/anthropics/agent-ready/releases/tag/v0.0.1
+[Unreleased]: https://github.com/robotlearning123/agent-ready/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/robotlearning123/agent-ready/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/robotlearning123/agent-ready/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/robotlearning123/agent-ready/compare/v0.0.1...v0.0.4
+[0.0.1]: https://github.com/robotlearning123/agent-ready/releases/tag/v0.0.1
