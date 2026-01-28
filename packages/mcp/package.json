@@ -35,7 +35,7 @@
     "@modelcontextprotocol/sdk": "^1.11.0",
     "agent-ready": "file:../..",
     "glob": "^13.0.0",
-    "zod": "^3.24.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
