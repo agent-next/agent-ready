@@ -74,9 +74,15 @@ runs:
       with:
         node-version: '20'
 
-    - name: Install agent-ready
+    - name: Install dependencies
       shell: bash
-      run: npm install -g agent-ready
+      working-directory: ${{ github.action_path }}
+      run: npm ci
+
+    - name: Build agent-ready
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm run build
 
     - name: Run scan
       id: scan
@@ -106,7 +112,7 @@ runs:
         echo "Profile: $INPUT_PROFILE"
         echo "Output format: $INPUT_OUTPUT_FORMAT"
 
-        agent-ready scan "$SCAN_PATH" \
+        node "${{ github.action_path }}/dist/index.js" scan "$SCAN_PATH" \
           --profile "$INPUT_PROFILE" \
           --output "$INPUT_OUTPUT_FORMAT" \
           --output-file "$OUTPUT_DIR/readiness.json" \
