@@ -13,6 +13,7 @@ import type {
   CheckResult,
   CheckConfig,
   MonorepoApp,
+  ScanContext,
 } from './types.js';
 import { loadProfile } from './profiles/index.js';
 import { buildScanContext } from './engine/context.js';
@@ -24,6 +25,7 @@ import {
   calculateOverallScore,
 } from './engine/level-gate.js';
 import { executeChecks } from './checks/index.js';
+import { isApplicableToProjectType, getProjectTypeDescription } from './engine/project-type.js';
 
 /**
  * Run a full scan on a repository
@@ -43,6 +45,17 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
       const checkLevel = parseInt(check.level.substring(1), 10);
       return checkLevel <= levelValue;
     });
+  }
+
+  // Filter checks by project type
+  const projectType = context.project_type.type;
+  const checksBeforeFilter = checksToRun.length;
+  checksToRun = filterChecksByProjectType(checksToRun, context);
+  const checksSkipped = checksBeforeFilter - checksToRun.length;
+
+  if (options.verbose && checksSkipped > 0) {
+    console.log(`Project type: ${getProjectTypeDescription(projectType)} (${projectType})`);
+    console.log(`Skipped ${checksSkipped} checks not applicable to this project type`);
   }
 
   // Execute all checks
@@ -83,6 +96,8 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
     action_items: actionItems,
     is_monorepo: context.is_monorepo,
     apps,
+    project_type: context.project_type,
+    checks_skipped_by_type: checksSkipped,
   };
 }
 
@@ -163,13 +178,18 @@ function getTemplateForCheck(check: CheckConfig): string | undefined {
     'docs.contributing': 'CONTRIBUTING.md',
     'env.dotenv_example': '.env.example',
     'security.gitignore': '.gitignore',
-    'ci.github_workflow': '.github/workflows/ci.yml',
-    // New templates for Factory parity
+    'build.github_workflow': '.github/workflows/ci.yml',
+    // Templates for Factory parity
     'env.devcontainer': '.devcontainer/devcontainer.json',
     'security.codeowners': '.github/CODEOWNERS',
     'task_discovery.issue_templates': '.github/ISSUE_TEMPLATE/bug_report.md',
     'task_discovery.pr_template': '.github/PULL_REQUEST_TEMPLATE.md',
     'env.docker_compose': 'docker-compose.yml',
+    // Agent Configuration templates (v0.0.2)
+    'agent_config.agents_md': 'AGENTS.md',
+    'agent_config.claude_settings': '.claude/settings.json',
+    'agent_config.cursorrules': '.cursorrules',
+    'agent_config.copilot_config': '.github/copilot-instructions.md',
   };
 
   return templateMap[check.id];
@@ -221,4 +241,25 @@ async function scanMonorepoApps(
   }
 
   return apps;
+}
+
+/**
+ * Filter checks based on project type applicability
+ *
+ * This is the core of the "production control layer" concept:
+ * - CLI projects don't need K8s checks
+ * - Libraries don't need feature flags
+ * - Web services need deployment checks
+ */
+function filterChecksByProjectType(checks: CheckConfig[], context: ScanContext): CheckConfig[] {
+  const projectType = context.project_type.type;
+
+  return checks.filter((check) => {
+    // If no applicableTo specified, check applies to all
+    if (!check.applicableTo || check.applicableTo.length === 0) {
+      return true;
+    }
+
+    return isApplicableToProjectType(check.applicableTo, projectType);
+  });
 }

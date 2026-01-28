@@ -1,18 +1,18 @@
 {
   "repo": "robotlearning123/agent-ready",
-  "commit": "3b2c79c7d7d9d1e5fbb99f942c73d3f015350a40",
-  "timestamp": "2026-01-25T18:11:04.761Z",
+  "commit": "db6eac18217ea4cba33377ff7df81ae1b103b7b5",
+  "timestamp": "2026-01-26T17:46:23.461Z",
   "profile": "factory_compat",
   "profile_version": "1.0.0",
-  "level": "L3",
-  "progress_to_next": 0,
-  "overall_score": 79,
+  "level": "L1",
+  "progress_to_next": 0.74,
+  "overall_score": 58,
   "pillars": {
     "docs": {
       "level_achieved": "L5",
-      "score": 100,
+      "score": 71,
       "checks_passed": 5,
-      "checks_total": 5
+      "checks_total": 7
     },
     "style": {
       "level_achieved": "L5",
@@ -22,32 +22,32 @@
     },
     "build": {
       "level_achieved": "L5",
-      "score": 100,
+      "score": 78,
       "checks_passed": 7,
-      "checks_total": 7
+      "checks_total": 9
     },
     "test": {
+      "level_achieved": "L5",
+      "score": 60,
+      "checks_passed": 3,
+      "checks_total": 5
+    },
+    "security": {
+      "level_achieved": "L5",
+      "score": 67,
+      "checks_passed": 4,
+      "checks_total": 6
+    },
+    "observability": {
       "level_achieved": "L5",
       "score": 100,
       "checks_passed": 3,
       "checks_total": 3
     },
-    "security": {
+    "env": {
       "level_achieved": "L5",
       "score": 100,
-      "checks_passed": 4,
-      "checks_total": 4
-    },
-    "observability": {
-      "level_achieved": "L5",
-      "score": 33,
-      "checks_passed": 1,
-      "checks_total": 3
-    },
-    "env": {
-      "level_achieved": "L2",
-      "score": 33,
-      "checks_passed": 1,
+      "checks_passed": 3,
       "checks_total": 3
     },
     "task_discovery": {
@@ -61,84 +61,47 @@
       "score": 0,
       "checks_passed": 0,
       "checks_total": 3
+    },
+    "agent_config": {
+      "level_achieved": "L1",
+      "score": 22,
+      "checks_passed": 4,
+      "checks_total": 18
     }
   },
   "levels": {
     "L1": {
       "achieved": true,
-      "score": 100,
-      "checks_passed": 6,
-      "checks_total": 6
+      "score": 89,
+      "checks_passed": 8,
+      "checks_total": 9
     },
     "L2": {
-      "achieved": true,
-      "score": 94,
-      "checks_passed": 16,
-      "checks_total": 17
+      "achieved": false,
+      "score": 74,
+      "checks_passed": 17,
+      "checks_total": 23
     },
     "L3": {
       "achieved": true,
-      "score": 83,
-      "checks_passed": 5,
-      "checks_total": 6
+      "score": 80,
+      "checks_passed": 8,
+      "checks_total": 10
     },
     "L4": {
       "achieved": false,
-      "score": 0,
-      "checks_passed": 0,
-      "checks_total": 5
+      "score": 25,
+      "checks_passed": 2,
+      "checks_total": 8
     },
     "L5": {
-      "achieved": true,
+      "achieved": false,
       "score": 0,
       "checks_passed": 0,
-      "checks_total": 0
+      "checks_total": 10
     }
   },
   "failed_checks": [
-    {
-      "check_id": "observability.tracing",
-      "pillar": "observability",
-      "level": "L4",
-      "message": "No matching dependencies found (looking for: @opentelemetry/sdk-trace-node, @opentelemetry/api, dd-trace, jaeger-client, @sentry/tracing, opentelemetry-sdk, ddtrace)",
-      "required": false,
-      "suggestions": [
-        "Install one of: @opentelemetry/sdk-trace-node, @opentelemetry/api, dd-trace, jaeger-client, @sentry/tracing, opentelemetry-sdk, ddtrace"
-      ]
-    },
-    {
-      "check_id": "observability.metrics",
-      "pillar": "observability",
-      "level": "L4",
-      "message": "No matching dependencies found (looking for: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client)",
-      "required": false,
-      "suggestions": [
-        "Install one of: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client"
-      ]
-    },
-    {
-      "check_id": "env.dotenv_example",
-      "pillar": "env",
-      "level": "L2",
-      "message": "Only 0/2 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create .env.example",
-        "Create .env.template"
-      ]
-    },
-    {
-      "check_id": "env.docker_compose",
-      "pillar": "env",
-      "level": "L3",
-      "message": "Only 0/3 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create docker-compose.yml",
-        "Create docker-compose.yaml",
-        "Create compose.yml"
-      ]
-    },
     {
       "check_id": "product.feature_flags",
       "pillar": "product",
@@ -179,36 +142,322 @@
         "Install one of: statsig-node, statsig-react",
         "Install one of: vwo-node-sdk"
       ]
+    },
+    {
+      "check_id": "agent_config.gitignore_agent",
+      "pillar": "agent_config",
+      "level": "L1",
+      "message": "File exists but does not contain required pattern: .gitignore",
+      "required": false,
+      "suggestions": [
+        "Update .gitignore to include required content"
+      ]
+    },
+    {
+      "check_id": "agent_config.claude_settings",
+      "pillar": "agent_config",
+      "level": "L2",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .claude/settings.json",
+        "Create .claude/settings.local.json"
+      ]
+    },
+    {
+      "check_id": "agent_config.claude_commands",
+      "pillar": "agent_config",
+      "level": "L2",
+      "message": "Found 0 files matching '.claude/commands/*.md', need at least 1",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .claude/commands/*.md"
+      ]
+    },
+    {
+      "check_id": "agent_config.cursorrules",
+      "pillar": "agent_config",
+      "level": "L2",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .cursorrules",
+        "Create .cursor/rules"
+      ]
+    },
+    {
+      "check_id": "agent_config.aider_config",
+      "pillar": "agent_config",
+      "level": "L2",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .aider.conf.yml",
+        "Create .aider.conf.yaml",
+        "Create .aider.toml"
+      ]
+    },
+    {
+      "check_id": "agent_config.copilot_config",
+      "pillar": "agent_config",
+      "level": "L2",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .github/copilot-instructions.md",
+        "Create files matching pattern: .github/copilot/**/*.md"
+      ]
+    },
+    {
+      "check_id": "agent_config.windsurf_rules",
+      "pillar": "agent_config",
+      "level": "L2",
+      "message": "File not found: .windsurfrules",
+      "required": false,
+      "suggestions": [
+        "Create .windsurfrules"
+      ]
+    },
+    {
+      "check_id": "agent_config.mcp_json",
+      "pillar": "agent_config",
+      "level": "L3",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create mcp.json",
+        "Create .claude/mcp.json"
+      ]
+    },
+    {
+      "check_id": "agent_config.claude_hooks",
+      "pillar": "agent_config",
+      "level": "L3",
+      "message": "Found 0 files matching '.claude/hooks/*', need at least 1",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .claude/hooks/*"
+      ]
+    },
+    {
+      "check_id": "agent_config.multi_agent_support",
+      "pillar": "agent_config",
+      "level": "L4",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .agent-workflows.yml",
+        "Create files matching pattern: .agents/**/*.{yml,yaml,json}",
+        "Create .claude/agents.json"
+      ]
+    },
+    {
+      "check_id": "agent_config.context_injection",
+      "pillar": "agent_config",
+      "level": "L4",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .context/**/*",
+        "Create .claude/context.json",
+        "Create .rag-config.yml"
+      ]
+    },
+    {
+      "check_id": "agent_config.agent_permissions",
+      "pillar": "agent_config",
+      "level": "L4",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .claude/settings.json",
+        "Create .agent-policy.yml"
+      ]
+    },
+    {
+      "check_id": "agent_config.autonomous_workflow",
+      "pillar": "agent_config",
+      "level": "L5",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .agent-workflows/autonomous.yml",
+        "Create .agent-workflows/autonomous.json",
+        "Create .claude/autonomous.json"
+      ]
+    },
+    {
+      "check_id": "agent_config.self_improvement",
+      "pillar": "agent_config",
+      "level": "L5",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .agent-feedback.yml",
+        "Create files matching pattern: .agent-learning/**/*"
+      ]
+    },
+    {
+      "check_id": "docs.auto_generated_docs",
+      "pillar": "docs",
+      "level": "L5",
+      "message": "Only 0/5 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create docs/conf.py",
+        "Create typedoc.json",
+        "Create jsdoc.json",
+        "Create mkdocs.yml",
+        "Create docusaurus.config.js"
+      ]
+    },
+    {
+      "check_id": "docs.docs_as_code",
+      "pillar": "docs",
+      "level": "L5",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .github/workflows/*docs*.{yml,yaml}",
+        "Ensure files matching .github/workflows/*.{yml,yaml} contain required content"
+      ]
+    },
+    {
+      "check_id": "test.mutation_testing",
+      "pillar": "test",
+      "level": "L5",
+      "message": "Only 0/4 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create stryker.conf.js",
+        "Create stryker.conf.json",
+        "Create pyproject.toml",
+        "Update package.json to include required content"
+      ]
+    },
+    {
+      "check_id": "test.property_based_testing",
+      "pillar": "test",
+      "level": "L5",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Update package.json to include required content",
+        "Create pyproject.toml",
+        "Create files matching pattern: **/*.property.{test,spec}.{ts,js}"
+      ]
+    },
+    {
+      "check_id": "security.sast_integrated",
+      "pillar": "security",
+      "level": "L5",
+      "message": "Only 0/4 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create .github/workflows/codeql-analysis.yml",
+        "Create .github/workflows/codeql.yml",
+        "Create .semgrep.yml",
+        "Create .snyk"
+      ]
+    },
+    {
+      "check_id": "security.sbom_generation",
+      "pillar": "security",
+      "level": "L5",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: **/sbom*.{json,xml}",
+        "Ensure files matching .github/workflows/*.{yml,yaml} contain required content"
+      ]
+    },
+    {
+      "check_id": "build.canary_deployment",
+      "pillar": "build",
+      "level": "L5",
+      "message": "Only 0/3 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: **/k8s/**/*canary*.{yml,yaml}",
+        "Create argo-rollouts.yml",
+        "Create files matching pattern: **/flagger*.{yml,yaml}"
+      ]
+    },
+    {
+      "check_id": "build.rollback_automation",
+      "pillar": "build",
+      "level": "L5",
+      "message": "Only 0/2 alternatives passed (need 1)",
+      "required": false,
+      "suggestions": [
+        "Create files matching pattern: .github/workflows/*rollback*.{yml,yaml}",
+        "Create scripts/rollback.sh"
+      ]
     }
   ],
   "action_items": [
     {
       "priority": "medium",
-      "check_id": "env.dotenv_example",
-      "pillar": "env",
+      "check_id": "agent_config.gitignore_agent",
+      "pillar": "agent_config",
+      "level": "L1",
+      "action": "Update .gitignore to include required content"
+    },
+    {
+      "priority": "medium",
+      "check_id": "agent_config.claude_settings",
+      "pillar": "agent_config",
       "level": "L2",
-      "action": "Create .env.example"
+      "action": "Create .claude/settings.json"
+    },
+    {
+      "priority": "medium",
+      "check_id": "agent_config.claude_commands",
+      "pillar": "agent_config",
+      "level": "L2",
+      "action": "Create files matching pattern: .claude/commands/*.md"
+    },
+    {
+      "priority": "medium",
+      "check_id": "agent_config.cursorrules",
+      "pillar": "agent_config",
+      "level": "L2",
+      "action": "Create .cursorrules"
+    },
+    {
+      "priority": "medium",
+      "check_id": "agent_config.aider_config",
+      "pillar": "agent_config",
+      "level": "L2",
+      "action": "Create .aider.conf.yml"
+    },
+    {
+      "priority": "medium",
+      "check_id": "agent_config.copilot_config",
+      "pillar": "agent_config",
+      "level": "L2",
+      "action": "Create .github/copilot-instructions.md"
+    },
+    {
+      "priority": "medium",
+      "check_id": "agent_config.windsurf_rules",
+      "pillar": "agent_config",
+      "level": "L2",
+      "action": "Create .windsurfrules"
     },
     {
       "priority": "low",
-      "check_id": "env.docker_compose",
-      "pillar": "env",
+      "check_id": "agent_config.mcp_json",
+      "pillar": "agent_config",
       "level": "L3",
-      "action": "Create docker-compose.yml"
+      "action": "Create mcp.json"
     },
     {
       "priority": "low",
-      "check_id": "observability.tracing",
-      "pillar": "observability",
-      "level": "L4",
-      "action": "Install one of: @opentelemetry/sdk-trace-node, @opentelemetry/api, dd-trace, jaeger-client, @sentry/tracing, opentelemetry-sdk, ddtrace"
-    },
-    {
-      "priority": "low",
-      "check_id": "observability.metrics",
-      "pillar": "observability",
-      "level": "L4",
-      "action": "Install one of: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client"
+      "check_id": "agent_config.claude_hooks",
+      "pillar": "agent_config",
+      "level": "L3",
+      "action": "Create files matching pattern: .claude/hooks/*"
     },
     {
       "priority": "low",
@@ -230,6 +479,97 @@
       "pillar": "product",
       "level": "L4",
       "action": "Install one of: @optimizely/optimizely-sdk, @optimizely/react-sdk"
+    },
+    {
+      "priority": "low",
+      "check_id": "agent_config.multi_agent_support",
+      "pillar": "agent_config",
+      "level": "L4",
+      "action": "Create .agent-workflows.yml"
+    },
+    {
+      "priority": "low",
+      "check_id": "agent_config.context_injection",
+      "pillar": "agent_config",
+      "level": "L4",
+      "action": "Create files matching pattern: .context/**/*"
+    },
+    {
+      "priority": "low",
+      "check_id": "agent_config.agent_permissions",
+      "pillar": "agent_config",
+      "level": "L4",
+      "action": "Create .claude/settings.json"
+    },
+    {
+      "priority": "low",
+      "check_id": "agent_config.autonomous_workflow",
+      "pillar": "agent_config",
+      "level": "L5",
+      "action": "Create .agent-workflows/autonomous.yml"
+    },
+    {
+      "priority": "low",
+      "check_id": "agent_config.self_improvement",
+      "pillar": "agent_config",
+      "level": "L5",
+      "action": "Create .agent-feedback.yml"
+    },
+    {
+      "priority": "low",
+      "check_id": "docs.auto_generated_docs",
+      "pillar": "docs",
+      "level": "L5",
+      "action": "Create docs/conf.py"
+    },
+    {
+      "priority": "low",
+      "check_id": "docs.docs_as_code",
+      "pillar": "docs",
+      "level": "L5",
+      "action": "Create files matching pattern: .github/workflows/*docs*.{yml,yaml}"
+    },
+    {
+      "priority": "low",
+      "check_id": "test.mutation_testing",
+      "pillar": "test",
+      "level": "L5",
+      "action": "Create stryker.conf.js"
+    },
+    {
+      "priority": "low",
+      "check_id": "test.property_based_testing",
+      "pillar": "test",
+      "level": "L5",
+      "action": "Update package.json to include required content"
+    },
+    {
+      "priority": "low",
+      "check_id": "security.sast_integrated",
+      "pillar": "security",
+      "level": "L5",
+      "action": "Create .github/workflows/codeql-analysis.yml"
+    },
+    {
+      "priority": "low",
+      "check_id": "security.sbom_generation",
+      "pillar": "security",
+      "level": "L5",
+      "action": "Create files matching pattern: **/sbom*.{json,xml}"
+    },
+    {
+      "priority": "low",
+      "check_id": "build.canary_deployment",
+      "pillar": "build",
+      "level": "L5",
+      "action": "Create files matching pattern: **/k8s/**/*canary*.{yml,yaml}"
+    },
+    {
+      "priority": "low",
+      "check_id": "build.rollback_automation",
+      "pillar": "build",
+      "level": "L5",
+      "action": "Create files matching pattern: .github/workflows/*rollback*.{yml,yaml}"
     }
   ],
   "is_monorepo": false

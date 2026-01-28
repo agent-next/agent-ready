@@ -1,105 +1,172 @@
 ---
 name: agent-ready
-description: Scan repositories for AI agent readiness using the Factory.ai 9-pillar / 5-level framework. Use when (1) checking repository maturity for AI agents, (2) evaluating codebase quality, (3) generating missing config files, or (4) understanding what makes a repo agent-ready. Triggers on "check agent readiness", "scan for readiness", "evaluate repo maturity", "how ready is this repo", "what level is this repo", "/agent-ready".
+description: Analyze repositories for AI agent readiness using the 10-pillar / 5-level framework. Use when (1) evaluating codebase quality for AI agents, (2) understanding agent-native configuration, (3) generating missing config files, or (4) answering "how ready is this repo for AI agents". Triggers on "check agent readiness", "analyze repo maturity", "evaluate agent readiness", "what level is this repo", "/agent-ready".
 license: MIT
 metadata:
   author: robotlearning123
-  version: "0.0.1"
+  version: "0.0.2"
 ---
 
-# Agent-Ready Scanner
+# Agent-Ready Analysis
 
-Evaluate repository maturity for AI agent collaboration using the Factory.ai-compatible 9 Pillars / 5 Levels model.
+Evaluate repository maturity for AI agent collaboration using the 10 Pillars / 5 Levels model.
 
-## Quick Start
+## What Makes This Different
+
+**Traditional scanners**: Check if files exist (README.md ✓)
+**Agent-Ready v0.0.2**: Assess quality and AI-friendliness (README clear? AGENTS.md actionable? MCP configured?)
+
+**Key differentiator**: The `agent_config` pillar - we evaluate Agent Native configurations that no other tool checks:
+- `.claude/` directory (settings, commands, hooks)
+- `.cursorrules` / `.cursor/rules`
+- `mcp.json` and MCP server implementations
+- Multi-agent collaboration configs
+- Autonomous workflow definitions
+
+## Analysis Framework
+
+### 10 Pillars (v0.0.2)
+
+| # | Pillar | Focus |
+|---|--------|-------|
+| 1 | docs | README, AGENTS.md, API docs |
+| 2 | style | Linting, formatting, types |
+| 3 | build | Build scripts, CI/CD |
+| 4 | test | Unit, integration, coverage |
+| 5 | security | Secrets, dependabot, SAST |
+| 6 | observability | Logging, tracing, metrics |
+| 7 | env | .env.example, devcontainer |
+| 8 | task_discovery | Issue/PR templates |
+| 9 | product | Feature flags, analytics |
+| 10 | **agent_config** | **Agent Native configs** |
+
+### 5 Levels
+
+| Level | Name | Score Range | Description |
+|-------|------|-------------|-------------|
+| L1 | Functional | 0-20 | Basic functionality works |
+| L2 | Documented | 21-40 | Essential documentation |
+| L3 | Standardized | 41-60 | Standard practices |
+| L4 | Optimized | 61-80 | Advanced automation |
+| L5 | Autonomous | 81-100 | Self-improving, AI-ready |
+
+## How to Analyze
+
+### Step 1: Quick Baseline (Optional)
+
+For fast file-existence checks, run the CLI:
 
 ```bash
-# Scan current directory
+npx agent-ready scan . --output json
+```
+
+This gives you a quick snapshot but **only checks file existence, not quality**.
+
+### Step 2: Deep Analysis
+
+Use Read/Glob/Grep tools to analyze each pillar:
+
+1. **Discover project structure**
+   ```
+   Glob: **/*.{json,yml,yaml,md,ts,js}
+   ```
+
+2. **Read key files**
+   - README.md - Project overview
+   - package.json - Scripts, dependencies
+   - AGENTS.md - Agent instructions
+   - .claude/ - Claude Code config
+
+3. **Evaluate quality** using `references/scoring-rubric.md`
+
+4. **Follow patterns** in `references/analysis-patterns.md`
+
+### Step 3: Generate Report
+
+Output format:
+
+```markdown
+## Agent Readiness Report
+
+**Level: L3** (Standardized)
+**Overall Score: 72/100**
+
+### Pillar Breakdown
+| Pillar | Score | Key Finding |
+|--------|-------|-------------|
+| docs | 85/100 | README clear, missing API docs |
+| agent_config | 45/100 | AGENTS.md exists, no MCP |
+| test | 65/100 | Good unit tests, no e2e |
+...
+
+### Top Recommendations
+1. Configure MCP server (+15 agent_config)
+2. Add integration tests (+10 test)
+3. Add API documentation (+5 docs)
+```
+
+## Agent Configuration Analysis (New in v0.0.2)
+
+### What to Look For
+
+**L1 - Basic:**
+- AGENTS.md or CLAUDE.md exists
+- .gitignore covers .claude/, .cursor/
+
+**L2 - Structured:**
+- .claude/settings.json
+- .claude/commands/*.md
+- .cursorrules
+- .aider.conf.yml
+- .github/copilot-instructions.md
+
+**L3 - MCP Integration:**
+- mcp.json configured
+- MCP server implementation
+- Claude hooks defined
+
+**L4 - Advanced:**
+- Multi-agent collaboration
+- Context injection system
+- Permission boundaries
+
+**L5 - Autonomous:**
+- Autonomous workflows
+- Self-improvement mechanisms
+
+### Quality Assessment
+
+For AGENTS.md, check:
+- Does it explain key commands?
+- Does it describe architecture?
+- Does it list code conventions?
+- Does it specify files to ignore?
+- Is it actionable for AI agents?
+
+For .claude/settings.json, check:
+- Are permissions properly restricted?
+- Are dangerous commands blocked?
+- Are allowed tools specified?
+
+## CLI Reference (For Quick Scans)
+
+```bash
+# Basic scan
 npx agent-ready scan .
 
-# Chinese output
-npx agent-ready scan . --lang zh
+# JSON output
+npx agent-ready scan . --output json
 
-# Generate missing files for L2
+# Generate missing files
 npx agent-ready init . --level L2
 
 # Preview what would be created
 npx agent-ready init . --level L2 --dry-run
 ```
 
-## CLI Reference
-
-### scan
-```bash
-npx agent-ready scan <path> [options]
-  -o, --output <format>   json | markdown | both (default: both)
-  -l, --level <level>     Target level (L1-L5)
-  -v, --verbose           Show all checks
-  --lang <locale>         en | zh
-```
-
-### init
-```bash
-npx agent-ready init <path> [options]
-  -l, --level <level>     Generate files for level
-  -c, --check <id>        Generate for specific check
-  -n, --dry-run           Preview only
-  -f, --force             Overwrite existing
-```
-
-## Understanding Results
-
-**Levels (L1-L5):** L1=Functional, L2=Documented, L3=Standardized, L4=Optimized, L5=Autonomous
-
-**Pillars (9):** docs, style, build, test, security, observability, env, task_discovery, product
-
-**Scoring:** 80% of checks must pass per level. See `references/levels.md` for details.
-
-**Action Priorities:**
-- CRITICAL - Blocking current level
-- HIGH - Required for next level
-- MEDIUM/LOW - Improvements
-
-## Common Workflows
-
-**Initial assessment:**
-```bash
-npx agent-ready scan . --verbose
-```
-
-**Reach L2 (most important for AI agents):**
-```bash
-npx agent-ready init . --level L2
-```
-
-**Fix specific check:**
-```bash
-npx agent-ready init . --check docs.agents_md
-```
-
-## Key File: AGENTS.md
-
-The most important file for AI agent readiness:
-
-```markdown
-# AGENTS.md
-
-## Project Context
-What this project does.
-
-## Key Commands
-- `npm run build` - Build
-- `npm test` - Test
-
-## Code Conventions
-- TypeScript strict mode
-- Functional patterns
-
-## Files to Ignore
-- node_modules/, dist/, .env
-```
-
 ## References
 
-- **Pillar details:** See `references/pillars.md` for each pillar's purpose, key files, and examples
-- **Level requirements:** See `references/levels.md` for per-level requirements and progression strategy
+- **Scoring rubric**: `references/scoring-rubric.md`
+- **Analysis patterns**: `references/analysis-patterns.md`
+- **Pillar details**: `references/pillars.md`
+- **Level requirements**: `references/levels.md`

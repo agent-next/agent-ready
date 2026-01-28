@@ -60,6 +60,8 @@ export async function outputJson(result: ScanResult, outputPath: string): Promis
     })),
     is_monorepo: result.is_monorepo,
     apps: result.apps,
+    project_type: result.project_type,
+    checks_skipped_by_type: result.checks_skipped_by_type,
   };
 
   const json = JSON.stringify(output, null, 2);

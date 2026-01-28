@@ -1,22 +1,31 @@
 #!/usr/bin/env node
 /**
- * agent-ready MCP Server
+ * agent-ready MCP Server v0.0.2
  *
- * Provides agent-ready scanning capabilities through the Model Context Protocol.
+ * Provides agent-ready context and analysis framework through the Model Context Protocol.
+ *
+ * Tools:
+ * - get_repo_context: Returns project structure, tech stack, key files
+ * - get_analysis_framework: Returns 10-pillar/5-level evaluation framework
+ * - get_baseline_scan: Quick file-existence check (CLI wrapper)
+ * - init_files: Generate missing configuration files
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { scanRepositorySchema, scanRepository } from './tools/scan-repository.js';
-import { getActionItemsSchema, getActionItems } from './tools/get-action-items.js';
+import { getRepoContextSchema, getRepoContext } from './tools/get-repo-context.js';
+import {
+  getAnalysisFrameworkSchema,
+  getAnalysisFramework,
+} from './tools/get-analysis-framework.js';
+import { getBaselineScanSchema, getBaselineScan } from './tools/get-baseline-scan.js';
 import { initFilesSchema, initFiles } from './tools/init-files.js';
-import { listProfilesSchema, listProfilesHandler } from './tools/list-profiles.js';
 
 // Create MCP server
 const server = new McpServer({
   name: 'agent-ready',
-  version: '0.0.1',
+  version: '0.0.2',
 });
 
 // Helper to create tool handlers with consistent error handling
@@ -40,47 +49,52 @@ function createHandler<T extends z.ZodType>(
 }
 
 // Register tools
+
+// NEW in v0.0.2: Context provider for Claude's own analysis
 server.tool(
-  'scan_repository',
-  'Scan a repository for AI agent readiness. Returns level (L1-L5), overall score, pillar breakdown, and statistics.',
+  'get_repo_context',
+  'Get repository context: tech stack, key files, structure. Use this to understand the project before analysis.',
   {
-    ...scanRepositorySchema.shape,
+    ...getRepoContextSchema.shape,
   },
-  createHandler(scanRepositorySchema, scanRepository)
+  createHandler(getRepoContextSchema, getRepoContext)
 );
 
+// NEW in v0.0.2: Analysis framework provider
 server.tool(
-  'get_action_items',
-  'Get prioritized action items for improving agent readiness. Filter by priority (critical/high/medium/low).',
+  'get_analysis_framework',
+  'Get the 10-pillar/5-level analysis framework. Returns scoring rubrics and evaluation questions for quality-based assessment.',
   {
-    ...getActionItemsSchema.shape,
+    ...getAnalysisFrameworkSchema.shape,
   },
-  createHandler(getActionItemsSchema, getActionItems)
+  createHandler(getAnalysisFrameworkSchema, getAnalysisFramework)
 );
 
+// Renamed from scan_repository: Now clearly a baseline, not deep analysis
+server.tool(
+  'get_baseline_scan',
+  'Quick file-existence check using CLI. Only checks if files exist, not quality. For deep analysis, use get_repo_context + Read tools.',
+  {
+    ...getBaselineScanSchema.shape,
+  },
+  createHandler(getBaselineScanSchema, getBaselineScan)
+);
+
+// Kept from v0.0.1: File generation
 server.tool(
   'init_files',
-  'Generate missing configuration files. Set dry_run=true to preview, dry_run=false to create files.',
+  'Generate missing configuration files (AGENTS.md, .cursorrules, etc.). Set dry_run=true to preview.',
   {
     ...initFilesSchema.shape,
   },
   createHandler(initFilesSchema, initFiles)
 );
 
-server.tool(
-  'list_profiles',
-  'List available scanning profiles with descriptions and pillar/level coverage.',
-  {
-    ...listProfilesSchema.shape,
-  },
-  createHandler(listProfilesSchema, listProfilesHandler)
-);
-
 // Start server
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('agent-ready MCP server started');
+  console.error('agent-ready MCP server v0.0.2 started');
 }
 
 main().catch((error) => {

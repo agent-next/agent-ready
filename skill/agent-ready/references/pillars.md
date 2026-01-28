@@ -1,6 +1,8 @@
-# The 9 Pillars of Agent Readiness
+# The 10 Pillars of Agent Readiness (v0.0.2)
 
 Each pillar represents a dimension of repository maturity that enables AI agents to work effectively with the codebase.
+
+**New in v0.0.2:** The `agent_config` pillar - our core differentiator for Agent Native configurations.
 
 ## Table of Contents
 
@@ -13,6 +15,7 @@ Each pillar represents a dimension of repository maturity that enables AI agents
 7. [Development Environment (env)](#7-development-environment-env)
 8. [Task Discovery (task_discovery)](#8-task-discovery-task_discovery)
 9. [Product & Experimentation (product)](#9-product--experimentation-product)
+10. [Agent Configuration (agent_config)](#10-agent-configuration-agent_config) - **NEW**
 
 ---
 
@@ -273,14 +276,121 @@ if (isEnabled('new-checkout-flow', user)) {
 
 ---
 
+## 10. Agent Configuration (agent_config)
+
+**Purpose**: Configure AI agent behavior and enable effective AI-human collaboration.
+
+**This is the core differentiator of Agent-Ready** - no other tool evaluates these Agent Native configurations.
+
+### Key Files
+
+| File | Level | Purpose |
+|------|-------|---------|
+| AGENTS.md / CLAUDE.md | L1 | AI agent instructions |
+| .cursorrules | L2 | Cursor AI IDE rules |
+| .claude/settings.json | L2 | Claude Code settings |
+| .claude/commands/*.md | L2 | Custom slash commands |
+| .aider.conf.yml | L2 | Aider AI config |
+| .github/copilot-instructions.md | L2 | GitHub Copilot rules |
+| .windsurfrules | L2 | Windsurf IDE rules |
+| mcp.json | L3 | MCP server config |
+| .claude/hooks/* | L3 | Automation hooks |
+| .agent-workflows.yml | L4 | Multi-agent workflows |
+| .claude/autonomous.json | L5 | Autonomous operations |
+
+### AGENTS.md Best Practices
+
+```markdown
+# AGENTS.md
+
+## Project Context
+Brief description of what this project does and its architecture.
+
+## Key Commands
+- `npm run build` - Build the project
+- `npm test` - Run tests
+- `npm run lint` - Check code style
+
+## Architecture
+- `src/` - Source code (TypeScript)
+- `test/` - Test files
+- `packages/` - Monorepo packages
+
+## Code Conventions
+- Use TypeScript strict mode
+- Prefer functional patterns
+- All public APIs need JSDoc comments
+
+## Files to Ignore
+- `node_modules/`
+- `dist/`
+- `.env` (see .env.example)
+
+## Agent-Specific Instructions
+- Run tests before committing
+- Always update CHANGELOG.md for features
+- Prefer existing patterns over new abstractions
+```
+
+### Claude Code Settings Example
+
+```json
+// .claude/settings.json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(git:*)",
+      "Read(*)",
+      "Write(src/**)",
+      "Edit(src/**)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Write(.env)"
+    ]
+  }
+}
+```
+
+### MCP Configuration Example
+
+```json
+// mcp.json
+{
+  "mcpServers": {
+    "project-tools": {
+      "command": "node",
+      "args": ["packages/mcp/dist/index.js"],
+      "env": {}
+    }
+  }
+}
+```
+
+### Why It Matters for Agents
+
+- **AGENTS.md** = Project context for any AI agent
+- **Claude settings** = Permission boundaries for Claude Code
+- **MCP servers** = Tool extensions for Claude
+- **Hooks** = Automated workflows triggered by events
+- **Multi-agent** = Coordination between AI assistants
+
+---
+
 ## Pillar Dependencies
 
 Some pillars depend on others:
 
 ```
 L1: docs → style → build → test → security
-L2: + observability → env → task_discovery
-L3-5: + product
+L2: + observability → env → task_discovery + agent_config
+L3-5: + product + advanced agent_config (MCP, hooks)
 ```
 
 Higher levels build on lower levels. Achieve L2 across all basic pillars before focusing on L3+ optimizations.
+
+For AI agent readiness specifically, prioritize:
+1. AGENTS.md (L1 agent_config)
+2. .cursorrules or .claude/settings.json (L2 agent_config)
+3. MCP integration (L3 agent_config)

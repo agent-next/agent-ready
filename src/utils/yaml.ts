@@ -4,7 +4,7 @@
 
 import * as yaml from 'js-yaml';
 import { readFile } from './fs.js';
-import type { Profile, CheckConfig, Pillar, Level } from '../types.js';
+import type { Profile, CheckConfig, Pillar, Level, ProjectType } from '../types.js';
 import { PILLARS, LEVELS } from '../types.js';
 
 /**
@@ -65,6 +65,7 @@ interface RawCheck {
   required?: boolean;
   weight?: number;
   tags?: string[];
+  applicableTo?: ProjectType[];
   [key: string]: unknown;
 }
 
@@ -99,6 +100,14 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
     );
   }
 
+  // Validate applicableTo if provided
+  if (
+    raw.applicableTo &&
+    (!Array.isArray(raw.applicableTo) || !raw.applicableTo.every((t) => typeof t === 'string'))
+  ) {
+    throw new Error(`Check '${raw.id}' 'applicableTo' must be an array of strings`);
+  }
+
   const base = {
     id: raw.id,
     name: raw.name || raw.id,
@@ -108,6 +117,7 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
     required: raw.required ?? false,
     weight: raw.weight ?? 1.0,
     tags: raw.tags ?? [],
+    applicableTo: raw.applicableTo,
   };
 
   switch (raw.type) {
@@ -222,6 +232,38 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
         type: 'dependency_detect',
         packages: raw.packages as string[],
         config_files: raw.config_files as string[] | undefined,
+      };
+
+    case 'git_freshness':
+      if (typeof raw.path !== 'string') {
+        throw new Error(`Check '${raw.id}' of type 'git_freshness' missing required 'path' string`);
+      }
+      if (typeof raw.max_days !== 'number') {
+        throw new Error(
+          `Check '${raw.id}' of type 'git_freshness' missing required 'max_days' number`
+        );
+      }
+      return {
+        ...base,
+        type: 'git_freshness',
+        path: raw.path as string,
+        max_days: raw.max_days as number,
+      };
+
+    case 'command_exists':
+      if (!Array.isArray(raw.commands)) {
+        throw new Error(
+          `Check '${raw.id}' of type 'command_exists' missing required 'commands' array`
+        );
+      }
+      if (!raw.commands.every((c) => typeof c === 'string')) {
+        throw new Error(`Check '${raw.id}' 'commands' array must contain only strings`);
+      }
+      return {
+        ...base,
+        type: 'command_exists',
+        commands: raw.commands as string[],
+        require_all: raw.require_all as boolean | undefined,
       };
 
     default:

@@ -8,6 +8,7 @@ import * as path from 'node:path';
 import type { ScanContext, PackageJson } from '../types.js';
 import { readFile, fileExists, directoryExists, findFiles } from '../utils/fs.js';
 import { getCommitSha, getRepoName } from '../utils/git.js';
+import { detectProjectType } from './project-type.js';
 
 /**
  * Build scan context for a repository
@@ -22,6 +23,9 @@ export async function buildScanContext(rootPath: string): Promise<ScanContext> {
   // Detect monorepo
   const { isMonorepo, apps } = await detectMonorepo(rootPath, packageJson);
 
+  // Detect project type for intelligent check filtering
+  const projectType = await detectProjectType(rootPath, packageJson);
+
   return {
     root_path: rootPath,
     repo_name: repoName,
@@ -31,6 +35,7 @@ export async function buildScanContext(rootPath: string): Promise<ScanContext> {
     package_json: packageJson,
     is_monorepo: isMonorepo,
     monorepo_apps: apps,
+    project_type: projectType,
   };
 }
 

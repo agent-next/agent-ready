@@ -50,7 +50,7 @@ const TEMPLATE_DEFS: Array<Omit<Template, 'content'>> = [
     targetPath: '.gitignore',
   },
   {
-    checkId: 'ci.github_workflow',
+    checkId: 'build.github_workflow',
     name: 'CI Workflow',
     description: 'GitHub Actions CI workflow',
     targetPath: '.github/workflows/ci.yml',

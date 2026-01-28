@@ -1,0 +1,60 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/settings.json",
+  "permissions": {
+    "allowedTools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash"
+    ],
+    "blockedCommands": [
+      "rm -rf /",
+      "rm -rf ~",
+      "git push --force",
+      "npm publish",
+      "curl | bash",
+      "wget | bash"
+    ],
+    "allowedPaths": [
+      "src/**",
+      "test/**",
+      "profiles/**",
+      ".github/**",
+      "*.md",
+      "*.json",
+      "*.yaml",
+      "*.yml",
+      "*.ts"
+    ],
+    "blockedPaths": [
+      ".env",
+      ".env.local",
+      "*.key",
+      "*.pem",
+      "**/secrets/**"
+    ]
+  },
+  "context": {
+    "includePatterns": [
+      "src/**/*.ts",
+      "test/**/*.ts",
+      "profiles/*.yaml",
+      "SPEC.md",
+      "CLAUDE.md",
+      "README.md"
+    ],
+    "excludePatterns": [
+      "node_modules/**",
+      "dist/**",
+      "coverage/**",
+      "*.log"
+    ]
+  },
+  "behavior": {
+    "autoApprove": false,
+    "maxFileSize": 1048576,
+    "requireTestsOnChange": true
+  }
+}

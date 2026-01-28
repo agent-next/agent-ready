@@ -1,0 +1,377 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/robotlearning123/agent-ready/schema/scan-result.json",
+  "title": "Agent Ready Scan Result",
+  "description": "Output format for agent-ready repository scans",
+  "type": "object",
+  "required": [
+    "repo",
+    "commit",
+    "timestamp",
+    "profile",
+    "profile_version",
+    "level",
+    "progress_to_next",
+    "overall_score",
+    "pillars",
+    "levels",
+    "check_results",
+    "failed_checks",
+    "action_items",
+    "is_monorepo"
+  ],
+  "properties": {
+    "repo": {
+      "type": "string",
+      "description": "Repository name"
+    },
+    "commit": {
+      "type": "string",
+      "description": "Git commit SHA"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scan execution timestamp in ISO 8601 format"
+    },
+    "profile": {
+      "type": "string",
+      "description": "Profile name used for scan"
+    },
+    "profile_version": {
+      "type": "string",
+      "description": "Profile version"
+    },
+    "level": {
+      "oneOf": [
+        { "type": "null" },
+        { "enum": ["L0", "L1", "L2", "L3", "L4", "L5"] }
+      ],
+      "description": "Overall maturity level achieved (null if none)"
+    },
+    "progress_to_next": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Progress to next level (0.0 to 1.0)"
+    },
+    "overall_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Overall score (0-100)"
+    },
+    "pillars": {
+      "type": "object",
+      "description": "Per-pillar summaries",
+      "additionalProperties": {
+        "$ref": "#/$defs/PillarSummary"
+      }
+    },
+    "levels": {
+      "type": "object",
+      "description": "Per-level summaries",
+      "properties": {
+        "L0": { "$ref": "#/$defs/LevelSummary" },
+        "L1": { "$ref": "#/$defs/LevelSummary" },
+        "L2": { "$ref": "#/$defs/LevelSummary" },
+        "L3": { "$ref": "#/$defs/LevelSummary" },
+        "L4": { "$ref": "#/$defs/LevelSummary" },
+        "L5": { "$ref": "#/$defs/LevelSummary" }
+      },
+      "required": ["L0", "L1", "L2", "L3", "L4", "L5"]
+    },
+    "check_results": {
+      "type": "array",
+      "description": "All check execution results",
+      "items": {
+        "$ref": "#/$defs/CheckResult"
+      }
+    },
+    "failed_checks": {
+      "type": "array",
+      "description": "Failed checks only",
+      "items": {
+        "$ref": "#/$defs/CheckResult"
+      }
+    },
+    "action_items": {
+      "type": "array",
+      "description": "Prioritized action recommendations",
+      "items": {
+        "$ref": "#/$defs/ActionItem"
+      }
+    },
+    "is_monorepo": {
+      "type": "boolean",
+      "description": "Whether repository is a monorepo"
+    },
+    "apps": {
+      "type": "array",
+      "description": "Monorepo app results (only if is_monorepo=true)",
+      "items": {
+        "$ref": "#/$defs/MonorepoApp"
+      }
+    }
+  },
+  "$defs": {
+    "PillarSummary": {
+      "type": "object",
+      "required": [
+        "pillar",
+        "name",
+        "level_achieved",
+        "score",
+        "checks_passed",
+        "checks_total",
+        "failed_checks"
+      ],
+      "properties": {
+        "pillar": {
+          "type": "string",
+          "enum": [
+            "docs",
+            "style",
+            "build",
+            "test",
+            "security",
+            "observability",
+            "env",
+            "task_discovery",
+            "product",
+            "agent_config",
+            "code_quality"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable pillar name"
+        },
+        "level_achieved": {
+          "oneOf": [
+            { "type": "null" },
+            { "enum": ["L0", "L1", "L2", "L3", "L4", "L5"] }
+          ],
+          "description": "Highest level achieved for this pillar"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Pillar score (0-100)"
+        },
+        "checks_passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of checks passed"
+        },
+        "checks_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of checks"
+        },
+        "failed_checks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of failed check IDs"
+        }
+      }
+    },
+    "LevelSummary": {
+      "type": "object",
+      "required": [
+        "level",
+        "achieved",
+        "score",
+        "checks_passed",
+        "checks_total",
+        "required_passed",
+        "required_total"
+      ],
+      "properties": {
+        "level": {
+          "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]
+        },
+        "achieved": {
+          "type": "boolean",
+          "description": "Whether this level is achieved"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Level score (0-100)"
+        },
+        "checks_passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Checks passed at this level"
+        },
+        "checks_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total checks at this level"
+        },
+        "required_passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Required checks passed"
+        },
+        "required_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total required checks"
+        }
+      }
+    },
+    "CheckResult": {
+      "type": "object",
+      "required": [
+        "check_id",
+        "check_name",
+        "pillar",
+        "level",
+        "passed",
+        "required",
+        "message"
+      ],
+      "properties": {
+        "check_id": {
+          "type": "string",
+          "description": "Unique check identifier (pillar.check_name)"
+        },
+        "check_name": {
+          "type": "string",
+          "description": "Human-readable check name"
+        },
+        "pillar": {
+          "type": "string",
+          "enum": [
+            "docs",
+            "style",
+            "build",
+            "test",
+            "security",
+            "observability",
+            "env",
+            "task_discovery",
+            "product",
+            "agent_config",
+            "code_quality"
+          ]
+        },
+        "level": {
+          "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "Whether check passed"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether check is mandatory for its level"
+        },
+        "message": {
+          "type": "string",
+          "description": "Explanation of result"
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional context (optional)"
+        },
+        "matched_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files matched (for glob checks)"
+        },
+        "suggestions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Actionable recommendations on failure"
+        }
+      }
+    },
+    "ActionItem": {
+      "type": "object",
+      "required": [
+        "priority",
+        "check_id",
+        "pillar",
+        "level",
+        "action"
+      ],
+      "properties": {
+        "priority": {
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Priority level"
+        },
+        "check_id": {
+          "type": "string",
+          "description": "Associated check ID"
+        },
+        "pillar": {
+          "type": "string"
+        },
+        "level": {
+          "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]
+        },
+        "action": {
+          "type": "string",
+          "description": "Recommended action"
+        },
+        "details": {
+          "type": "string",
+          "description": "Additional details"
+        },
+        "template": {
+          "type": "string",
+          "description": "Template file to generate"
+        }
+      }
+    },
+    "MonorepoApp": {
+      "type": "object",
+      "required": [
+        "name",
+        "path",
+        "level",
+        "score",
+        "checks_passed",
+        "checks_total"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "App name"
+        },
+        "path": {
+          "type": "string",
+          "description": "Relative path to app"
+        },
+        "level": {
+          "oneOf": [
+            { "type": "null" },
+            { "enum": ["L0", "L1", "L2", "L3", "L4", "L5"] }
+          ]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "checks_passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checks_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if scan failed"
+        }
+      }
+    }
+  }
+}

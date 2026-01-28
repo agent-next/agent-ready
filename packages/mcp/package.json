@@ -1,6 +1,6 @@
 {
   "name": "agent-ready-mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MCP server for agent-ready repository scanner",
   "type": "module",
   "main": "dist/index.js",
@@ -34,6 +34,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.0",
     "agent-ready": "file:../..",
+    "glob": "^13.0.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

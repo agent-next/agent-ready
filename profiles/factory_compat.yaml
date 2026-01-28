@@ -775,6 +775,7 @@ checks:
     pillar: observability
     level: L4
     required: false
+    applicableTo: [web-service, webapp]  # Not applicable to CLI or library projects
     packages:
       - "@opentelemetry/sdk-trace-node"
       - "@opentelemetry/api"
@@ -795,6 +796,7 @@ checks:
     pillar: observability
     level: L4
     required: false
+    applicableTo: [web-service, webapp]  # Not applicable to CLI or library projects
     packages:
       - "prom-client"
       - "statsd-client"
@@ -859,6 +861,7 @@ checks:
     pillar: env
     level: L3
     required: false
+    applicableTo: [web-service, webapp, monorepo]  # Not typically needed for CLI or library
     checks:
       - id: env.docker_compose_yml
         type: file_exists
@@ -992,6 +995,7 @@ checks:
     pillar: product
     level: L4
     required: false
+    applicableTo: [webapp, web-service]  # Not applicable to CLI or library projects
     checks:
       - id: product.launchdarkly
         type: dependency_detect
@@ -1047,6 +1051,7 @@ checks:
     pillar: product
     level: L4
     required: false
+    applicableTo: [webapp, web-service]  # Not applicable to CLI or library projects
     checks:
       - id: product.segment
         type: dependency_detect
@@ -1103,6 +1108,7 @@ checks:
     pillar: product
     level: L4
     required: false
+    applicableTo: [webapp, web-service]  # Not applicable to CLI or library projects
     checks:
       - id: product.optimizely
         type: dependency_detect
@@ -1138,3 +1144,866 @@ checks:
         required: false
         packages:
           - "vwo-node-sdk"
+
+  # =============================================================================
+  # PILLAR: Agent Configuration (agent_config) - NEW in v0.0.2
+  # The core differentiator: Agent Native configuration files
+  # =============================================================================
+
+  # L1 - Basic Agent Configuration (3 checks)
+  - id: agent_config.agents_md
+    name: AGENTS.md or CLAUDE.md exists
+    description: AI agent instruction file for providing context to agents
+    type: any_of
+    pillar: agent_config
+    level: L1
+    required: false
+    checks:
+      - id: agent_config.agents_md.standard
+        type: file_exists
+        name: AGENTS.md
+        pillar: agent_config
+        level: L1
+        required: false
+        path: AGENTS.md
+      - id: agent_config.agents_md.claude
+        type: file_exists
+        name: CLAUDE.md
+        pillar: agent_config
+        level: L1
+        required: false
+        path: CLAUDE.md
+      - id: agent_config.agents_md.copilot
+        type: file_exists
+        name: GitHub Copilot instructions
+        pillar: agent_config
+        level: L1
+        required: false
+        path: .github/copilot-instructions.md
+
+  - id: agent_config.gitignore_agent
+    name: .gitignore covers agent caches
+    description: .gitignore includes AI agent cache and temp directories
+    type: file_exists
+    pillar: agent_config
+    level: L1
+    required: false
+    path: .gitignore
+    content_regex: "(\\.claude|\\.cursor|\\.aider|\\.copilot)"
+
+  - id: agent_config.basic_instructions
+    name: Basic agent instructions exist
+    description: Any form of agent instruction file exists
+    type: any_of
+    pillar: agent_config
+    level: L1
+    required: false
+    checks:
+      - id: agent_config.basic_instructions.agents
+        type: file_exists
+        name: AGENTS.md exists
+        pillar: agent_config
+        level: L1
+        required: false
+        path: AGENTS.md
+      - id: agent_config.basic_instructions.claude
+        type: file_exists
+        name: CLAUDE.md exists
+        pillar: agent_config
+        level: L1
+        required: false
+        path: CLAUDE.md
+      - id: agent_config.basic_instructions.cursorrules
+        type: file_exists
+        name: .cursorrules exists
+        pillar: agent_config
+        level: L1
+        required: false
+        path: .cursorrules
+
+  # L2 - Structured Configuration (6 checks)
+  - id: agent_config.claude_settings
+    name: Claude Code settings
+    description: .claude/settings.json or .claude/settings.local.json
+    type: any_of
+    pillar: agent_config
+    level: L2
+    required: false
+    checks:
+      - id: agent_config.claude_settings.json
+        type: file_exists
+        name: Claude settings.json
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .claude/settings.json
+      - id: agent_config.claude_settings.local
+        type: file_exists
+        name: Claude settings.local.json
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .claude/settings.local.json
+
+  - id: agent_config.claude_commands
+    name: Claude custom commands
+    description: Custom slash commands defined in .claude/commands/
+    type: path_glob
+    pillar: agent_config
+    level: L2
+    required: false
+    pattern: ".claude/commands/*.md"
+    min_matches: 1
+
+  - id: agent_config.cursorrules
+    name: Cursor rules configuration
+    description: .cursorrules or .cursor/rules for Cursor AI IDE
+    type: any_of
+    pillar: agent_config
+    level: L2
+    required: false
+    checks:
+      - id: agent_config.cursorrules.root
+        type: file_exists
+        name: .cursorrules (root)
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .cursorrules
+      - id: agent_config.cursorrules.dir
+        type: file_exists
+        name: .cursor/rules
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .cursor/rules
+
+  - id: agent_config.aider_config
+    name: Aider configuration
+    description: .aider.conf.yml for Aider AI assistant
+    type: any_of
+    pillar: agent_config
+    level: L2
+    required: false
+    checks:
+      - id: agent_config.aider_config.yml
+        type: file_exists
+        name: .aider.conf.yml
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .aider.conf.yml
+      - id: agent_config.aider_config.yaml
+        type: file_exists
+        name: .aider.conf.yaml
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .aider.conf.yaml
+      - id: agent_config.aider_config.toml
+        type: file_exists
+        name: .aider.toml
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .aider.toml
+
+  - id: agent_config.copilot_config
+    name: GitHub Copilot configuration
+    description: Copilot instructions for GitHub Copilot
+    type: any_of
+    pillar: agent_config
+    level: L2
+    required: false
+    checks:
+      - id: agent_config.copilot_instructions
+        type: file_exists
+        name: copilot-instructions.md
+        pillar: agent_config
+        level: L2
+        required: false
+        path: .github/copilot-instructions.md
+      - id: agent_config.copilot_prompts
+        type: path_glob
+        name: Copilot prompts directory
+        pillar: agent_config
+        level: L2
+        required: false
+        pattern: ".github/copilot/**/*.md"
+
+  - id: agent_config.windsurf_rules
+    name: Windsurf rules configuration
+    description: .windsurfrules for Windsurf AI IDE
+    type: file_exists
+    pillar: agent_config
+    level: L2
+    required: false
+    path: .windsurfrules
+
+  # L3 - MCP Integration (4 checks)
+  - id: agent_config.mcp_json
+    name: MCP configuration exists
+    description: mcp.json for Model Context Protocol server configuration
+    type: any_of
+    pillar: agent_config
+    level: L3
+    required: false
+    checks:
+      - id: agent_config.mcp_json.root
+        type: file_exists
+        name: mcp.json (root)
+        pillar: agent_config
+        level: L3
+        required: false
+        path: mcp.json
+      - id: agent_config.mcp_json.claude
+        type: file_exists
+        name: .claude/mcp.json
+        pillar: agent_config
+        level: L3
+        required: false
+        path: .claude/mcp.json
+
+  - id: agent_config.mcp_server_config
+    name: MCP server implementation
+    description: MCP server configuration or implementation exists
+    type: any_of
+    pillar: agent_config
+    level: L3
+    required: false
+    checks:
+      - id: agent_config.mcp_server_ts
+        type: path_glob
+        name: MCP server TypeScript
+        pillar: agent_config
+        level: L3
+        required: false
+        pattern: "**/mcp/**/*.ts"
+        min_matches: 1
+      - id: agent_config.mcp_server_py
+        type: path_glob
+        name: MCP server Python
+        pillar: agent_config
+        level: L3
+        required: false
+        pattern: "**/mcp/**/*.py"
+        min_matches: 1
+      - id: agent_config.mcp_package
+        type: file_exists
+        name: MCP in package.json
+        pillar: agent_config
+        level: L3
+        required: false
+        path: package.json
+        content_regex: "@modelcontextprotocol"
+
+  - id: agent_config.mcp_tools_defined
+    name: MCP tools defined
+    description: At least one MCP tool is defined
+    type: any_of
+    pillar: agent_config
+    level: L3
+    required: false
+    checks:
+      - id: agent_config.mcp_tools_json
+        type: file_exists
+        name: Tools in mcp.json
+        pillar: agent_config
+        level: L3
+        required: false
+        path: mcp.json
+        content_regex: "(tools|server\\.tool)"
+      - id: agent_config.mcp_tools_code
+        type: path_glob
+        name: Tool implementations
+        pillar: agent_config
+        level: L3
+        required: false
+        pattern: "**/tools/*.ts"
+        min_matches: 1
+
+  - id: agent_config.claude_hooks
+    name: Claude hooks configured
+    description: .claude/hooks/ directory with automation hooks
+    type: path_glob
+    pillar: agent_config
+    level: L3
+    required: false
+    pattern: ".claude/hooks/*"
+    min_matches: 1
+
+  # L4 - Advanced Automation (3 checks)
+  - id: agent_config.multi_agent_support
+    name: Multi-agent collaboration support
+    description: Configuration for multiple AI agents working together
+    type: any_of
+    pillar: agent_config
+    level: L4
+    required: false
+    checks:
+      - id: agent_config.multi_agent_workflow
+        type: file_exists
+        name: Agent workflow config
+        pillar: agent_config
+        level: L4
+        required: false
+        path: .agent-workflows.yml
+      - id: agent_config.agent_team
+        type: path_glob
+        name: Agent team definitions
+        pillar: agent_config
+        level: L4
+        required: false
+        pattern: ".agents/**/*.{yml,yaml,json}"
+        min_matches: 1
+      - id: agent_config.claude_multi
+        type: file_exists
+        name: Claude multi-agent config
+        pillar: agent_config
+        level: L4
+        required: false
+        path: .claude/agents.json
+
+  - id: agent_config.context_injection
+    name: Automatic context injection
+    description: System for automatically providing context to agents
+    type: any_of
+    pillar: agent_config
+    level: L4
+    required: false
+    checks:
+      - id: agent_config.context_files
+        type: path_glob
+        name: Context injection files
+        pillar: agent_config
+        level: L4
+        required: false
+        pattern: ".context/**/*"
+        min_matches: 1
+      - id: agent_config.claude_context
+        type: file_exists
+        name: Claude context config
+        pillar: agent_config
+        level: L4
+        required: false
+        path: .claude/context.json
+      - id: agent_config.rag_config
+        type: file_exists
+        name: RAG configuration
+        pillar: agent_config
+        level: L4
+        required: false
+        path: .rag-config.yml
+
+  - id: agent_config.agent_permissions
+    name: Agent permission boundaries
+    description: Defined permission and capability boundaries for agents
+    type: any_of
+    pillar: agent_config
+    level: L4
+    required: false
+    checks:
+      - id: agent_config.claude_permissions
+        type: file_exists
+        name: Claude permissions config
+        pillar: agent_config
+        level: L4
+        required: false
+        path: .claude/settings.json
+        content_regex: "(permissions|allowedTools|blockedTools)"
+      - id: agent_config.agent_policy
+        type: file_exists
+        name: Agent policy file
+        pillar: agent_config
+        level: L4
+        required: false
+        path: .agent-policy.yml
+
+  # L5 - Autonomous Agent (2 checks)
+  - id: agent_config.autonomous_workflow
+    name: Autonomous workflow definition
+    description: Workflows that agents can execute without human intervention
+    type: any_of
+    pillar: agent_config
+    level: L5
+    required: false
+    checks:
+      - id: agent_config.auto_workflow_yml
+        type: file_exists
+        name: Autonomous workflow YAML
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .agent-workflows/autonomous.yml
+      - id: agent_config.auto_workflow_json
+        type: file_exists
+        name: Autonomous workflow JSON
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .agent-workflows/autonomous.json
+      - id: agent_config.claude_auto
+        type: file_exists
+        name: Claude autonomous config
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .claude/autonomous.json
+
+  - id: agent_config.self_improvement
+    name: Self-improvement mechanism
+    description: Agent can learn from feedback and improve its behavior
+    type: any_of
+    pillar: agent_config
+    level: L5
+    required: false
+    checks:
+      - id: agent_config.feedback_loop
+        type: file_exists
+        name: Feedback loop config
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .agent-feedback.yml
+      - id: agent_config.learning_config
+        type: path_glob
+        name: Agent learning configuration
+        pillar: agent_config
+        level: L5
+        required: false
+        pattern: ".agent-learning/**/*"
+        min_matches: 1
+
+  # =============================================================================
+  # L5 CHECKS FOR EXISTING PILLARS (added in v0.0.2)
+  # =============================================================================
+
+  # docs.L5 - Auto-generated documentation
+  - id: docs.auto_generated_docs
+    name: Auto-generated documentation
+    description: Documentation is automatically generated from code (Sphinx, TSDoc, JSDoc, etc.)
+    type: any_of
+    pillar: docs
+    level: L5
+    required: false
+    checks:
+      - id: docs.auto_generated_sphinx
+        type: file_exists
+        name: Sphinx configuration
+        pillar: docs
+        level: L5
+        required: false
+        path: docs/conf.py
+      - id: docs.auto_generated_typedoc
+        type: file_exists
+        name: TypeDoc configuration
+        pillar: docs
+        level: L5
+        required: false
+        path: typedoc.json
+      - id: docs.auto_generated_jsdoc
+        type: file_exists
+        name: JSDoc configuration
+        pillar: docs
+        level: L5
+        required: false
+        path: jsdoc.json
+      - id: docs.auto_generated_mkdocs
+        type: file_exists
+        name: MkDocs configuration
+        pillar: docs
+        level: L5
+        required: false
+        path: mkdocs.yml
+      - id: docs.auto_generated_docusaurus
+        type: file_exists
+        name: Docusaurus configuration
+        pillar: docs
+        level: L5
+        required: false
+        path: docusaurus.config.js
+
+  - id: docs.docs_as_code
+    name: Docs-as-code workflow
+    description: Documentation updates are automated via CI/CD
+    type: any_of
+    pillar: docs
+    level: L5
+    required: false
+    checks:
+      - id: docs.docs_as_code_workflow
+        type: path_glob
+        name: Docs workflow
+        pillar: docs
+        level: L5
+        required: false
+        pattern: ".github/workflows/*docs*.{yml,yaml}"
+        min_matches: 1
+      - id: docs.docs_as_code_action
+        type: path_glob
+        name: Docs in CI
+        pillar: docs
+        level: L5
+        required: false
+        pattern: ".github/workflows/*.{yml,yaml}"
+        content_regex: "(typedoc|jsdoc|sphinx-build|mkdocs)"
+
+  # test.L5 - Advanced testing
+  - id: test.mutation_testing
+    name: Mutation testing
+    description: Mutation testing to verify test effectiveness (Stryker, mutmut)
+    type: any_of
+    pillar: test
+    level: L5
+    required: false
+    checks:
+      - id: test.mutation_stryker
+        type: file_exists
+        name: Stryker config
+        pillar: test
+        level: L5
+        required: false
+        path: stryker.conf.js
+      - id: test.mutation_stryker_json
+        type: file_exists
+        name: Stryker JSON config
+        pillar: test
+        level: L5
+        required: false
+        path: stryker.conf.json
+      - id: test.mutation_mutmut
+        type: file_exists
+        name: mutmut config
+        pillar: test
+        level: L5
+        required: false
+        path: pyproject.toml
+        content_regex: "\\[tool\\.mutmut\\]"
+      - id: test.mutation_package
+        type: file_exists
+        name: Stryker in package.json
+        pillar: test
+        level: L5
+        required: false
+        path: package.json
+        content_regex: "@stryker-mutator"
+
+  - id: test.property_based_testing
+    name: Property-based testing
+    description: Property-based tests using fast-check, Hypothesis, etc.
+    type: any_of
+    pillar: test
+    level: L5
+    required: false
+    checks:
+      - id: test.property_fastcheck
+        type: file_exists
+        name: fast-check in dependencies
+        pillar: test
+        level: L5
+        required: false
+        path: package.json
+        content_regex: "fast-check"
+      - id: test.property_hypothesis
+        type: file_exists
+        name: Hypothesis in Python
+        pillar: test
+        level: L5
+        required: false
+        path: pyproject.toml
+        content_regex: "hypothesis"
+      - id: test.property_files
+        type: path_glob
+        name: Property test files
+        pillar: test
+        level: L5
+        required: false
+        pattern: "**/*.property.{test,spec}.{ts,js}"
+        min_matches: 1
+
+  # security.L5 - Advanced security
+  - id: security.sast_integrated
+    name: SAST in CI
+    description: Static Application Security Testing integrated into CI (CodeQL, Semgrep)
+    type: any_of
+    pillar: security
+    level: L5
+    required: false
+    checks:
+      - id: security.sast_codeql
+        type: file_exists
+        name: CodeQL workflow
+        pillar: security
+        level: L5
+        required: false
+        path: .github/workflows/codeql-analysis.yml
+      - id: security.sast_codeql_alt
+        type: file_exists
+        name: CodeQL workflow (alt)
+        pillar: security
+        level: L5
+        required: false
+        path: .github/workflows/codeql.yml
+      - id: security.sast_semgrep
+        type: file_exists
+        name: Semgrep config
+        pillar: security
+        level: L5
+        required: false
+        path: .semgrep.yml
+      - id: security.sast_snyk
+        type: file_exists
+        name: Snyk config
+        pillar: security
+        level: L5
+        required: false
+        path: .snyk
+
+  - id: security.sbom_generation
+    name: SBOM generation
+    description: Software Bill of Materials automatically generated
+    type: any_of
+    pillar: security
+    level: L5
+    required: false
+    checks:
+      - id: security.sbom_cyclonedx
+        type: path_glob
+        name: CycloneDX SBOM
+        pillar: security
+        level: L5
+        required: false
+        pattern: "**/sbom*.{json,xml}"
+        min_matches: 1
+      - id: security.sbom_workflow
+        type: path_glob
+        name: SBOM workflow
+        pillar: security
+        level: L5
+        required: false
+        pattern: ".github/workflows/*.{yml,yaml}"
+        content_regex: "(sbom|cyclonedx|syft)"
+
+  # build.L5 - Advanced deployment
+  - id: build.canary_deployment
+    name: Canary deployment
+    description: Canary or blue-green deployment configuration
+    type: any_of
+    pillar: build
+    level: L5
+    required: false
+    applicableTo: [web-service]  # Only applicable to deployed web services
+    checks:
+      - id: build.canary_k8s
+        type: path_glob
+        name: Kubernetes canary config
+        pillar: build
+        level: L5
+        required: false
+        pattern: "**/k8s/**/*canary*.{yml,yaml}"
+        min_matches: 1
+      - id: build.canary_argo
+        type: file_exists
+        name: Argo Rollouts config
+        pillar: build
+        level: L5
+        required: false
+        path: argo-rollouts.yml
+      - id: build.canary_flagger
+        type: path_glob
+        name: Flagger canary
+        pillar: build
+        level: L5
+        required: false
+        pattern: "**/flagger*.{yml,yaml}"
+        min_matches: 1
+
+  - id: build.rollback_automation
+    name: Automated rollback
+    description: Automatic rollback mechanism on failure
+    type: any_of
+    pillar: build
+    level: L5
+    required: false
+    applicableTo: [web-service]  # Only applicable to deployed web services
+    checks:
+      - id: build.rollback_workflow
+        type: path_glob
+        name: Rollback workflow
+        pillar: build
+        level: L5
+        required: false
+        pattern: ".github/workflows/*rollback*.{yml,yaml}"
+        min_matches: 1
+      - id: build.rollback_script
+        type: file_exists
+        name: Rollback script
+        pillar: build
+        level: L5
+        required: false
+        path: scripts/rollback.sh
+
+  # =============================================================================
+  # NEW IN v0.0.3: Documentation Freshness Check
+  # =============================================================================
+
+  - id: docs.readme_freshness
+    name: README freshness
+    description: README has been updated within the last 180 days
+    type: git_freshness
+    pillar: docs
+    level: L3
+    required: false
+    path: README.md
+    max_days: 180
+
+  - id: docs.agents_md_freshness
+    name: AGENTS.md freshness
+    description: AGENTS.md has been updated within the last 90 days
+    type: git_freshness
+    pillar: docs
+    level: L3
+    required: false
+    path: AGENTS.md
+    max_days: 90
+
+  # =============================================================================
+  # NEW IN v0.0.3: VCS CLI Tools Detection
+  # =============================================================================
+
+  - id: build.vcs_cli_tools
+    name: VCS CLI tools available
+    description: GitHub CLI (gh) or other VCS CLI tools are available
+    type: command_exists
+    pillar: build
+    level: L2
+    required: false
+    commands: ["gh", "git-lfs", "hub"]
+    require_all: false
+
+  # =============================================================================
+  # NEW IN v0.0.3: Code Quality Pillar
+  # =============================================================================
+
+  - id: code_quality.complexity_config
+    name: Code complexity analysis configured
+    description: Code complexity or quality analysis tool configured
+    type: any_of
+    pillar: code_quality
+    level: L2
+    required: false
+    checks:
+      - id: code_quality.codeclimate
+        type: file_exists
+        name: CodeClimate config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .codeclimate.yml
+      - id: code_quality.sonar
+        type: file_exists
+        name: SonarQube config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: sonar-project.properties
+      - id: code_quality.sonar_json
+        type: file_exists
+        name: SonarCloud config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: sonar-project.json
+
+  - id: code_quality.coverage_config
+    name: Code coverage configured
+    description: Test coverage reporting is configured
+    type: any_of
+    pillar: code_quality
+    level: L2
+    required: false
+    checks:
+      - id: code_quality.codecov
+        type: file_exists
+        name: Codecov config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: codecov.yml
+      - id: code_quality.codecov_yaml
+        type: file_exists
+        name: Codecov config (yaml)
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .codecov.yml
+      - id: code_quality.coveralls
+        type: file_exists
+        name: Coveralls config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .coveralls.yml
+      - id: code_quality.jest_coverage
+        type: file_exists
+        name: Jest coverage in package.json
+        pillar: code_quality
+        level: L2
+        required: false
+        path: package.json
+        content_regex: "coverageThreshold"
+      - id: code_quality.nyc_config
+        type: file_exists
+        name: nyc/istanbul coverage config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .nycrc
+
+  - id: code_quality.duplication_detection
+    name: Code duplication detection
+    description: Tool for detecting duplicate code configured
+    type: any_of
+    pillar: code_quality
+    level: L3
+    required: false
+    checks:
+      - id: code_quality.jscpd
+        type: file_exists
+        name: jscpd config
+        pillar: code_quality
+        level: L3
+        required: false
+        path: .jscpd.json
+      - id: code_quality.cpd_config
+        type: path_glob
+        name: CPD/PMD duplication config
+        pillar: code_quality
+        level: L3
+        required: false
+        pattern: "**/pmd*.xml"
+        min_matches: 1
+
+  - id: code_quality.tech_debt_tracking
+    name: Technical debt tracking
+    description: Technical debt is tracked via TODO comments or tools
+    type: any_of
+    pillar: code_quality
+    level: L4
+    required: false
+    checks:
+      - id: code_quality.todo_config
+        type: file_exists
+        name: TODO/FIXME tracking config
+        pillar: code_quality
+        level: L4
+        required: false
+        path: .todo
+      - id: code_quality.technical_debt_md
+        type: file_exists
+        name: Technical debt documentation
+        pillar: code_quality
+        level: L4
+        required: false
+        path: TECHNICAL_DEBT.md
+

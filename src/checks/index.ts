@@ -13,6 +13,8 @@ import { executeGitHubActionPresent } from './github-action.js';
 import { executeBuildCommandDetect } from './build-command.js';
 import { executeLogFrameworkDetect } from './log-framework.js';
 import { executeDependencyDetect } from './dependency-detect.js';
+import { executeGitFreshness } from './git-freshness.js';
+import { executeCommandExists } from './command-exists.js';
 
 /**
  * Execute a check and return the result
@@ -42,6 +44,12 @@ export async function executeCheck(check: CheckConfig, context: ScanContext): Pr
 
     case 'dependency_detect':
       return executeDependencyDetect(check, context);
+
+    case 'git_freshness':
+      return executeGitFreshness(check as any, context);
+
+    case 'command_exists':
+      return executeCommandExists(check as any, context);
 
     default: {
       // This should never happen due to TypeScript and YAML validation,
@@ -84,5 +92,7 @@ export function getSupportedCheckTypes(): string[] {
     'build_command_detect',
     'log_framework_detect',
     'dependency_detect',
+    'git_freshness',
+    'command_exists',
   ];
 }
