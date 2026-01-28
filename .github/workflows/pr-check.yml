@@ -34,6 +34,7 @@ jobs:
             ci
             chore
             revert
+            deps
           requireScope: false
           subjectPattern: ^(?![A-Z]).+$
           subjectPatternError: |
@@ -49,6 +50,13 @@ jobs:
           if [[ -z "$BRANCH_NAME" ]]; then
             echo "::error::BRANCH_NAME environment variable is not set"
             exit 1
+          fi
+
+          # Allow automated tool branches (dependabot, claude, renovate, etc.)
+          AUTOMATED_PATTERN="^(dependabot|renovate|add-claude-|claude-)"
+          if [[ "$BRANCH_NAME" =~ $AUTOMATED_PATTERN ]]; then
+            echo "✅ Branch '$BRANCH_NAME' is from an automated tool - skipping naming check"
+            exit 0
           fi
 
           VALID_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|hotfix|release)/"
