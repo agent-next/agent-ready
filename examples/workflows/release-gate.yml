@@ -1,0 +1,76 @@
+# Agent Ready Release Gate
+# Ensures releases meet minimum readiness requirements
+
+name: Agent Ready - Release Gate
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      required-level:
+        description: 'Minimum required level'
+        required: true
+        default: 'L3'
+        type: choice
+        options:
+          - L1
+          - L2
+          - L3
+          - L4
+          - L5
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine Required Level
+        id: config
+        env:
+          INPUT_LEVEL: ${{ github.event.inputs.required-level }}
+        run: |
+          # Default to L3 for releases
+          LEVEL="${INPUT_LEVEL:-L3}"
+          echo "required-level=$LEVEL" >> $GITHUB_OUTPUT
+
+      - name: Run Agent Ready Scan
+        id: scan
+        uses: your-org/agent-ready@v1
+        with:
+          fail-below-level: ${{ steps.config.outputs.required-level }}
+          verbose: 'true'
+
+      - name: Update Release Notes
+        if: github.event_name == 'release'
+        uses: actions/github-script@v7
+        env:
+          LEVEL: ${{ steps.scan.outputs.level }}
+          SCORE: ${{ steps.scan.outputs.score }}
+          PROJECT_TYPE: ${{ steps.scan.outputs.project-type }}
+        with:
+          script: |
+            const release = context.payload.release;
+            const level = process.env.LEVEL;
+            const score = process.env.SCORE;
+            const projectType = process.env.PROJECT_TYPE;
+
+            const badge = `
+            ---
+
+            ### Agent Readiness
+
+            | Metric | Value |
+            |--------|-------|
+            | Level | ${level} |
+            | Score | ${score}% |
+            | Project Type | ${projectType} |
+            `;
+
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.id,
+              body: (release.body || '') + badge
+            });

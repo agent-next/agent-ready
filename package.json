@@ -1,6 +1,6 @@
 {
   "name": "agent-ready",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "Factory-compatible repo maturity scanner for AI agent readiness",
   "type": "module",
   "workspaces": [
@@ -30,6 +30,7 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "test": "tsx --test test/*.test.ts",
+    "test:coverage": "c8 --reporter=text --reporter=lcov tsx --test test/*.test.ts",
     "test:watch": "tsx --test --watch test/*.test.ts",
     "lint": "eslint src/ test/",
     "lint:fix": "eslint src/ test/ --fix",
@@ -79,6 +80,7 @@
     "@opentelemetry/sdk-trace-node": "^2.5.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.0.10",
+    "c8": "^10.1.3",
     "eslint": "^9.17.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",

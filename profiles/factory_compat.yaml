@@ -775,6 +775,7 @@ checks:
     pillar: observability
     level: L4
     required: false
+    applicableTo: [web-service, webapp]  # Not applicable to CLI or library projects
     packages:
       - "@opentelemetry/sdk-trace-node"
       - "@opentelemetry/api"
@@ -795,6 +796,7 @@ checks:
     pillar: observability
     level: L4
     required: false
+    applicableTo: [web-service, webapp]  # Not applicable to CLI or library projects
     packages:
       - "prom-client"
       - "statsd-client"
@@ -859,6 +861,7 @@ checks:
     pillar: env
     level: L3
     required: false
+    applicableTo: [web-service, webapp, monorepo]  # Not typically needed for CLI or library
     checks:
       - id: env.docker_compose_yml
         type: file_exists
@@ -992,6 +995,7 @@ checks:
     pillar: product
     level: L4
     required: false
+    applicableTo: [webapp, web-service]  # Not applicable to CLI or library projects
     checks:
       - id: product.launchdarkly
         type: dependency_detect
@@ -1047,6 +1051,7 @@ checks:
     pillar: product
     level: L4
     required: false
+    applicableTo: [webapp, web-service]  # Not applicable to CLI or library projects
     checks:
       - id: product.segment
         type: dependency_detect
@@ -1103,6 +1108,7 @@ checks:
     pillar: product
     level: L4
     required: false
+    applicableTo: [webapp, web-service]  # Not applicable to CLI or library projects
     checks:
       - id: product.optimizely
         type: dependency_detect
@@ -1786,6 +1792,7 @@ checks:
     pillar: build
     level: L5
     required: false
+    applicableTo: [web-service]  # Only applicable to deployed web services
     checks:
       - id: build.canary_k8s
         type: path_glob
@@ -1818,6 +1825,7 @@ checks:
     pillar: build
     level: L5
     required: false
+    applicableTo: [web-service]  # Only applicable to deployed web services
     checks:
       - id: build.rollback_workflow
         type: path_glob
@@ -1834,3 +1842,168 @@ checks:
         level: L5
         required: false
         path: scripts/rollback.sh
+
+  # =============================================================================
+  # NEW IN v0.0.3: Documentation Freshness Check
+  # =============================================================================
+
+  - id: docs.readme_freshness
+    name: README freshness
+    description: README has been updated within the last 180 days
+    type: git_freshness
+    pillar: docs
+    level: L3
+    required: false
+    path: README.md
+    max_days: 180
+
+  - id: docs.agents_md_freshness
+    name: AGENTS.md freshness
+    description: AGENTS.md has been updated within the last 90 days
+    type: git_freshness
+    pillar: docs
+    level: L3
+    required: false
+    path: AGENTS.md
+    max_days: 90
+
+  # =============================================================================
+  # NEW IN v0.0.3: VCS CLI Tools Detection
+  # =============================================================================
+
+  - id: build.vcs_cli_tools
+    name: VCS CLI tools available
+    description: GitHub CLI (gh) or other VCS CLI tools are available
+    type: command_exists
+    pillar: build
+    level: L2
+    required: false
+    commands: ["gh", "git-lfs", "hub"]
+    require_all: false
+
+  # =============================================================================
+  # NEW IN v0.0.3: Code Quality Pillar
+  # =============================================================================
+
+  - id: code_quality.complexity_config
+    name: Code complexity analysis configured
+    description: Code complexity or quality analysis tool configured
+    type: any_of
+    pillar: code_quality
+    level: L2
+    required: false
+    checks:
+      - id: code_quality.codeclimate
+        type: file_exists
+        name: CodeClimate config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .codeclimate.yml
+      - id: code_quality.sonar
+        type: file_exists
+        name: SonarQube config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: sonar-project.properties
+      - id: code_quality.sonar_json
+        type: file_exists
+        name: SonarCloud config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: sonar-project.json
+
+  - id: code_quality.coverage_config
+    name: Code coverage configured
+    description: Test coverage reporting is configured
+    type: any_of
+    pillar: code_quality
+    level: L2
+    required: false
+    checks:
+      - id: code_quality.codecov
+        type: file_exists
+        name: Codecov config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: codecov.yml
+      - id: code_quality.codecov_yaml
+        type: file_exists
+        name: Codecov config (yaml)
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .codecov.yml
+      - id: code_quality.coveralls
+        type: file_exists
+        name: Coveralls config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .coveralls.yml
+      - id: code_quality.jest_coverage
+        type: file_exists
+        name: Jest coverage in package.json
+        pillar: code_quality
+        level: L2
+        required: false
+        path: package.json
+        content_regex: "coverageThreshold"
+      - id: code_quality.nyc_config
+        type: file_exists
+        name: nyc/istanbul coverage config
+        pillar: code_quality
+        level: L2
+        required: false
+        path: .nycrc
+
+  - id: code_quality.duplication_detection
+    name: Code duplication detection
+    description: Tool for detecting duplicate code configured
+    type: any_of
+    pillar: code_quality
+    level: L3
+    required: false
+    checks:
+      - id: code_quality.jscpd
+        type: file_exists
+        name: jscpd config
+        pillar: code_quality
+        level: L3
+        required: false
+        path: .jscpd.json
+      - id: code_quality.cpd_config
+        type: path_glob
+        name: CPD/PMD duplication config
+        pillar: code_quality
+        level: L3
+        required: false
+        pattern: "**/pmd*.xml"
+        min_matches: 1
+
+  - id: code_quality.tech_debt_tracking
+    name: Technical debt tracking
+    description: Technical debt is tracked via TODO comments or tools
+    type: any_of
+    pillar: code_quality
+    level: L4
+    required: false
+    checks:
+      - id: code_quality.todo_config
+        type: file_exists
+        name: TODO/FIXME tracking config
+        pillar: code_quality
+        level: L4
+        required: false
+        path: .todo
+      - id: code_quality.technical_debt_md
+        type: file_exists
+        name: Technical debt documentation
+        pillar: code_quality
+        level: L4
+        required: false
+        path: TECHNICAL_DEBT.md
+

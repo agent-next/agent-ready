@@ -81,6 +81,7 @@ describe('Profile checks structure', () => {
       'task_discovery',
       'product',
       'agent_config',
+      'code_quality',
     ];
 
     for (const check of profile.checks) {
@@ -114,6 +115,8 @@ describe('Profile checks structure', () => {
       'build_command_detect',
       'dependency_detect',
       'log_framework_detect',
+      'git_freshness',
+      'command_exists',
     ];
 
     for (const check of profile.checks) {

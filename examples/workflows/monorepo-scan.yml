@@ -1,0 +1,74 @@
+# Monorepo Agent Ready Scan
+# Scans multiple packages/apps in a monorepo
+
+name: Agent Ready - Monorepo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan-packages:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - apps/web
+          - apps/api
+          - packages/shared
+          - packages/ui
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanitize package name for artifact
+        id: sanitize
+        run: |
+          # Replace slashes with dashes to create valid artifact name
+          SAFE_NAME=$(echo "${{ matrix.package }}" | tr '/' '-')
+          echo "name=$SAFE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Scan ${{ matrix.package }}
+        id: scan
+        uses: your-org/agent-ready@v1
+        with:
+          path: ${{ matrix.package }}
+          artifact-name: readiness-${{ steps.sanitize.outputs.name }}
+
+      - name: Report
+        env:
+          PACKAGE: ${{ matrix.package }}
+          LEVEL: ${{ steps.scan.outputs.level }}
+          SCORE: ${{ steps.scan.outputs.score }}
+        run: |
+          echo "Package: $PACKAGE"
+          echo "Level: $LEVEL"
+          echo "Score: ${SCORE}%"
+
+  aggregate:
+    needs: scan-packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: readiness-*
+          path: reports/
+
+      - name: Aggregate Results
+        run: |
+          echo "# Monorepo Readiness Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Level | Score |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|-------|" >> $GITHUB_STEP_SUMMARY
+
+          for dir in reports/*/; do
+            if [[ -f "${dir}readiness.json" ]]; then
+              PACKAGE=$(basename "$dir" | sed 's/readiness-//')
+              LEVEL=$(jq -r '.level // "N/A"' "${dir}readiness.json")
+              SCORE=$(jq -r '.overall_score // 0' "${dir}readiness.json")
+              echo "| ${PACKAGE} | ${LEVEL} | ${SCORE}% |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done

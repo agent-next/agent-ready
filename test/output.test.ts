@@ -16,6 +16,7 @@ import type {
   Pillar,
   LevelSummary,
   CheckResult,
+  ProjectType,
 } from '../src/types.js';
 
 function createMockPillarSummary(
@@ -130,6 +131,12 @@ function createMockScanResult(): ScanResult {
     failed_checks,
     action_items,
     is_monorepo: false,
+    project_type: {
+      type: 'library',
+      confidence: 'medium',
+      indicators: ['package.json has main field'],
+    },
+    checks_skipped_by_type: 0,
   };
 }
 

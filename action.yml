@@ -1,0 +1,267 @@
+name: 'Agent Ready Scanner'
+description: 'Scan your repository for AI agent readiness - the production control layer for AI-written software'
+author: 'Agent Ready'
+
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  path:
+    description: 'Path to scan (relative to repository root)'
+    required: false
+    default: '.'
+
+  profile:
+    description: 'Profile to use for scanning'
+    required: false
+    default: 'factory_compat'
+
+  output-format:
+    description: 'Output format: json, markdown, or both'
+    required: false
+    default: 'both'
+
+  fail-below-level:
+    description: 'Fail the action if achieved level is below this (L1-L5, or none to never fail)'
+    required: false
+    default: 'none'
+
+  verbose:
+    description: 'Enable verbose output'
+    required: false
+    default: 'false'
+
+  upload-artifact:
+    description: 'Upload scan results as artifact'
+    required: false
+    default: 'true'
+
+  artifact-name:
+    description: 'Name for the uploaded artifact'
+    required: false
+    default: 'agent-ready-report'
+
+  comment-on-pr:
+    description: 'Post results as PR comment (only works on pull_request events)'
+    required: false
+    default: 'false'
+
+outputs:
+  level:
+    description: 'Achieved maturity level (L1-L5 or null)'
+
+  score:
+    description: 'Overall readiness score (0-100)'
+
+  project-type:
+    description: 'Detected project type (cli, library, webapp, web-service, monorepo)'
+
+  report-json:
+    description: 'Path to JSON report file'
+
+  report-markdown:
+    description: 'Path to markdown report file'
+
+  passed:
+    description: 'Whether the scan passed the fail-below-level threshold (true/false)'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci
+
+    - name: Build agent-ready
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm run build
+
+    - name: Run scan
+      id: scan
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_PROFILE: ${{ inputs.profile }}
+        INPUT_OUTPUT_FORMAT: ${{ inputs.output-format }}
+        INPUT_FAIL_BELOW_LEVEL: ${{ inputs.fail-below-level }}
+        INPUT_VERBOSE: ${{ inputs.verbose }}
+      run: |
+        # Build command
+        SCAN_PATH="${GITHUB_WORKSPACE}/${INPUT_PATH}"
+        SCAN_PATH="${SCAN_PATH%/}"  # Remove trailing slash
+
+        OUTPUT_DIR="${GITHUB_WORKSPACE}/.agent-ready-output"
+        mkdir -p "$OUTPUT_DIR"
+
+        VERBOSE_FLAG=""
+        if [[ "$INPUT_VERBOSE" == "true" ]]; then
+          VERBOSE_FLAG="--verbose"
+        fi
+
+        # Always produce JSON internally for outputs, but honor user's display preference
+        # If user requested markdown-only, we still need JSON for action outputs
+        EFFECTIVE_FORMAT="$INPUT_OUTPUT_FORMAT"
+        if [[ "$INPUT_OUTPUT_FORMAT" == "markdown" ]]; then
+          EFFECTIVE_FORMAT="both"
+        fi
+
+        # Run scan
+        echo "::group::Running agent-ready scan"
+        echo "Scanning: $SCAN_PATH"
+        echo "Profile: $INPUT_PROFILE"
+        echo "Output format: $INPUT_OUTPUT_FORMAT (internal: $EFFECTIVE_FORMAT)"
+
+        node "${{ github.action_path }}/dist/index.js" scan "$SCAN_PATH" \
+          --profile "$INPUT_PROFILE" \
+          --output "$EFFECTIVE_FORMAT" \
+          --output-file "$OUTPUT_DIR/readiness.json" \
+          $VERBOSE_FLAG || true
+
+        echo "::endgroup::"
+
+        # Parse results from JSON
+        if [[ -f "$OUTPUT_DIR/readiness.json" ]]; then
+          LEVEL=$(jq -r '.level // "null"' "$OUTPUT_DIR/readiness.json")
+          SCORE=$(jq -r '.overall_score // 0' "$OUTPUT_DIR/readiness.json")
+          PROJECT_TYPE=$(jq -r '.project_type.type // "unknown"' "$OUTPUT_DIR/readiness.json")
+
+          echo "level=$LEVEL" >> $GITHUB_OUTPUT
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          echo "project-type=$PROJECT_TYPE" >> $GITHUB_OUTPUT
+          echo "report-json=$OUTPUT_DIR/readiness.json" >> $GITHUB_OUTPUT
+
+          # Generate markdown report
+          if [[ "$INPUT_OUTPUT_FORMAT" == "markdown" || "$INPUT_OUTPUT_FORMAT" == "both" ]]; then
+            MARKDOWN_FILE="$OUTPUT_DIR/readiness.md"
+            echo "# Agent Readiness Report" > "$MARKDOWN_FILE"
+            echo "" >> "$MARKDOWN_FILE"
+            echo "**Level:** $LEVEL" >> "$MARKDOWN_FILE"
+            echo "**Score:** $SCORE%" >> "$MARKDOWN_FILE"
+            echo "**Project Type:** $PROJECT_TYPE" >> "$MARKDOWN_FILE"
+            echo "" >> "$MARKDOWN_FILE"
+            echo "## Pillar Summary" >> "$MARKDOWN_FILE"
+            echo "" >> "$MARKDOWN_FILE"
+            jq -r '.pillars | to_entries[] | "- **\(.key)**: \(.value.level_achieved // "N/A") (\(.value.score)%)"' "$OUTPUT_DIR/readiness.json" >> "$MARKDOWN_FILE"
+            echo "" >> "$MARKDOWN_FILE"
+
+            if [[ $(jq '.failed_checks | length' "$OUTPUT_DIR/readiness.json") -gt 0 ]]; then
+              echo "## Failed Checks" >> "$MARKDOWN_FILE"
+              echo "" >> "$MARKDOWN_FILE"
+              jq -r '.failed_checks[:10][] | "- [\(.level)] \(.check_id): \(.message)"' "$OUTPUT_DIR/readiness.json" >> "$MARKDOWN_FILE"
+              FAILED_COUNT=$(jq '.failed_checks | length' "$OUTPUT_DIR/readiness.json")
+              if [[ $FAILED_COUNT -gt 10 ]]; then
+                echo "" >> "$MARKDOWN_FILE"
+                echo "_...and $((FAILED_COUNT - 10)) more_" >> "$MARKDOWN_FILE"
+              fi
+            fi
+
+            echo "report-markdown=$MARKDOWN_FILE" >> $GITHUB_OUTPUT
+          fi
+
+          # Check pass/fail threshold
+          PASSED="true"
+          if [[ "$INPUT_FAIL_BELOW_LEVEL" != "none" && "$INPUT_FAIL_BELOW_LEVEL" != "" ]]; then
+            REQUIRED_NUM=${INPUT_FAIL_BELOW_LEVEL:1}
+            if [[ "$LEVEL" == "null" ]]; then
+              ACHIEVED_NUM=0
+            else
+              ACHIEVED_NUM=${LEVEL:1}
+            fi
+
+            if [[ $ACHIEVED_NUM -lt $REQUIRED_NUM ]]; then
+              PASSED="false"
+              echo "::warning::Achieved level ($LEVEL) is below required level ($INPUT_FAIL_BELOW_LEVEL)"
+            fi
+          fi
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+
+          # Summary
+          echo "### Agent Ready Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Level | $LEVEL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Score | $SCORE% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Project Type | $PROJECT_TYPE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+
+        else
+          echo "::error::Scan failed to produce output"
+          echo "level=null" >> $GITHUB_OUTPUT
+          echo "score=0" >> $GITHUB_OUTPUT
+          echo "passed=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Upload artifact
+      if: inputs.upload-artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ github.workspace }}/.agent-ready-output/
+        retention-days: 30
+
+    - name: Comment on PR
+      if: inputs.comment-on-pr == 'true' && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const mdPath = '${{ steps.scan.outputs.report-markdown }}';
+
+          let body = '## Agent Ready Scan Results\n\n';
+          body += '| Metric | Value |\n';
+          body += '|--------|-------|\n';
+          body += `| Level | ${{ steps.scan.outputs.level }} |\n`;
+          body += `| Score | ${{ steps.scan.outputs.score }}% |\n`;
+          body += `| Project Type | ${{ steps.scan.outputs.project-type }} |\n`;
+          body += `| Passed | ${{ steps.scan.outputs.passed }} |\n`;
+
+          if (fs.existsSync(mdPath)) {
+            const mdContent = fs.readFileSync(mdPath, 'utf8');
+            body += '\n<details>\n<summary>Full Report</summary>\n\n';
+            body += mdContent;
+            body += '\n</details>';
+          }
+
+          // Find existing comment
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+
+          const botComment = comments.find(comment =>
+            comment.user.type === 'Bot' &&
+            comment.body.includes('Agent Ready Scan Results')
+          );
+
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: body
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+          }
+
+    - name: Fail if below threshold
+      if: steps.scan.outputs.passed == 'false'
+      shell: bash
+      run: |
+        echo "::error::Agent readiness level (${{ steps.scan.outputs.level }}) is below required threshold (${{ inputs.fail-below-level }})"
+        exit 1

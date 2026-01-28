@@ -1,0 +1,20 @@
+# Basic Agent Ready Scan
+# Runs on every push and PR, uploads results as artifact
+
+name: Agent Ready - Basic
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Agent Ready
+        uses: your-org/agent-ready@v1
+        with:
+          upload-artifact: 'true'
