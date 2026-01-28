@@ -72,5 +72,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: release.id,
-              body: release.body + badge
+              body: (release.body || '') + badge
             });

@@ -106,15 +106,22 @@ runs:
           VERBOSE_FLAG="--verbose"
         fi
 
+        # Always produce JSON internally for outputs, but honor user's display preference
+        # If user requested markdown-only, we still need JSON for action outputs
+        EFFECTIVE_FORMAT="$INPUT_OUTPUT_FORMAT"
+        if [[ "$INPUT_OUTPUT_FORMAT" == "markdown" ]]; then
+          EFFECTIVE_FORMAT="both"
+        fi
+
         # Run scan
         echo "::group::Running agent-ready scan"
         echo "Scanning: $SCAN_PATH"
         echo "Profile: $INPUT_PROFILE"
-        echo "Output format: $INPUT_OUTPUT_FORMAT"
+        echo "Output format: $INPUT_OUTPUT_FORMAT (internal: $EFFECTIVE_FORMAT)"
 
         node "${{ github.action_path }}/dist/index.js" scan "$SCAN_PATH" \
           --profile "$INPUT_PROFILE" \
-          --output "$INPUT_OUTPUT_FORMAT" \
+          --output "$EFFECTIVE_FORMAT" \
           --output-file "$OUTPUT_DIR/readiness.json" \
           $VERBOSE_FLAG || true
 

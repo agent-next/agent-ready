@@ -5,7 +5,7 @@
  * Used for VCS CLI tools detection (gh, git-lfs, etc.)
  */
 
-import type { CheckResult, ScanContext } from '../types.js';
+import type { CheckResult, ScanContext, Pillar, Level } from '../types.js';
 import { execSafe } from '../utils/exec.js';
 
 export interface CommandExistsCheck {
@@ -13,8 +13,8 @@ export interface CommandExistsCheck {
   id: string;
   name: string;
   description: string;
-  pillar: string;
-  level: string;
+  pillar: Pillar;
+  level: Level;
   required: boolean;
   commands: string[];
   require_all?: boolean;
@@ -52,8 +52,8 @@ export async function executeCommandExists(
     return {
       check_id: check.id,
       check_name: check.name,
-      pillar: check.pillar as any,
-      level: check.level as any,
+      pillar: check.pillar,
+      level: check.level,
       passed: true,
       required: check.required,
       message: `CLI tools available: ${foundCommands.join(', ')}`,
@@ -67,8 +67,8 @@ export async function executeCommandExists(
   return {
     check_id: check.id,
     check_name: check.name,
-    pillar: check.pillar as any,
-    level: check.level as any,
+    pillar: check.pillar,
+    level: check.level,
     passed: false,
     required: check.required,
     message: requireAll

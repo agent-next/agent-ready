@@ -350,6 +350,9 @@ export function getProjectTypeDescription(type: ProjectType): string {
 
 /**
  * Check if a project type matches the applicableTo filter
+ *
+ * An empty or undefined applicableTo means "applies to all project types".
+ * No special sentinel values are treated as wildcards.
  */
 export function isApplicableToProjectType(
   applicableTo: ProjectType[] | undefined,
@@ -357,11 +360,6 @@ export function isApplicableToProjectType(
 ): boolean {
   // If no applicableTo specified, check applies to all
   if (!applicableTo || applicableTo.length === 0) {
-    return true;
-  }
-
-  // Check for 'all' special value (though we use undefined for this)
-  if (applicableTo.includes('unknown')) {
     return true;
   }
 

@@ -23,12 +23,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Sanitize package name for artifact
+        id: sanitize
+        run: |
+          # Replace slashes with dashes to create valid artifact name
+          SAFE_NAME=$(echo "${{ matrix.package }}" | tr '/' '-')
+          echo "name=$SAFE_NAME" >> $GITHUB_OUTPUT
+
       - name: Scan ${{ matrix.package }}
         id: scan
         uses: your-org/agent-ready@v1
         with:
           path: ${{ matrix.package }}
-          artifact-name: readiness-${{ matrix.package }}
+          artifact-name: readiness-${{ steps.sanitize.outputs.name }}
 
       - name: Report
         env:

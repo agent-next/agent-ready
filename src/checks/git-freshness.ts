@@ -6,7 +6,7 @@
  */
 
 import * as path from 'node:path';
-import type { CheckResult, ScanContext } from '../types.js';
+import type { CheckResult, ScanContext, Pillar, Level } from '../types.js';
 import { gitExec } from '../utils/exec.js';
 import { fileExists } from '../utils/fs.js';
 
@@ -18,8 +18,8 @@ export interface GitFreshnessCheck {
   id: string;
   name: string;
   description: string;
-  pillar: string;
-  level: string;
+  pillar: Pillar;
+  level: Level;
   required: boolean;
   path: string; // File or directory to check
   max_days: number; // Maximum days since last modification
@@ -54,7 +54,7 @@ function getLastModifiedDate(filePath: string, repoPath: string): Date | null {
  */
 function daysBetween(date1: Date, date2: Date): number {
   const diffTime = Math.abs(date2.getTime() - date1.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 }
 
@@ -73,8 +73,8 @@ export async function executeGitFreshness(
     return {
       check_id: check.id,
       check_name: check.name,
-      pillar: check.pillar as any,
-      level: check.level as any,
+      pillar: check.pillar,
+      level: check.level,
       passed: false,
       required: check.required,
       message: `File not found: ${check.path}`,
@@ -89,8 +89,8 @@ export async function executeGitFreshness(
     return {
       check_id: check.id,
       check_name: check.name,
-      pillar: check.pillar as any,
-      level: check.level as any,
+      pillar: check.pillar,
+      level: check.level,
       passed: false,
       required: check.required,
       message: `File ${check.path} is not tracked by git or has no commit history`,
@@ -105,8 +105,8 @@ export async function executeGitFreshness(
     return {
       check_id: check.id,
       check_name: check.name,
-      pillar: check.pillar as any,
-      level: check.level as any,
+      pillar: check.pillar,
+      level: check.level,
       passed: true,
       required: check.required,
       message: `File ${check.path} was modified ${daysSinceModified} days ago (within ${check.max_days} day limit)`,
@@ -122,8 +122,8 @@ export async function executeGitFreshness(
   return {
     check_id: check.id,
     check_name: check.name,
-    pillar: check.pillar as any,
-    level: check.level as any,
+    pillar: check.pillar,
+    level: check.level,
     passed: false,
     required: check.required,
     message: `File ${check.path} was last modified ${daysSinceModified} days ago (exceeds ${check.max_days} day limit)`,
