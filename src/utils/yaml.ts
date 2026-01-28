@@ -4,7 +4,7 @@
 
 import * as yaml from 'js-yaml';
 import { readFile } from './fs.js';
-import type { Profile, CheckConfig, Pillar, Level } from '../types.js';
+import type { Profile, CheckConfig, Pillar, Level, ProjectType } from '../types.js';
 import { PILLARS, LEVELS } from '../types.js';
 
 /**
@@ -65,6 +65,7 @@ interface RawCheck {
   required?: boolean;
   weight?: number;
   tags?: string[];
+  applicableTo?: ProjectType[];
   [key: string]: unknown;
 }
 
@@ -99,6 +100,14 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
     );
   }
 
+  // Validate applicableTo if provided
+  if (
+    raw.applicableTo &&
+    (!Array.isArray(raw.applicableTo) || !raw.applicableTo.every((t) => typeof t === 'string'))
+  ) {
+    throw new Error(`Check '${raw.id}' 'applicableTo' must be an array of strings`);
+  }
+
   const base = {
     id: raw.id,
     name: raw.name || raw.id,
@@ -108,6 +117,7 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
     required: raw.required ?? false,
     weight: raw.weight ?? 1.0,
     tags: raw.tags ?? [],
+    applicableTo: raw.applicableTo,
   };
 
   switch (raw.type) {
