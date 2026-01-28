@@ -16,6 +16,7 @@ const translations: Translations = {
     task_discovery: 'Task Discovery',
     product: 'Product & Experimentation',
     agent_config: 'Agent Configuration',
+    code_quality: 'Code Quality',
   },
 
   levels: {

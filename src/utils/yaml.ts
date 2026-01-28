@@ -224,6 +224,38 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
         config_files: raw.config_files as string[] | undefined,
       };
 
+    case 'git_freshness':
+      if (typeof raw.path !== 'string') {
+        throw new Error(`Check '${raw.id}' of type 'git_freshness' missing required 'path' string`);
+      }
+      if (typeof raw.max_days !== 'number') {
+        throw new Error(
+          `Check '${raw.id}' of type 'git_freshness' missing required 'max_days' number`
+        );
+      }
+      return {
+        ...base,
+        type: 'git_freshness',
+        path: raw.path as string,
+        max_days: raw.max_days as number,
+      };
+
+    case 'command_exists':
+      if (!Array.isArray(raw.commands)) {
+        throw new Error(
+          `Check '${raw.id}' of type 'command_exists' missing required 'commands' array`
+        );
+      }
+      if (!raw.commands.every((c) => typeof c === 'string')) {
+        throw new Error(`Check '${raw.id}' 'commands' array must contain only strings`);
+      }
+      return {
+        ...base,
+        type: 'command_exists',
+        commands: raw.commands as string[],
+        require_all: raw.require_all as boolean | undefined,
+      };
+
     default:
       throw new Error(`Check '${raw.id}' has unknown type '${raw.type}'`);
   }
