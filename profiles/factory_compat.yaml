@@ -2165,3 +2165,229 @@ checks:
     pattern: ".claude/commands/speckit*.md"
     min_matches: 1
 
+  # =============================================================================
+  # AGENT CONTROL SURFACE - Agent-Driven Development
+  # These checks verify production control mechanisms for safe agent collaboration
+  # =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # Agent Boundaries (L3) - Define what agents CAN and CANNOT modify
+  # ---------------------------------------------------------------------------
+
+  - id: agent_config.agent_boundaries
+    name: Agent boundaries defined
+    description: Explicit boundaries for what agents can modify
+    type: any_of
+    pillar: agent_config
+    level: L3
+    required: false
+    checks:
+      - id: agent_config.boundaries_json
+        type: file_exists
+        name: Agent boundaries JSON
+        pillar: agent_config
+        level: L3
+        required: false
+        path: .claude/boundaries.json
+      - id: agent_config.boundaries_yaml
+        type: file_exists
+        name: Agent boundaries YAML
+        pillar: agent_config
+        level: L3
+        required: false
+        path: .agent-boundaries.yml
+      - id: agent_config.codeowners_agents
+        type: file_exists
+        name: CODEOWNERS with agent assignments
+        pillar: agent_config
+        level: L3
+        required: false
+        path: .github/CODEOWNERS
+        content_regex: "(agent|bot|automated)"
+        case_sensitive: false
+
+  # ---------------------------------------------------------------------------
+  # Task Discovery (L3) - How agents find work to do
+  # ---------------------------------------------------------------------------
+
+  - id: task_discovery.task_queue
+    name: Task queue for agents
+    description: Structured task list agents can claim and work on
+    type: any_of
+    pillar: task_discovery
+    level: L3
+    required: false
+    checks:
+      - id: task_discovery.tasks_md
+        type: file_exists
+        name: TASKS.md file
+        pillar: task_discovery
+        level: L3
+        required: false
+        path: TASKS.md
+      - id: task_discovery.tasks_yaml
+        type: file_exists
+        name: tasks.yaml file
+        pillar: task_discovery
+        level: L3
+        required: false
+        path: tasks.yaml
+      - id: task_discovery.github_issues_template
+        type: path_glob
+        name: GitHub issue templates for agent tasks
+        pillar: task_discovery
+        level: L3
+        required: false
+        pattern: ".github/ISSUE_TEMPLATE/*agent*.{md,yml,yaml}"
+        min_matches: 1
+
+  # ---------------------------------------------------------------------------
+  # Verification Gates (L4) - CI must block bad agent changes
+  # ---------------------------------------------------------------------------
+
+  - id: build.ci_required_checks
+    name: CI required status checks
+    description: CI enforces quality gates before merge
+    type: any_of
+    pillar: build
+    level: L4
+    required: false
+    checks:
+      - id: build.branch_protection
+        type: file_exists
+        name: Branch protection rules
+        pillar: build
+        level: L4
+        required: false
+        path: .github/branch-protection.yml
+      - id: build.ci_required_in_workflow
+        type: path_glob
+        name: CI workflow with required checks
+        pillar: build
+        level: L4
+        required: false
+        pattern: ".github/workflows/*.{yml,yaml}"
+        min_matches: 1
+        content_regex: "(required|if: failure|if: always)"
+
+  - id: test.contract_tests
+    name: Contract tests exist
+    description: Tests that verify API/interface contracts
+    type: any_of
+    pillar: test
+    level: L4
+    required: false
+    checks:
+      - id: test.contract_test_files
+        type: path_glob
+        name: Contract test files
+        pillar: test
+        level: L4
+        required: false
+        pattern: "**/*.contract.{test,spec}.{ts,tsx,js,jsx}"
+        min_matches: 1
+      - id: test.contract_test_dir
+        type: path_glob
+        name: Contract test directory
+        pillar: test
+        level: L4
+        required: false
+        pattern: "{test,tests,__tests__}/contract/**/*.{ts,tsx,js,jsx}"
+        min_matches: 1
+      - id: test.pact_config
+        type: file_exists
+        name: Pact contract testing
+        pillar: test
+        level: L4
+        required: false
+        path: pact.config.js
+
+  # ---------------------------------------------------------------------------
+  # Frozen Contracts (L4) - Interfaces agents cannot modify
+  # ---------------------------------------------------------------------------
+
+  - id: docs.frozen_contracts
+    name: Frozen contract definitions
+    description: Explicitly marked interfaces that must not change
+    type: any_of
+    pillar: docs
+    level: L4
+    required: false
+    checks:
+      - id: docs.contracts_dir
+        type: path_glob
+        name: Contracts directory
+        pillar: docs
+        level: L4
+        required: false
+        pattern: "{contracts,frozen,schemas}/**/*.{ts,json,yaml}"
+        min_matches: 1
+      - id: docs.api_schema
+        type: path_glob
+        name: API schema definitions
+        pillar: docs
+        level: L4
+        required: false
+        pattern: "{api,spec}/**/*.schema.{json,yaml}"
+        min_matches: 1
+
+  # ---------------------------------------------------------------------------
+  # Agent Coordination (L5) - Multi-agent collaboration
+  # ---------------------------------------------------------------------------
+
+  - id: agent_config.ownership_map
+    name: Code ownership mapping
+    description: Clear ownership of code areas for agent coordination
+    type: any_of
+    pillar: agent_config
+    level: L5
+    required: false
+    checks:
+      - id: agent_config.ownership_json
+        type: file_exists
+        name: Agent ownership JSON
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .agent-ownership.json
+      - id: agent_config.ownership_yaml
+        type: file_exists
+        name: Agent ownership YAML
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .agent-ownership.yml
+      - id: agent_config.agents_md
+        type: file_exists
+        name: AGENTS.md with ownership
+        pillar: agent_config
+        level: L5
+        required: false
+        path: AGENTS.md
+        content_regex: "(owner|responsibility|boundary)"
+        case_sensitive: false
+
+  - id: agent_config.conflict_detection
+    name: Agent conflict detection
+    description: Mechanisms to detect and resolve agent conflicts
+    type: any_of
+    pillar: agent_config
+    level: L5
+    required: false
+    checks:
+      - id: agent_config.lock_config
+        type: file_exists
+        name: Agent lock configuration
+        pillar: agent_config
+        level: L5
+        required: false
+        path: .agent-locks.json
+      - id: agent_config.conflict_workflow
+        type: path_glob
+        name: Conflict resolution workflow
+        pillar: agent_config
+        level: L5
+        required: false
+        pattern: ".github/workflows/*conflict*.{yml,yaml}"
+        min_matches: 1
+
