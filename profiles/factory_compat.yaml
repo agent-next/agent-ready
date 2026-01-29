@@ -2007,3 +2007,161 @@ checks:
         required: false
         path: TECHNICAL_DEBT.md
 
+  # =============================================================================
+  # SPEC-DRIVEN DEVELOPMENT (spec-kit integration)
+  # https://github.com/github/spec-kit
+  # =============================================================================
+
+  - id: docs.spec_constitution
+    name: Project constitution
+    description: CONSTITUTION.md defines project principles and development guidelines
+    type: file_exists
+    pillar: docs
+    level: L3
+    required: false
+    path: CONSTITUTION.md
+
+  - id: docs.spec_md
+    name: Feature specification
+    description: SPEC.md or specs/ directory with feature specifications
+    type: any_of
+    pillar: docs
+    level: L3
+    required: false
+    checks:
+      - id: docs.spec_md_root
+        type: file_exists
+        name: Root SPEC.md
+        pillar: docs
+        level: L3
+        required: false
+        path: SPEC.md
+      - id: docs.spec_directory
+        type: path_glob
+        name: Feature specs directory
+        pillar: docs
+        level: L3
+        required: false
+        pattern: "specs/**/spec.md"
+        min_matches: 1
+
+  - id: docs.spec_plans
+    name: Implementation plans
+    description: Technical implementation plans (plan.md or PLAN.md)
+    type: any_of
+    pillar: docs
+    level: L4
+    required: false
+    checks:
+      - id: docs.plan_md_root
+        type: file_exists
+        name: Root PLAN.md
+        pillar: docs
+        level: L4
+        required: false
+        path: PLAN.md
+      - id: docs.plan_directory
+        type: path_glob
+        name: Feature plans in specs/
+        pillar: docs
+        level: L4
+        required: false
+        pattern: "specs/**/plan.md"
+        min_matches: 1
+
+  - id: docs.spec_contracts_openapi
+    name: OpenAPI contracts
+    description: API contracts defined using OpenAPI/Swagger specification
+    type: any_of
+    pillar: docs
+    level: L4
+    required: false
+    checks:
+      - id: docs.openapi_root
+        type: file_exists
+        name: Root openapi.yaml
+        pillar: docs
+        level: L4
+        required: false
+        path: openapi.yaml
+      - id: docs.openapi_yml
+        type: file_exists
+        name: Root openapi.yml
+        pillar: docs
+        level: L4
+        required: false
+        path: openapi.yml
+      - id: docs.openapi_json
+        type: file_exists
+        name: Root openapi.json
+        pillar: docs
+        level: L4
+        required: false
+        path: openapi.json
+      - id: docs.swagger_yaml
+        type: file_exists
+        name: Root swagger.yaml
+        pillar: docs
+        level: L4
+        required: false
+        path: swagger.yaml
+      - id: docs.swagger_json
+        type: file_exists
+        name: Root swagger.json
+        pillar: docs
+        level: L4
+        required: false
+        path: swagger.json
+      - id: docs.openapi_spec_dir
+        type: path_glob
+        name: OpenAPI in spec/ or api/
+        pillar: docs
+        level: L4
+        required: false
+        pattern: "{spec,api,contracts,specs}/**/*.{yaml,yml,json}"
+        min_matches: 1
+        content_regex: "(openapi|swagger)"
+      - id: docs.openapi_docs_dir
+        type: path_glob
+        name: OpenAPI in docs/
+        pillar: docs
+        level: L4
+        required: false
+        pattern: "docs/**/*.{yaml,yml,json}"
+        min_matches: 1
+        content_regex: "(openapi|swagger)"
+
+  - id: docs.spec_tasks
+    name: Task specifications
+    description: Task lists derived from specs (tasks.md or TASKS.md)
+    type: any_of
+    pillar: docs
+    level: L3
+    required: false
+    checks:
+      - id: docs.tasks_md_root
+        type: file_exists
+        name: Root TASKS.md
+        pillar: docs
+        level: L3
+        required: false
+        path: TASKS.md
+      - id: docs.tasks_directory
+        type: path_glob
+        name: Feature tasks in specs/
+        pillar: docs
+        level: L3
+        required: false
+        pattern: "specs/**/tasks.md"
+        min_matches: 1
+
+  - id: agent_config.speckit_commands
+    name: Spec-kit commands
+    description: Spec-kit slash commands for AI agents (/speckit.* commands)
+    type: path_glob
+    pillar: agent_config
+    level: L3
+    required: false
+    pattern: ".claude/commands/speckit*.md"
+    min_matches: 1
+
