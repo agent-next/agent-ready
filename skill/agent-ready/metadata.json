@@ -1,11 +1,11 @@
 {
   "version": "0.0.2",
-  "organization": "robotlearning123",
+  "organization": "agent-next",
   "date": "January 2026",
   "abstract": "Repository maturity scanner for AI agent collaboration. Evaluates codebases using the 10 Pillars / 5 Levels model with quality-based scoring. Key differentiator: agent_config pillar for Agent Native configurations (.claude/, .cursorrules, mcp.json). Provides deep analysis methodology for Claude to assess documentation clarity, test quality, and agent-friendliness - not just file existence.",
   "references": [
     "https://agent-ready.org",
-    "https://github.com/robotlearning123/agent-ready",
+    "https://github.com/agent-next/agent-ready",
     "https://www.npmjs.com/package/agent-ready",
     "https://factory.ai"
   ],

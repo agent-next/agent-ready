@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/robotlearning123/agent-ready/schema/scan-result.json",
+  "$id": "https://github.com/agent-next/agent-ready/schema/scan-result.json",
   "title": "Agent Ready Scan Result",
   "description": "Output format for agent-ready repository scans",
   "type": "object",

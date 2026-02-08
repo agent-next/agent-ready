@@ -5,7 +5,7 @@ Repository maturity scanner for AI agent collaboration.
 ## Installation
 
 ```bash
-npx skills add robotlearning123/agent-ready --path skill/agent-ready
+npx skills add agent-next/agent-ready --path skill/agent-ready
 ```
 
 ## What it does
@@ -33,4 +33,4 @@ npx agent-ready scan . --lang zh
 
 - [Website](https://agent-ready.org)
 - [npm package](https://www.npmjs.com/package/agent-ready)
-- [GitHub repository](https://github.com/robotlearning123/agent-ready)
+- [GitHub repository](https://github.com/agent-next/agent-ready)

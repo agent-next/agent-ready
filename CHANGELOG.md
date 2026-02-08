@@ -61,8 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 100% scan success rate
 - Factory.ai comparison documented in `test/VALIDATION_REPORT.md`
 
-[Unreleased]: https://github.com/robotlearning123/agent-ready/compare/v0.0.6...HEAD
-[0.0.6]: https://github.com/robotlearning123/agent-ready/compare/v0.0.5...v0.0.6
-[0.0.5]: https://github.com/robotlearning123/agent-ready/compare/v0.0.4...v0.0.5
-[0.0.4]: https://github.com/robotlearning123/agent-ready/compare/v0.0.1...v0.0.4
-[0.0.1]: https://github.com/robotlearning123/agent-ready/releases/tag/v0.0.1
+[Unreleased]: https://github.com/agent-next/agent-ready/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/agent-next/agent-ready/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/agent-next/agent-ready/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/agent-next/agent-ready/compare/v0.0.1...v0.0.4
+[0.0.1]: https://github.com/agent-next/agent-ready/releases/tag/v0.0.1

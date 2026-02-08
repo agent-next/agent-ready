@@ -148,7 +148,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Agent Ready
-        uses: robotlearning123/agent-ready@v1
+        uses: agent-next/agent-ready@v1
         with:
           fail-below-level: 'L2'
           comment-on-pr: 'true'
@@ -300,7 +300,7 @@ agent-ready/
 
 ## Related Projects
 
-- [agent-ready-website](https://github.com/UPKI-AI/agent-ready-website) - Web UI for scanning repos
+- [agent-ready-website](https://github.com/agent-next/agent-ready-website) - Web UI for scanning repos
 - [spec-kit](https://github.com/github/spec-kit) - GitHub's spec-driven development methodology
 
 ## License

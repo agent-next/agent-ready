@@ -49,11 +49,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robotlearning123/agent-ready.git"
+    "url": "git+https://github.com/agent-next/agent-ready.git"
   },
-  "homepage": "https://github.com/robotlearning123/agent-ready#readme",
+  "homepage": "https://github.com/agent-next/agent-ready#readme",
   "bugs": {
-    "url": "https://github.com/robotlearning123/agent-ready/issues"
+    "url": "https://github.com/agent-next/agent-ready/issues"
   },
   "keywords": [
     "ai",

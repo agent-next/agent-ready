@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robotlearning123/agent-ready.git"
+    "url": "git+https://github.com/agent-next/agent-ready.git"
   },
   "keywords": [
     "mcp",
