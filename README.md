@@ -148,7 +148,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Agent Ready
-        uses: agent-next/agent-ready@v1
+        # Pin to a tag or SHA for production usage; `main` tracks the latest.
+        uses: agent-next/agent-ready@main
         with:
           fail-below-level: 'L2'
           comment-on-pr: 'true'
