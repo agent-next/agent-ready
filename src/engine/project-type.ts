@@ -8,7 +8,7 @@
 
 import * as path from 'node:path';
 import type { PackageJson } from '../types.js';
-import { fileExists, readFile, findFiles } from '../utils/fs.js';
+import { fileExists, findFiles } from '../utils/fs.js';
 
 /**
  * Project types that determine which checks are applicable

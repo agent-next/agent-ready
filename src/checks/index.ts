@@ -4,7 +4,13 @@
  * Dispatches check execution to the appropriate handler based on check type
  */
 
-import type { CheckConfig, CheckResult, ScanContext } from '../types.js';
+import type {
+  CheckConfig,
+  CheckResult,
+  ScanContext,
+  GitFreshnessCheck,
+  CommandExistsCheck,
+} from '../types.js';
 import { executeFileExists } from './file-exists.js';
 import { executePathGlob } from './path-glob.js';
 import { executeAnyOf } from './any-of.js';
@@ -46,10 +52,10 @@ export async function executeCheck(check: CheckConfig, context: ScanContext): Pr
       return executeDependencyDetect(check, context);
 
     case 'git_freshness':
-      return executeGitFreshness(check as any, context);
+      return executeGitFreshness(check as GitFreshnessCheck, context);
 
     case 'command_exists':
-      return executeCommandExists(check as any, context);
+      return executeCommandExists(check as CommandExistsCheck, context);
 
     default: {
       // This should never happen due to TypeScript and YAML validation,
