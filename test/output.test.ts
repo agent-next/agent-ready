@@ -16,7 +16,6 @@ import type {
   Pillar,
   LevelSummary,
   CheckResult,
-  ProjectType,
 } from '../src/types.js';
 
 function createMockPillarSummary(
