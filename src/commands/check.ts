@@ -10,10 +10,26 @@ export async function checkCommand(
   targetPath: string,
   options: { json?: boolean; strict?: boolean }
 ): Promise<void> {
-  const result = await checkRepoReadiness(targetPath);
+  let result;
+  try {
+    result = await checkRepoReadiness(targetPath);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (options.json) {
+      console.log(JSON.stringify({ ok: false, error: msg }));
+    } else {
+      console.error(`Error: ${msg}`);
+    }
+    process.exit(1);
+  }
+
+  const allComplete = Object.values(result.data.areas).every(
+    (a) => a.status === 'complete' || a.status === 'unknown'
+  );
 
   if (options.json) {
     console.log(JSON.stringify(result, null, 2));
+    if (!allComplete && options.strict) process.exit(1);
     return;
   }
 
@@ -21,7 +37,6 @@ export async function checkCommand(
   const { data } = result;
   console.log(`\nProject: ${data.project_type} (${data.language})\n`);
 
-  let allComplete = true;
   for (const [area, info] of Object.entries(data.areas)) {
     const icon =
       info.status === 'complete'
@@ -39,9 +54,6 @@ export async function checkCommand(
     }
     if (info.note) {
       console.log(`      note: ${info.note}`);
-    }
-    if (info.status !== 'complete') {
-      allComplete = false;
     }
   }
 

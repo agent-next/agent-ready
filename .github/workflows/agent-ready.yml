@@ -1,47 +1,34 @@
-# Agent Ready - AI Readiness Scanner
-# This workflow runs on PRs and pushes to check repository AI readiness
+# Agent Ready - Repository Readiness Check
+# Runs on PRs and pushes to check repo setup for AI coding agents
 
 name: Agent Ready
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
-  scan:
-    name: Scan Repository
+  check:
+    name: Check Repository
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Agent Ready Scan
-        id: scan
+      - name: Run Agent Ready Check
+        id: check
         uses: ./
         with:
           path: '.'
-          profile: 'factory_compat'
-          output-format: 'both'
-          fail-below-level: 'none'
-          verbose: 'true'
-          upload-artifact: 'true'
-          comment-on-pr: ${{ github.event_name == 'pull_request' }}
 
       - name: Print Results
         env:
-          LEVEL: ${{ steps.scan.outputs.level }}
-          SCORE: ${{ steps.scan.outputs.score }}
-          PROJECT_TYPE: ${{ steps.scan.outputs.project-type }}
-          PASSED: ${{ steps.scan.outputs.passed }}
+          PASSED: ${{ steps.check.outputs.passed }}
         run: |
-          echo "Level: $LEVEL"
-          echo "Score: ${SCORE}%"
-          echo "Project Type: $PROJECT_TYPE"
           echo "Passed: $PASSED"

@@ -60,8 +60,10 @@ runs:
         echo "::group::Running agent-ready check"
         echo "Checking: $SCAN_PATH"
 
-        RESULT=$(node "${{ github.action_path }}/dist/index.js" check "$SCAN_PATH" --json $STRICT_FLAG 2>&1) || true
+        set +e
+        RESULT=$(node "${{ github.action_path }}/dist/index.js" check "$SCAN_PATH" --json $STRICT_FLAG 2>&1)
         EXIT_CODE=$?
+        set -e
 
         echo "::endgroup::"
 
