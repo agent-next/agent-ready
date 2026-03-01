@@ -376,7 +376,7 @@ Goal: Final confirmation
 
 ## Creating Real Test Conditions
 
-**核心原则: 用户不是测试人员。上线前必须覆盖真实条件，没有条件就创造条件。**
+**Core principle: Users are not testers. Before going live, cover all real conditions — if conditions don't exist, create them.**
 
 ### Why This Matters
 

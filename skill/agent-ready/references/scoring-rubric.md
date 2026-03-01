@@ -73,8 +73,8 @@ README.md exists?
 | 0-20  | No tests or only placeholder |
 | 21-40 | Some unit tests, low coverage |
 | 41-60 | Good unit tests, >50% coverage |
-| 61-80 | Unit + integration, >80% coverage, systematic branch coverage |
-| 81-100| BDT methodology: branch matrix tracked, all P0/P1 branches covered, mutation/property tests |
+| 61-80 | Unit + integration, >80% coverage, branch matrix tracking conditions |
+| 81-100| Full BDT methodology: all P0/P1 branches covered, mutation/property tests |
 
 **Key quality indicators:**
 - Do tests actually run and pass?
