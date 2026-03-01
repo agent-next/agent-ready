@@ -6,6 +6,7 @@
 
 // Types
 export type {
+  Language,
   Level,
   Pillar,
   CheckType,

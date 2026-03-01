@@ -275,6 +275,9 @@ export interface ProjectTypeInfo {
   indicators: string[];
 }
 
+// Language detection
+export type Language = 'typescript' | 'javascript' | 'python' | 'unknown';
+
 // Scan context (passed to checks)
 export interface ScanContext {
   root_path: string;
@@ -287,6 +290,8 @@ export interface ScanContext {
   monorepo_apps: string[];
   /** Detected project type for intelligent check filtering */
   project_type: ProjectTypeInfo;
+  /** Detected primary language */
+  language: Language;
 }
 
 // Simplified package.json type
