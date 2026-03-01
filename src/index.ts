@@ -11,6 +11,7 @@ import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { scanCommand } from './commands/scan.js';
 import { initCommand } from './commands/init.js';
+import { checkCommand } from './commands/check.js';
 import { setLocale, isValidLocale, type Locale } from './i18n/index.js';
 
 // Read version from package.json
@@ -78,6 +79,16 @@ program
       force: options.force,
       interactive: options.interactive,
     });
+  });
+
+// Check command
+program
+  .command('check [path]')
+  .description('Check repo readiness for AI agents')
+  .option('--json', 'Output as JSON')
+  .option('--strict', 'Exit with code 1 if anything missing')
+  .action(async (targetPath = '.', options) => {
+    await checkCommand(path.resolve(targetPath), options);
   });
 
 // Parse arguments and run
