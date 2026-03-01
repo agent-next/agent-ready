@@ -1,299 +1,64 @@
-# Agent Ready
+# agent-ready
 
-*From entropy generator to scalable production worker.*
+Best practices for setting up high-quality GitHub repos for AI coding agents.
 
-[![npm version](https://img.shields.io/npm/v/agent-ready.svg)](https://www.npmjs.com/package/agent-ready)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Agent%20Ready-blue?logo=github)](https://github.com/marketplace/actions/agent-ready-scanner)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+Agent-ready is a **knowledge layer** that teaches AI agents (Claude Code, Copilot, Cursor, Gemini) what a well-set-up repo looks like. The agent reads the skill, analyzes your project, and generates project-specific configs.
 
-**The missing production control layer for AI-written software.**
+## Three Deliverables
 
-> Without it: even a single coding agent can slowly destroy a large codebase through behavioral drift and uncontrolled patches.
->
-> With it: **1000 imperfect agents can work in parallel safely.**
+| Deliverable | What | For |
+|-------------|------|-----|
+| **Skill** | 9 best practice reference docs + BDT testing methodology | AI agents |
+| **CLI** | `npx agent-ready check .` -- scan what's present/missing | Humans + CI |
+| **MCP Server** | `check_repo_readiness` tool -- structured JSON for agents | AI agents |
 
-## The Vision
+## The 9 Areas
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    AGENT-DRIVEN DEVELOPMENT                      │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐  │
-│  │  SPEC    │ -> │  TASKS   │ -> │  AGENTS  │ -> │  VERIFY  │  │
-│  │  .md     │    │  Queue   │    │  Execute │    │  Gates   │  │
-│  └──────────┘    └──────────┘    └──────────┘    └──────────┘  │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              FROZEN CONTRACTS (types, schemas)            │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │                    CI GATEKEEPING                         │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## Demo
-
-![agent-ready demo](./agent-ready-demo.gif)
+| Area | What It Covers |
+|------|---------------|
+| Agent Guidance | AGENTS.md, CLAUDE.md, copilot-instructions, cursor rules |
+| Code Quality | Linters (Biome/Ruff), formatters, type checkers, .editorconfig |
+| Testing | BDT methodology, test scaffolds, coverage thresholds |
+| CI/CD | GitHub Actions: ci.yml, claude.yml, copilot-setup-steps.yml |
+| Hooks | Git pre-commit (Lefthook/Husky) + Claude PostToolUse hooks |
+| Branch Rulesets | GitHub rulesets via API (require PR, reviews, status checks) |
+| Repo Templates | Issue forms (YAML), PR template, CODEOWNERS |
+| DevContainer | .devcontainer for reproducible agent environments |
+| Security | Dependabot, push protection, CodeQL, secret scanning |
 
 ## Quick Start
 
-```bash
-# Scan any repository
-npx agent-ready scan .
+### For AI Agents (Skill)
 
-# See what's needed for the next level
-agent-ready init --dry-run
-
-# Generate missing files
-agent-ready init --level L2
-```
-
-## The 5 Maturity Levels
-
-| Level | Name | What Agents Can Do |
-|-------|------|-------------------|
-| **L1** | Agent-Readable | Agents can **understand** the codebase (CLAUDE.md, README) |
-| **L2** | Agent-Configurable | Agents have **tool configurations** (.cursorrules, settings) |
-| **L3** | Agent-Executable | Agents can **run tasks** (MCP, commands, SPEC.md) |
-| **L4** | Agent-Coordinated | **Multiple agents** can work together (contracts, ownership) |
-| **L5** | Agent-Autonomous | Agents can **self-improve** (feedback loops, conflict resolution) |
-
-## The 11 Pillars
-
-| Pillar | What It Checks |
-|--------|----------------|
-| **Documentation** | README, AGENTS.md, SPEC.md, CONTRIBUTING |
-| **Code Style** | Linters, formatters, EditorConfig |
-| **Build System** | Package manifest, CI/CD, build scripts |
-| **Testing** | Test framework, contract tests, coverage |
-| **Security** | CODEOWNERS, secrets, Dependabot, SAST |
-| **Observability** | Logging, tracing, metrics |
-| **Environment** | .env.example, devcontainer |
-| **Task Discovery** | Issue templates, TASKS.md |
-| **Product** | Feature flags, analytics |
-| **Agent Config** | .claude/, MCP, boundaries, ownership |
-| **Code Quality** | Coverage, complexity, tech debt tracking |
-
-## Agent Control Surface Checks
-
-Beyond "file exists" checks, agent-ready verifies **production control mechanisms**:
-
-### Agent Boundaries (L3)
-```yaml
-# What agents CAN and CANNOT modify
-.claude/boundaries.json
-.agent-boundaries.yml
-.github/CODEOWNERS  # with agent assignments
-```
-
-### Task Discovery (L3)
-```yaml
-# How agents find work
-TASKS.md
-tasks.yaml
-.github/ISSUE_TEMPLATE/*agent*.md
-```
-
-### Frozen Contracts (L4)
-```yaml
-# Interfaces that must not change
-contracts/**/*.ts
-schemas/**/*.json
-*.contract.test.ts
-```
-
-### Agent Coordination (L5)
-```yaml
-# Multi-agent collaboration
-.agent-ownership.json
-AGENTS.md  # with ownership mapping
-.github/workflows/*conflict*.yml
-```
-
-## Spec-Kit Integration
-
-Agent-ready supports [GitHub's spec-kit](https://github.com/github/spec-kit) methodology:
-
-| Check | File | Level |
-|-------|------|-------|
-| Project Constitution | `CONSTITUTION.md` | L3 |
-| Feature Specifications | `SPEC.md`, `specs/**/spec.md` | L3 |
-| Implementation Plans | `PLAN.md`, `specs/**/plan.md` | L4 |
-| API Contracts | `openapi.yaml`, `swagger.json` | L4 |
-| Task Lists | `TASKS.md`, `specs/**/tasks.md` | L3 |
-
-## Installation
+The skill teaches agents what to set up. Install it or point your agent at the reference docs:
 
 ```bash
-# Use npx (no install required)
-npx agent-ready scan .
-
-# Or install globally
-npm install -g agent-ready
+# Install as a skill
+npx skills add agent-next/agent-ready --path skill/agent-ready
 ```
 
-## GitHub Action
+### For Humans (CLI)
+
+```bash
+# Check what's present/missing
+npx agent-ready check .
+
+# JSON output for scripts
+npx agent-ready check . --json
+
+# CI gate (exit 1 if anything missing)
+npx agent-ready check . --json --strict
+```
+
+### GitHub Action
 
 ```yaml
-name: Agent Ready
-
-on: [push, pull_request]
-
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Agent Ready
-        # Pin to @v0 for latest stable; use a full tag like @v0.1.0 for exact version.
-        uses: agent-next/agent-ready@v0
-        with:
-          fail-below-level: 'L2'
-          comment-on-pr: 'true'
+- uses: agent-next/agent-ready@v2
+  with:
+    path: .
+    fail-on-missing: true
 ```
-
-### Action Inputs
-
-| Input | Description | Default |
-|-------|-------------|---------|
-| `path` | Path to scan | `.` |
-| `profile` | Profile to use | `factory_compat` |
-| `output-format` | `json`, `markdown`, or `both` | `both` |
-| `fail-below-level` | Fail if below level | `none` |
-| `comment-on-pr` | Post PR comment | `false` |
-
-### Action Outputs
-
-| Output | Description |
-|--------|-------------|
-| `level` | Achieved level (`L1`-`L5`) |
-| `score` | Overall score (0-100) |
-| `project-type` | `cli`, `library`, `webapp`, `web-service`, `monorepo` |
-| `passed` | Whether threshold was met |
-
-## CLI Usage
-
-```bash
-# Scan with verbose output
-agent-ready scan . --verbose
-
-# Use specific profile
-agent-ready scan --profile factory_compat
-
-# Output JSON only
-agent-ready scan --output json
-
-# Initialize missing files
-agent-ready init --level L3 --dry-run
-```
-
-## Output Example
-
-```
-Agent Readiness Report
-══════════════════════════════════════════════════
-Repository: owner/repo
-Profile:    factory_compat v1.0.0
-
-┌─────────────────────────────────────────────────┐
-│          Level: L3                              │
-│          Score: 78%                             │
-│          Type:  webapp                          │
-└─────────────────────────────────────────────────┘
-
-Pillar Summary
-──────────────────────────────────────────────────
-  Documentation       L4   90%  ████████░░
-  Agent Config        L3   75%  ███████░░░
-  Testing             L3   80%  ████████░░
-  ...
-
-Action Items (Next Level)
-──────────────────────────────────────────────────
-  [L4] Create contract tests for API
-  [L4] Add agent ownership mapping
-  [L4] Define frozen contracts
-```
-
-## The "1000 Idiots" Test
-
-A codebase is truly agent-ready when:
-
-> **1000 imperfect AI agents can work on it in parallel without destroying it.**
-
-This requires:
-1. **Clear specifications** (what to build)
-2. **Frozen contracts** (what not to break)
-3. **Strict CI gates** (catch all mistakes)
-4. **Agent boundaries** (who owns what)
-5. **Verification loops** (continuous checking)
-
-See [VISION.md](./VISION.md) for the complete philosophy.
-
-## Creating Custom Profiles
-
-```yaml
-# profiles/my_profile.yaml
-name: my_profile
-version: "1.0.0"
-
-checks:
-  - id: custom.spec_exists
-    name: SPEC.md exists
-    type: file_exists
-    pillar: docs
-    level: L3
-    path: SPEC.md
-
-  - id: custom.contract_tests
-    name: Contract tests
-    type: path_glob
-    pillar: test
-    level: L4
-    pattern: "**/*.contract.test.ts"
-    min_matches: 1
-```
-
-```bash
-agent-ready scan --profile my_profile
-```
-
-## Development
-
-```bash
-npm install        # Install dependencies
-npm run dev        # Run in development
-npm test           # Run tests
-npm run build      # Build for production
-```
-
-## Project Structure
-
-```
-agent-ready/
-├── src/
-│   ├── index.ts          # CLI entry
-│   ├── checks/           # Check implementations
-│   ├── engine/           # Level gating, project type detection
-│   └── utils/            # FS, git, YAML utilities
-├── profiles/
-│   └── factory_compat.yaml   # Default profile (11 pillars, 5 levels)
-├── templates/            # Init command templates
-├── examples/workflows/   # GitHub Action examples
-├── VISION.md             # Agent-driven development philosophy
-└── test/                 # Tests and fixtures
-```
-
-## Related Projects
-
-- [spec-kit](https://github.com/github/spec-kit) - GitHub's spec-driven development methodology
 
 ## License
 
 MIT
-
----
