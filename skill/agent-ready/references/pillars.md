@@ -114,7 +114,7 @@ jobs:
 
 ## 4. Testing (test)
 
-**Purpose**: Verify code works correctly, enabling confident changes.
+**Purpose**: Verify code works correctly, enabling confident changes. Includes **Behavior-Driven Testing (BDT)** methodology for systematic branch coverage.
 
 ### Key Components
 | Component | Level | Purpose |
@@ -123,11 +123,21 @@ jobs:
 | Test command | L1 | `npm test` documented |
 | Coverage | L3 | Track test coverage % |
 | Coverage threshold | L4 | Enforce minimum coverage |
+| Branch matrix | L4 | BDT: systematic branch tracking |
+| BDT methodology | L5 | Full behavior-driven testing with P0/P1 coverage |
 
 ### Why It Matters for Agents
 - Tests = validation that changes work
 - Coverage = confidence in what's tested
 - Test patterns = templates for new tests
+- **BDT branch matrices** = ensures agents test ALL branches, not just happy paths
+
+### BDT Quick Reference
+
+P0 branches (must always test): empty values, auth states, API error responses
+P1 branches (should test): boundary values, concurrent actions, loading states
+
+See `references/testing/` for complete methodology, templates, and branch matrix examples.
 
 ---
 
