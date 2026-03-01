@@ -89,49 +89,18 @@ jobs:
     needs: validate-pr
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run agent-ready scan
+      - name: Run agent-ready check
         run: |
           set -eo pipefail
-
-          npm run dev -- scan . --output json
-
-          # Verify the output file was created
-          if [[ ! -f readiness.json ]]; then
-            echo "::error::Scan failed to produce readiness.json output file"
-            exit 1
-          fi
-
-          # Extract values with jq (pre-installed on ubuntu runners)
-          LEVEL=$(jq -r '.level // empty' readiness.json)
-          SCORE=$(jq -r '.overall_score // empty' readiness.json)
-
-          # Validate extracted values
-          if [[ -z "$LEVEL" ]]; then
-            echo "::error::readiness.json missing 'level' field"
-            cat readiness.json
-            exit 1
-          fi
-
-          if [[ -z "$SCORE" ]]; then
-            echo "::error::readiness.json missing 'overall_score' field"
-            cat readiness.json
-            exit 1
-          fi
-
-          echo "## Agent Readiness Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Level | **$LEVEL** |" >> $GITHUB_STEP_SUMMARY
-          echo "| Score | $SCORE% |" >> $GITHUB_STEP_SUMMARY
+          npm run dev -- check . --json

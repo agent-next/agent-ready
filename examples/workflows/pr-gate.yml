@@ -1,5 +1,5 @@
 # Agent Ready PR Gate
-# Blocks PRs that don't meet minimum readiness level
+# Blocks PRs that have missing readiness areas
 
 name: Agent Ready - PR Gate
 
@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   readiness-check:
@@ -17,24 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check Agent Readiness
-        id: scan
-        uses: your-org/agent-ready@v1
+        uses: your-org/agent-ready@v0.2
         with:
-          fail-below-level: 'L2'  # Require at least L2 (Documented)
-          comment-on-pr: 'true'
-          verbose: 'true'
-
-      - name: Report Status
-        if: always()
-        env:
-          LEVEL: ${{ steps.scan.outputs.level }}
-          SCORE: ${{ steps.scan.outputs.score }}
-        run: |
-          if [[ "${{ steps.scan.outputs.passed }}" == "true" ]]; then
-            echo "✅ Repository meets AI readiness requirements"
-            echo "   Level: $LEVEL, Score: ${SCORE}%"
-          else
-            echo "❌ Repository does not meet AI readiness requirements"
-            echo "   Required: L2, Achieved: $LEVEL"
-            echo "   Please address the issues in the PR comment"
-          fi
+          path: '.'
+          fail-on-missing: 'true'
