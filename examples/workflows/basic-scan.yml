@@ -1,5 +1,5 @@
-# Basic Agent Ready Scan
-# Runs on every push and PR, uploads results as artifact
+# Basic Agent Ready Check
+# Runs on every push and PR to check repo readiness
 
 name: Agent Ready - Basic
 
@@ -9,12 +9,12 @@ on:
   pull_request:
 
 jobs:
-  scan:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Run Agent Ready
-        uses: your-org/agent-ready@v1
+        uses: your-org/agent-ready@v0.2
         with:
-          upload-artifact: 'true'
+          path: '.'
