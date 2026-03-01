@@ -72,7 +72,16 @@ describe('handleError', () => {
     });
   });
 
-  test('M02: string error shows default message', () => {
+  test('M02: Error without message shows default', () => {
+    handleError(new Error());
+    expect(mockToast).toHaveBeenCalledWith({
+      title: 'Error',
+      description: 'An error occurred',
+      variant: 'destructive',
+    });
+  });
+
+  test('M03: string error shows default message', () => {
     handleError('string error');
     expect(mockToast).toHaveBeenCalledWith({
       title: 'Error',
@@ -81,7 +90,7 @@ describe('handleError', () => {
     });
   });
 
-  test('M03: null error shows default message', () => {
+  test('M04: null error shows default message', () => {
     handleError(null);
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({ description: 'An error occurred' })
@@ -195,6 +204,17 @@ describe('Feature Integration', () => {
 
       await waitFor(() => {
         expect(screen.getByText(/processing/i)).toBeVisible();
+      });
+    });
+
+    test('L04: boundary - one below required → reject', async () => {
+      setupCredits({ amount: 9, isPremium: false }); // 10 required, have 9
+      render(<Feature />);
+
+      await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText(/insufficient/i)).toBeVisible();
       });
     });
 
