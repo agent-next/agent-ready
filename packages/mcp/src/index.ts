@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * agent-ready MCP Server v2.0.0
+ * agent-ready MCP Server v0.2.0
  *
  * Provides agent-ready context and readiness checking through the Model Context Protocol.
  *
@@ -20,7 +20,7 @@ import { initFilesSchema, initFiles } from './tools/init-files.js';
 // Create MCP server
 const server = new McpServer({
   name: 'agent-ready',
-  version: '2.0.0',
+  version: '0.2.0',
 });
 
 // Helper to create tool handlers with consistent error handling
@@ -79,7 +79,7 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('agent-ready MCP server v2.0.0 started');
+  console.error('agent-ready MCP server v0.2.0 started');
 }
 
 main().catch((error) => {

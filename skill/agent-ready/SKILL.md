@@ -4,7 +4,7 @@ description: Best practices for setting up high-quality GitHub repos for AI codi
 license: MIT
 metadata:
   author: agent-next
-  version: "2.0.0"
+  version: "0.2.0"
 ---
 
 # Agent-Ready: Repo Setup Best Practices

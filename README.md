@@ -53,7 +53,7 @@ npx agent-ready check . --json --strict
 ### GitHub Action
 
 ```yaml
-- uses: agent-next/agent-ready@v2
+- uses: agent-next/agent-ready@v0.2
   with:
     path: .
     fail-on-missing: true

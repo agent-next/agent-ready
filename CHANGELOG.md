@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0] - 2026-03-01
+## [0.2.0] - 2026-03-01
 
 ### Added
 - Skill-based architecture: 9 best practice reference docs for AI agents
@@ -93,8 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 100% scan success rate
 - Factory.ai comparison documented in `test/VALIDATION_REPORT.md`
 
-[Unreleased]: https://github.com/agent-next/agent-ready/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/agent-next/agent-ready/compare/v0.1.0...v2.0.0
+[Unreleased]: https://github.com/agent-next/agent-ready/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/agent-next/agent-ready/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/agent-next/agent-ready/compare/v0.0.6...v0.1.0
 [0.0.6]: https://github.com/agent-next/agent-ready/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/agent-next/agent-ready/compare/v0.0.4...v0.0.5

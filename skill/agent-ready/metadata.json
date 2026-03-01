@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "0.2.0",
   "organization": "agent-next",
   "date": "February 2026",
   "abstract": "Best practices for setting up high-quality GitHub repos for AI coding agents. Covers 9 areas: agent guidance, code quality, testing (BDT), CI/CD, hooks, branch rulesets, repo templates, devcontainers, and security. A knowledge layer that teaches agents what a well-set-up repo looks like.",
