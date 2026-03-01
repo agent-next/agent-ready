@@ -2,21 +2,19 @@
  * i18n type definitions
  */
 
-import type { Level, Pillar, ActionPriority } from '../types.js';
-
 export type Locale = 'en' | 'zh';
 
 export const LOCALES: Locale[] = ['en', 'zh'];
 
 export interface Translations {
   // Pillar names
-  pillars: Record<Pillar, string>;
+  pillars: Record<string, string>;
 
   // Level names
-  levels: Record<Level | 'none', string>;
+  levels: Record<string, string>;
 
   // Priority names
-  priorities: Record<ActionPriority, string>;
+  priorities: Record<string, string>;
 
   // CLI messages
   cli: {

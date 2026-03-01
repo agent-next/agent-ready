@@ -5,7 +5,7 @@
  * Used for VCS CLI tools detection (gh, git-lfs, etc.)
  */
 
-import type { CheckResult, ScanContext, Pillar, Level } from '../types.js';
+import type { CheckResult, ScanContext } from '../types.js';
 import { execSafe } from '../utils/exec.js';
 
 export interface CommandExistsCheck {
@@ -13,8 +13,8 @@ export interface CommandExistsCheck {
   id: string;
   name: string;
   description: string;
-  pillar: Pillar;
-  level: Level;
+  pillar: string;
+  level: string;
   required: boolean;
   commands: string[];
   require_all?: boolean;

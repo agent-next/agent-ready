@@ -1,64 +1,19 @@
 /**
- * Core type definitions for agent-ready scanner
+ * Core type definitions for agent-ready
  */
-
-// Level definitions (Factory-compatible)
-export type Level = 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
 
 // Project types for intelligent check filtering
 export type ProjectType = 'cli' | 'web-service' | 'library' | 'webapp' | 'monorepo' | 'unknown';
 
-export const LEVELS: Level[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
+// Project type detection result
+export interface ProjectTypeInfo {
+  type: ProjectType;
+  confidence: 'high' | 'medium' | 'low';
+  indicators: string[];
+}
 
-// Factory.ai official level names
-export const LEVEL_NAMES: Record<Level, string> = {
-  L1: 'Functional',
-  L2: 'Documented',
-  L3: 'Standardized',
-  L4: 'Optimized',
-  L5: 'Autonomous',
-};
-
-export type Pillar =
-  | 'docs'
-  | 'style'
-  | 'build'
-  | 'test'
-  | 'security'
-  | 'observability'
-  | 'env'
-  | 'task_discovery'
-  | 'product'
-  | 'agent_config'
-  | 'code_quality';
-
-export const PILLARS: Pillar[] = [
-  'docs',
-  'style',
-  'build',
-  'test',
-  'security',
-  'observability',
-  'env',
-  'task_discovery',
-  'product',
-  'agent_config',
-  'code_quality',
-];
-
-export const PILLAR_NAMES: Record<Pillar, string> = {
-  docs: 'Documentation',
-  style: 'Style & Validation',
-  build: 'Build System',
-  test: 'Testing',
-  security: 'Security',
-  observability: 'Debugging & Observability',
-  env: 'Development Environment',
-  task_discovery: 'Task Discovery',
-  product: 'Product & Experimentation',
-  agent_config: 'Agent Configuration',
-  code_quality: 'Code Quality',
-};
+// Language detection
+export type Language = 'typescript' | 'javascript' | 'python' | 'unknown';
 
 // Check type discriminators
 export type CheckType =
@@ -78,17 +33,11 @@ export interface BaseCheckConfig {
   id: string;
   name: string;
   description: string;
-  pillar: Pillar;
-  level: Level;
+  pillar: string;
+  level: string;
   required: boolean;
-  weight?: number; // Default 1.0
+  weight?: number;
   tags?: string[];
-  /**
-   * Project types this check applies to.
-   * If undefined or empty, applies to all project types.
-   * Use this to skip checks that don't make sense for certain project types.
-   * e.g., K8s checks only for 'web-service', feature flags only for 'webapp'/'web-service'
-   */
   applicableTo?: ProjectType[];
 }
 
@@ -104,7 +53,7 @@ export interface FileExistsCheck extends BaseCheckConfig {
 export interface PathGlobCheck extends BaseCheckConfig {
   type: 'path_glob';
   pattern: string;
-  min_matches?: number; // Default 1
+  min_matches?: number;
   max_matches?: number;
   content_regex?: string;
 }
@@ -113,55 +62,55 @@ export interface PathGlobCheck extends BaseCheckConfig {
 export interface AnyOfCheck extends BaseCheckConfig {
   type: 'any_of';
   checks: CheckConfig[];
-  min_pass?: number; // Default 1
+  min_pass?: number;
 }
 
 // github_workflow_event check
 export interface GitHubWorkflowEventCheck extends BaseCheckConfig {
   type: 'github_workflow_event';
-  event: string; // 'push', 'pull_request', etc.
+  event: string;
   branches?: string[];
 }
 
 // github_action_present check
 export interface GitHubActionPresentCheck extends BaseCheckConfig {
   type: 'github_action_present';
-  action: string; // e.g., 'actions/checkout@v4'
-  action_pattern?: string; // Regex for flexible matching
+  action: string;
+  action_pattern?: string;
 }
 
 // build_command_detect check
 export interface BuildCommandDetectCheck extends BaseCheckConfig {
   type: 'build_command_detect';
-  commands: string[]; // Commands to look for
-  files?: string[]; // Files to search in (package.json, Makefile, etc.)
+  commands: string[];
+  files?: string[];
 }
 
 // log_framework_detect check
 export interface LogFrameworkDetectCheck extends BaseCheckConfig {
   type: 'log_framework_detect';
-  frameworks: string[]; // e.g., ['winston', 'pino', 'bunyan']
+  frameworks: string[];
 }
 
-// dependency_detect check (for tracing, metrics, analytics packages)
+// dependency_detect check
 export interface DependencyDetectCheck extends BaseCheckConfig {
   type: 'dependency_detect';
-  packages: string[]; // NPM/pip/cargo packages to detect
-  config_files?: string[]; // Config files that indicate usage (e.g., 'otel.config.js')
+  packages: string[];
+  config_files?: string[];
 }
 
-// git_freshness check (v0.0.3) - documentation freshness via git history
+// git_freshness check
 export interface GitFreshnessCheck extends BaseCheckConfig {
   type: 'git_freshness';
-  path: string; // File or directory to check
-  max_days: number; // Maximum days since last modification
+  path: string;
+  max_days: number;
 }
 
-// command_exists check (v0.0.3) - VCS CLI tools detection
+// command_exists check
 export interface CommandExistsCheck extends BaseCheckConfig {
   type: 'command_exists';
-  commands: string[]; // Commands to check (e.g., ['gh', 'git-lfs'])
-  require_all?: boolean; // If true, all commands must exist; if false, any one is sufficient
+  commands: string[];
+  require_all?: boolean;
 }
 
 // Union type for all checks
@@ -181,8 +130,8 @@ export type CheckConfig =
 export interface CheckResult {
   check_id: string;
   check_name: string;
-  pillar: Pillar;
-  level: Level;
+  pillar: string;
+  level: string;
   passed: boolean;
   required: boolean;
   message: string;
@@ -191,106 +140,17 @@ export interface CheckResult {
   suggestions?: string[];
 }
 
-// Profile definition
-export interface Profile {
-  name: string;
-  version: string;
-  description: string;
-  checks: CheckConfig[];
-}
-
-// Pillar summary in results
-export interface PillarSummary {
-  pillar: Pillar;
-  name: string;
-  level_achieved: Level | null;
-  score: number; // 0-100
-  checks_passed: number;
-  checks_total: number;
-  failed_checks: string[];
-}
-
-// Level summary
-export interface LevelSummary {
-  level: Level;
-  achieved: boolean;
-  score: number; // 0-100
-  checks_passed: number;
-  checks_total: number;
-  required_passed: number;
-  required_total: number;
-}
-
-// Action item for recommendations
-export type ActionPriority = 'critical' | 'high' | 'medium' | 'low';
-
-export interface ActionItem {
-  priority: ActionPriority;
-  check_id: string;
-  pillar: Pillar;
-  level: Level;
-  action: string;
-  details?: string;
-  template?: string; // Template file to generate
-}
-
-// Monorepo app definition
-export interface MonorepoApp {
-  name: string;
-  path: string;
-  level: Level | null;
-  score: number;
-  checks_passed: number;
-  checks_total: number;
-  error?: string; // Error message if scan failed
-}
-
-// Main scan result
-export interface ScanResult {
-  repo: string;
-  commit: string;
-  timestamp: string;
-  profile: string;
-  profile_version: string;
-  level: Level | null;
-  progress_to_next: number; // 0.0 - 1.0
-  overall_score: number; // 0-100
-  pillars: Record<Pillar, PillarSummary>;
-  levels: Record<Level, LevelSummary>;
-  check_results: CheckResult[];
-  failed_checks: CheckResult[];
-  action_items: ActionItem[];
-  is_monorepo: boolean;
-  apps?: MonorepoApp[];
-  /** Detected project type for intelligent check filtering */
-  project_type: ProjectTypeInfo;
-  /** Number of checks skipped due to project type filtering */
-  checks_skipped_by_type: number;
-}
-
-// Project type detection result
-export interface ProjectTypeInfo {
-  type: ProjectType;
-  confidence: 'high' | 'medium' | 'low';
-  indicators: string[];
-}
-
-// Language detection
-export type Language = 'typescript' | 'javascript' | 'python' | 'unknown';
-
 // Scan context (passed to checks)
 export interface ScanContext {
   root_path: string;
   repo_name: string;
   commit_sha: string;
-  file_cache: Map<string, string>; // path -> content
-  glob_cache: Map<string, string[]>; // pattern -> matches
+  file_cache: Map<string, string>;
+  glob_cache: Map<string, string[]>;
   package_json?: PackageJson;
   is_monorepo: boolean;
   monorepo_apps: string[];
-  /** Detected project type for intelligent check filtering */
   project_type: ProjectTypeInfo;
-  /** Detected primary language */
   language: Language;
 }
 
@@ -302,7 +162,6 @@ export interface PackageJson {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   workspaces?: string[] | { packages: string[] };
-  // For project type detection
   bin?: string | Record<string, string>;
   main?: string;
   module?: string;
@@ -314,22 +173,11 @@ export interface PackageJson {
 }
 
 // CLI options
-export interface ScanOptions {
-  path: string;
-  profile: string;
-  output: 'json' | 'markdown' | 'both';
-  level?: Level;
-  verbose: boolean;
-  outputFile?: string;
-}
-
 export interface InitOptions {
   path: string;
-  level?: Level;
   check?: string;
   dryRun: boolean;
   force: boolean;
-  interactive: boolean;
 }
 
 // Check executor interface
@@ -337,7 +185,3 @@ export interface CheckExecutor {
   type: CheckType;
   execute(check: CheckConfig, context: ScanContext): Promise<CheckResult>;
 }
-
-// Level gating constants
-// Factory.ai spec: 80% of checks must pass per level to achieve that level
-export const PASSING_THRESHOLD = 0.8;

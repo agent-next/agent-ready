@@ -6,7 +6,7 @@
  */
 
 import * as path from 'node:path';
-import type { CheckResult, ScanContext, Pillar, Level } from '../types.js';
+import type { CheckResult, ScanContext } from '../types.js';
 import { gitExec } from '../utils/exec.js';
 import { fileExists } from '../utils/fs.js';
 
@@ -18,8 +18,8 @@ export interface GitFreshnessCheck {
   id: string;
   name: string;
   description: string;
-  pillar: Pillar;
-  level: Level;
+  pillar: string;
+  level: string;
   required: boolean;
   path: string; // File or directory to check
   max_days: number; // Maximum days since last modification

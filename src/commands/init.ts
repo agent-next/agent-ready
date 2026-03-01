@@ -4,9 +4,8 @@
 
 import * as path from 'node:path';
 import chalk from 'chalk';
-import type { InitOptions, Level } from '../types.js';
+import type { InitOptions } from '../types.js';
 import { directoryExists, fileExists, writeFile, readFile } from '../utils/fs.js';
-import { loadDefaultProfile } from '../profiles/index.js';
 import { getTemplates, type Template } from '../templates/index.js';
 
 export async function initCommand(options: InitOptions): Promise<void> {
@@ -16,17 +15,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
     process.exit(1);
   }
 
-  // Validate level if provided
-  if (options.level && !isValidLevel(options.level)) {
-    console.error(chalk.red(`Error: Invalid level: ${options.level}`));
-    console.error('Valid levels: L1, L2, L3, L4, L5');
-    process.exit(1);
-  }
-
   try {
-    // Load profile to get check definitions
-    const profile = await loadDefaultProfile();
-
     // Get templates to generate
     const templates = await getTemplates();
 
@@ -40,13 +29,6 @@ export async function initCommand(options: InitOptions): Promise<void> {
         console.error(chalk.red(`Error: No template found for check: ${options.check}`));
         process.exit(1);
       }
-    } else if (options.level) {
-      // Generate templates needed for the specified level
-      const levelChecks = profile.checks.filter(
-        (c) => levelValue(c.level) <= levelValue(options.level!)
-      );
-      const checkIds = new Set(levelChecks.map((c) => c.id));
-      templatesNeeded = templates.filter((t) => checkIds.has(t.checkId));
     }
 
     // Check which files need to be created
@@ -93,14 +75,6 @@ export async function initCommand(options: InitOptions): Promise<void> {
     console.error(chalk.red('Init failed:'), error instanceof Error ? error.message : error);
     process.exit(1);
   }
-}
-
-function isValidLevel(level: string): level is Level {
-  return ['L1', 'L2', 'L3', 'L4', 'L5'].includes(level);
-}
-
-function levelValue(level: Level): number {
-  return parseInt(level.substring(1), 10);
 }
 
 interface ProjectContext {
