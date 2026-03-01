@@ -73,14 +73,21 @@ README.md exists?
 | 0-20  | No tests or only placeholder |
 | 21-40 | Some unit tests, low coverage |
 | 41-60 | Good unit tests, >50% coverage |
-| 61-80 | Unit + integration, >80% coverage |
-| 81-100| Mutation testing, property tests |
+| 61-80 | Unit + integration, >80% coverage, systematic branch coverage |
+| 81-100| BDT methodology: branch matrix tracked, all P0/P1 branches covered, mutation/property tests |
 
 **Key quality indicators:**
 - Do tests actually run and pass?
 - What's the code coverage percentage?
 - Are edge cases tested?
 - Are there integration/e2e tests?
+
+**BDT methodology indicators (L4+):**
+- Is there a branch matrix tracking coverage of all conditions?
+- Are P0 branches (empty values, auth states, API errors) all tested?
+- Are boundary values (min-1, min, min+1, max-1, max, max+1) tested?
+- Are error paths tested, not just happy paths?
+- See `references/testing/` for full BDT methodology
 
 ### 5. Security (security)
 
