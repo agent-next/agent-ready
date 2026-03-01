@@ -65,6 +65,10 @@ export { outputMarkdown } from './output/markdown.js';
 export type { Template } from './templates/index.js';
 export { getTemplates, getTemplateForCheck, listTemplates } from './templates/index.js';
 
+// Checker
+export type { AreaStatus, ReadinessResult } from './checker.js';
+export { checkRepoReadiness } from './checker.js';
+
 // i18n
 export type { Locale, Translations } from './i18n/index.js';
 export {
