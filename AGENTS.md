@@ -4,22 +4,24 @@ Instructions for AI agents working with the agent-ready codebase.
 
 ## Project Overview
 
-**agent-ready** is a Factory.ai-compatible repository maturity scanner that evaluates codebases against the 9 Pillars / 5 Levels model.
+**agent-ready** is a repo infrastructure setup tool for agent-guided development. One command to make any repo agent-ready — everything except the code.
 
-**Version:** 0.0.1
+**Version:** 0.1.0
 **Language:** TypeScript
 **Runtime:** Node.js >= 20
 
 ## Quick Commands
 
 ```bash
-npm install          # Install dependencies
-npm run dev -- scan . # Scan current directory
-npm test             # Run tests (22 tests)
-npm run typecheck    # Type check
-npm run lint         # Lint code
-npm run format       # Format code
-npm run build        # Build for production
+npm install                    # Install dependencies
+npm run dev -- scan .          # Scan current directory
+npm test                       # Run tests (152 tests)
+npm run test:coverage          # Coverage with c8
+npm run typecheck              # Type check (tsc --noEmit)
+npm run lint                   # ESLint
+npm run format                 # Prettier
+npm run check                  # All gates: typecheck + lint + format
+npm run build                  # Build for production
 ```
 
 ## Project Structure
@@ -72,33 +74,18 @@ agent-readiness/
 
 ## Key Concepts
 
-### 9 Pillars (Factory.ai Compatible)
-| ID | Pillar | Checks |
-|----|--------|--------|
-| `docs` | Documentation | README, AGENTS.md, CONTRIBUTING, CHANGELOG |
-| `style` | Style & Validation | EditorConfig, linters, formatters |
-| `build` | Build System | Package manifest, CI/CD, lock files |
-| `test` | Testing | Test files, config, integration tests |
-| `security` | Security | .gitignore, CODEOWNERS, dependabot |
-| `observability` | Observability | Logging, tracing, metrics |
-| `env` | Environment | .env.example, devcontainer |
-| `task_discovery` | Task Discovery | Issue/PR templates |
-| `product` | Product | Feature flags, analytics |
-
-### 5 Levels
-| Level | Name | Threshold |
-|-------|------|-----------|
-| L1 | Functional | 80% of L1 checks |
-| L2 | Documented | 80% of L2 checks |
-| L3 | Standardized | 80% of L3 checks |
-| L4 | Optimized | 80% of L4 checks |
-| L5 | Autonomous | 80% of L5 checks |
-
-### Gating Rule
-Level N achieved when:
-1. ALL required checks at level N pass
-2. ≥80% of ALL checks at level N pass
-3. All previous levels achieved
+### 9 Setup Categories (Providers)
+| Provider | What It Sets Up |
+|----------|----------------|
+| Agent Guidance | AGENTS.md, CLAUDE.md, copilot-instructions.md, cursor rules |
+| Code Quality | Biome (JS/TS) or Ruff+mypy (Python), .editorconfig |
+| Testing | Test scaffold, BDT branch matrix, coverage config |
+| CI/CD | ci.yml, claude.yml, copilot-setup-steps.yml |
+| Hooks | Lefthook/Husky pre-commit + Claude PostToolUse hooks |
+| Branch Ruleset | GitHub rulesets via API (require PR, reviews, status checks) |
+| Templates | Issue forms (YAML), PR template, CODEOWNERS, SECURITY.md |
+| DevContainer | .devcontainer/devcontainer.json |
+| Security | dependabot.yml, push protection, CodeQL |
 
 ## Code Conventions
 
