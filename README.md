@@ -1,8 +1,9 @@
-# agent-ready
+# Agent Ready
 
-[中文文档](./README_CN.md) | English
+*From entropy generator to scalable production worker.*
 
 [![npm version](https://img.shields.io/npm/v/agent-ready.svg)](https://www.npmjs.com/package/agent-ready)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Agent%20Ready-blue?logo=github)](https://github.com/marketplace/actions/agent-ready-scanner)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
@@ -148,8 +149,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Agent Ready
-        # Pin to a tag or SHA for production usage; `main` tracks the latest.
-        uses: agent-next/agent-ready@main
+        # Pin to @v0 for latest stable; use a full tag like @v0.1.0 for exact version.
+        uses: agent-next/agent-ready@v0
         with:
           fail-below-level: 'L2'
           comment-on-pr: 'true'
@@ -173,18 +174,6 @@ jobs:
 | `score` | Overall score (0-100) |
 | `project-type` | `cli`, `library`, `webapp`, `web-service`, `monorepo` |
 | `passed` | Whether threshold was met |
-
-## Online API
-
-```bash
-# Submit a scan
-curl -X POST https://agent-ready.org/api/scan \
-  -H "Content-Type: application/json" \
-  -d '{"repo_url":"https://github.com/owner/repo"}'
-
-# Check status
-curl https://agent-ready.org/api/scan/{scan_id}
-```
 
 ## CLI Usage
 
@@ -301,7 +290,6 @@ agent-ready/
 
 ## Related Projects
 
-- [agent-ready-website](https://github.com/agent-next/agent-ready-website) - Web UI for scanning repos
 - [spec-kit](https://github.com/github/spec-kit) - GitHub's spec-driven development methodology
 
 ## License
@@ -309,5 +297,3 @@ agent-ready/
 MIT
 
 ---
-
-**Agent-Ready: From entropy generator to scalable production worker.**
