@@ -1,36 +1,25 @@
 # agent-ready
 
-Repository maturity scanner for AI agent collaboration.
+Best practices for setting up high-quality GitHub repos for AI coding agents.
+
+## What it does
+
+Teaches AI agents (Claude Code, Copilot, Cursor, Gemini) what a well-set-up repo looks like. The agent reads the skill, analyzes your project, and generates project-specific configs — not templates.
+
+**9 Areas:** Agent Guidance, Code Quality, Testing (BDT), CI/CD, Hooks, Branch Rulesets, Repo Templates, DevContainers, Security
 
 ## Installation
 
 ```bash
+# As a skill (for AI agents)
 npx skills add agent-next/agent-ready --path skill/agent-ready
-```
 
-## What it does
-
-Evaluates codebases using the Factory.ai-compatible 9 Pillars / 5 Levels model:
-
-**9 Pillars:** Documentation, Style, Build, Test, Security, Observability, Environment, Task Discovery, Product
-
-**5 Levels:** L1 (Functional) → L2 (Documented) → L3 (Standardized) → L4 (Optimized) → L5 (Autonomous)
-
-## Usage
-
-```bash
-# Scan repository
-npx agent-ready scan .
-
-# Generate missing files
-npx agent-ready init . --level L2
-
-# Chinese output
-npx agent-ready scan . --lang zh
+# As a CLI (for humans and CI)
+npx agent-ready check .
+npx agent-ready check . --json
 ```
 
 ## Links
 
-- [Website](https://agent-ready.org)
-- [npm package](https://www.npmjs.com/package/agent-ready)
 - [GitHub repository](https://github.com/agent-next/agent-ready)
+- [npm package](https://www.npmjs.com/package/agent-ready)
