@@ -6,9 +6,20 @@
  */
 
 import * as path from 'node:path';
-import type { Language } from './types.js';
+import type { Language, PackageJson } from './types.js';
 import { fileExists, readFile, findFiles, directoryExists } from './utils/fs.js';
 import { buildScanContext } from './engine/context.js';
+
+export type AreaName =
+  | 'agent_guidance'
+  | 'code_quality'
+  | 'testing'
+  | 'ci_cd'
+  | 'hooks'
+  | 'branch_rulesets'
+  | 'templates'
+  | 'devcontainer'
+  | 'security';
 
 export interface AreaStatus {
   status: 'complete' | 'partial' | 'missing' | 'unknown';
@@ -22,7 +33,7 @@ export interface ReadinessResult {
   data: {
     project_type: string;
     language: string;
-    areas: Record<string, AreaStatus>;
+    areas: Record<AreaName, AreaStatus>;
   };
 }
 
@@ -32,17 +43,29 @@ export interface ReadinessResult {
 export async function checkRepoReadiness(repoPath: string): Promise<ReadinessResult> {
   const ctx = await buildScanContext(repoPath);
 
-  const areas: Record<string, AreaStatus> = {};
+  const [agent_guidance, code_quality, testing, ci_cd, hooks, templates, devcontainer, security] =
+    await Promise.all([
+      checkAgentGuidance(repoPath),
+      checkCodeQuality(repoPath, ctx.language, ctx.package_json),
+      checkTesting(repoPath, ctx.package_json),
+      checkCiCd(repoPath),
+      checkHooks(repoPath),
+      checkTemplates(repoPath),
+      checkDevcontainer(repoPath),
+      checkSecurity(repoPath),
+    ]);
 
-  areas.agent_guidance = await checkAgentGuidance(repoPath);
-  areas.code_quality = await checkCodeQuality(repoPath, ctx.language);
-  areas.testing = await checkTesting(repoPath);
-  areas.ci_cd = await checkCiCd(repoPath);
-  areas.hooks = await checkHooks(repoPath);
-  areas.branch_rulesets = checkBranchRulesets();
-  areas.templates = await checkTemplates(repoPath);
-  areas.devcontainer = await checkDevcontainer(repoPath);
-  areas.security = await checkSecurity(repoPath);
+  const areas: Record<AreaName, AreaStatus> = {
+    agent_guidance,
+    code_quality,
+    testing,
+    ci_cd,
+    hooks,
+    branch_rulesets: checkBranchRulesets(),
+    templates,
+    devcontainer,
+    security,
+  };
 
   return {
     ok: true,
@@ -107,7 +130,11 @@ async function checkAgentGuidance(repoPath: string): Promise<AreaStatus> {
   return { status: computeStatus(present, missing), present, missing };
 }
 
-async function checkCodeQuality(repoPath: string, language: Language): Promise<AreaStatus> {
+async function checkCodeQuality(
+  repoPath: string,
+  language: Language,
+  packageJson?: PackageJson
+): Promise<AreaStatus> {
   const checks: { label: string; paths: string[] }[] = [];
 
   if (language === 'typescript' || language === 'javascript') {
@@ -128,27 +155,27 @@ async function checkCodeQuality(repoPath: string, language: Language): Promise<A
     });
   }
 
-  if (language === 'python') {
-    // Check for ruff in pyproject.toml
-    const pyprojectContent = await readFile(path.join(repoPath, 'pyproject.toml'));
-    const hasRuff = pyprojectContent ? pyprojectContent.includes('ruff') : false;
-    if (hasRuff) {
-      // Will be added to present below via a different mechanism
-      checks.push({ label: 'linter (ruff)', paths: ['pyproject.toml'] });
-    } else {
-      checks.push({ label: 'linter (ruff)', paths: ['__nonexistent__'] });
-    }
+  if (language === 'typescript') {
+    checks.push({ label: 'tsconfig.json', paths: ['tsconfig.json'] });
   }
-
-  checks.push({ label: 'tsconfig.json', paths: ['tsconfig.json'] });
   checks.push({ label: '.editorconfig', paths: ['.editorconfig'] });
 
   const { present, missing } = await checkFiles(repoPath, checks);
 
+  // Python linter: check for ruff in pyproject.toml (no file-existence hack needed)
+  if (language === 'python') {
+    const pyprojectContent = await readFile(path.join(repoPath, 'pyproject.toml'));
+    if (pyprojectContent?.includes('ruff')) {
+      present.push('linter (ruff)');
+    } else {
+      missing.push('linter (ruff)');
+    }
+  }
+
   return { status: computeStatus(present, missing), present, missing };
 }
 
-async function checkTesting(repoPath: string): Promise<AreaStatus> {
+async function checkTesting(repoPath: string, packageJson?: PackageJson): Promise<AreaStatus> {
   const present: string[] = [];
   const missing: string[] = [];
 
@@ -164,7 +191,7 @@ async function checkTesting(repoPath: string): Promise<AreaStatus> {
     missing.push('test directory');
   }
 
-  // Check for test config
+  // Check for test config files
   const testConfigFiles = [
     'vitest.config.ts',
     'vitest.config.js',
@@ -178,7 +205,6 @@ async function checkTesting(repoPath: string): Promise<AreaStatus> {
     'conftest.py',
   ];
 
-  // Also check pyproject.toml for [tool.pytest] section
   let hasTestConfig = false;
   for (const f of testConfigFiles) {
     if (await fileExists(path.join(repoPath, f))) {
@@ -187,12 +213,11 @@ async function checkTesting(repoPath: string): Promise<AreaStatus> {
     }
   }
 
-  // Check pyproject.toml for pytest config
-  if (!hasTestConfig) {
-    const pyprojectContent = await readFile(path.join(repoPath, 'pyproject.toml'));
-    if (pyprojectContent && pyprojectContent.includes('[tool.pytest')) {
-      hasTestConfig = true;
-    }
+  // Read pyproject.toml once for both test config and coverage checks
+  const pyprojectContent = await readFile(path.join(repoPath, 'pyproject.toml'));
+
+  if (!hasTestConfig && pyprojectContent?.includes('[tool.pytest')) {
+    hasTestConfig = true;
   }
 
   if (hasTestConfig) {
@@ -201,33 +226,22 @@ async function checkTesting(repoPath: string): Promise<AreaStatus> {
     missing.push('test config');
   }
 
-  // Check for coverage config
+  // Check for coverage config using ctx.package_json (already parsed)
   const coverageIndicators = ['c8', 'istanbul', 'nyc', 'coverage', 'pytest-cov'];
   let hasCoverage = false;
 
-  // Check package.json for coverage tools
-  const pkgContent = await readFile(path.join(repoPath, 'package.json'));
-  if (pkgContent) {
-    try {
-      const pkg = JSON.parse(pkgContent);
-      const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-      for (const indicator of coverageIndicators) {
-        if (allDeps[indicator]) {
-          hasCoverage = true;
-          break;
-        }
+  if (packageJson) {
+    const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+    for (const indicator of coverageIndicators) {
+      if (allDeps[indicator]) {
+        hasCoverage = true;
+        break;
       }
-    } catch {
-      // ignore
     }
   }
 
-  // Check pyproject.toml for coverage config
-  if (!hasCoverage) {
-    const pyprojectContent = await readFile(path.join(repoPath, 'pyproject.toml'));
-    if (pyprojectContent && pyprojectContent.includes('pytest-cov')) {
-      hasCoverage = true;
-    }
+  if (!hasCoverage && pyprojectContent?.includes('pytest-cov')) {
+    hasCoverage = true;
   }
 
   if (hasCoverage) {
@@ -243,10 +257,8 @@ async function checkCiCd(repoPath: string): Promise<AreaStatus> {
   const present: string[] = [];
   const missing: string[] = [];
 
-  // Check for any GitHub workflow
-  const workflows = await findFiles('.github/workflows/*.yml', repoPath);
-  const workflowsYaml = await findFiles('.github/workflows/*.yaml', repoPath);
-  const allWorkflows = [...workflows, ...workflowsYaml];
+  // Single glob with brace expansion for both .yml and .yaml
+  const allWorkflows = await findFiles('.github/workflows/*.{yml,yaml}', repoPath);
 
   if (allWorkflows.length > 0) {
     present.push('CI workflow');
@@ -254,8 +266,9 @@ async function checkCiCd(repoPath: string): Promise<AreaStatus> {
     missing.push('CI workflow');
   }
 
-  // Check for claude.yml specifically
-  if (await fileExists(path.join(repoPath, '.github/workflows/claude.yml'))) {
+  // claude.yml is already found by the glob above — check in-memory
+  const hasClaude = allWorkflows.some((f) => f.endsWith('/claude.yml'));
+  if (hasClaude) {
     present.push('claude.yml');
   } else {
     missing.push('claude.yml');
@@ -292,11 +305,9 @@ async function checkTemplates(repoPath: string): Promise<AreaStatus> {
   const present: string[] = [];
   const missing: string[] = [];
 
-  // Check for issue templates
-  const issueTemplates = await findFiles('.github/ISSUE_TEMPLATE/*.yml', repoPath);
-  const issueTemplatesYaml = await findFiles('.github/ISSUE_TEMPLATE/*.yaml', repoPath);
-  const issueTemplatesMd = await findFiles('.github/ISSUE_TEMPLATE/*.md', repoPath);
-  if (issueTemplates.length + issueTemplatesYaml.length + issueTemplatesMd.length > 0) {
+  // Single glob with brace expansion for all issue template formats
+  const issueTemplates = await findFiles('.github/ISSUE_TEMPLATE/*.{yml,yaml,md}', repoPath);
+  if (issueTemplates.length > 0) {
     present.push('issue templates');
   } else {
     missing.push('issue templates');
@@ -309,10 +320,11 @@ async function checkTemplates(repoPath: string): Promise<AreaStatus> {
     missing.push('PR template');
   }
 
-  // Check for CODEOWNERS
-  if (await fileExists(path.join(repoPath, '.github/CODEOWNERS'))) {
-    present.push('CODEOWNERS');
-  } else if (await fileExists(path.join(repoPath, 'CODEOWNERS'))) {
+  // Check for CODEOWNERS (two common locations)
+  const hasCodeowners =
+    (await fileExists(path.join(repoPath, '.github/CODEOWNERS'))) ||
+    (await fileExists(path.join(repoPath, 'CODEOWNERS')));
+  if (hasCodeowners) {
     present.push('CODEOWNERS');
   } else {
     missing.push('CODEOWNERS');
