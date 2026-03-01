@@ -137,10 +137,7 @@ async function detectMonorepo(
  * 3. package.json exists (but no tsconfig.json) → 'javascript'
  * 4. else → 'unknown'
  */
-async function detectLanguage(
-  rootPath: string,
-  packageJson?: PackageJson
-): Promise<Language> {
+async function detectLanguage(rootPath: string, packageJson?: PackageJson): Promise<Language> {
   // TypeScript: tsconfig.json exists
   if (await fileExists(path.join(rootPath, 'tsconfig.json'))) {
     return 'typescript';

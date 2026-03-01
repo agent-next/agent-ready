@@ -46,7 +46,7 @@ export async function checkRepoReadiness(repoPath: string): Promise<ReadinessRes
   const [agent_guidance, code_quality, testing, ci_cd, hooks, templates, devcontainer, security] =
     await Promise.all([
       checkAgentGuidance(repoPath),
-      checkCodeQuality(repoPath, ctx.language, ctx.package_json),
+      checkCodeQuality(repoPath, ctx.language),
       checkTesting(repoPath, ctx.package_json),
       checkCiCd(repoPath),
       checkHooks(repoPath),
@@ -130,11 +130,7 @@ async function checkAgentGuidance(repoPath: string): Promise<AreaStatus> {
   return { status: computeStatus(present, missing), present, missing };
 }
 
-async function checkCodeQuality(
-  repoPath: string,
-  language: Language,
-  packageJson?: PackageJson
-): Promise<AreaStatus> {
+async function checkCodeQuality(repoPath: string, language: Language): Promise<AreaStatus> {
   const checks: { label: string; paths: string[] }[] = [];
 
   if (language === 'typescript' || language === 'javascript') {
