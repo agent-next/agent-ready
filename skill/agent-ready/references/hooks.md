@@ -143,6 +143,34 @@ repos:
 
 Install: `pre-commit install` (add to `Makefile` init target or CI setup step).
 
+#### Optional: lint agent instruction quality
+
+Formatters and code linters cannot check whether the instructions that guide an
+agent define useful stop conditions, distinguish tools, or resolve conflicting
+output requirements. For repositories that keep those instructions in version
+control, add [LintLang](https://github.com/hermes-labs-ai/lintlang) as a
+separate, deterministic pre-commit check:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/hermes-labs-ai/lintlang
+    rev: v0.5.3
+    hooks:
+      - id: lintlang
+        args: [AGENTS.md]
+```
+
+Replace `AGENTS.md` with only the instruction paths the repository owns, such
+as `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, or
+`.github/instructions/`. The hook scans those named inputs, not application
+source files. Start with its advisory default; after reviewing the baseline,
+add `--fail-on, fail` to block only high- and critical-severity findings.
+
+The same paths can be checked in GitHub Actions, including SARIF upload, with
+`lintlang init --github --path <instruction-path>`; see LintLang's
+[CI guide](https://github.com/hermes-labs-ai/lintlang#add-it-to-ci).
+
 ### Layer 2: Claude Code Hooks
 
 Configure in `.claude/settings.json` under the `hooks` key. These run automatically during Claude Code sessions.
