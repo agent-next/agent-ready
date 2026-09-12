@@ -155,7 +155,7 @@ separate, deterministic pre-commit check:
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/hermes-labs-ai/lintlang
-    rev: v0.5.3
+    rev: v0.6.0
     hooks:
       - id: lintlang
         args: [AGENTS.md]
@@ -164,12 +164,29 @@ repos:
 Replace `AGENTS.md` with only the instruction paths the repository owns, such
 as `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, or
 `.github/instructions/`. The hook scans those named inputs, not application
-source files. Start with its advisory default; after reviewing the baseline,
-add `--fail-on, fail` to block only high- and critical-severity findings.
+source files. Start with its advisory default. To adopt a blocking gate in an
+existing repository, first review a baseline, then add
+`--baseline, .lintlang-baseline.json, --fail-on, review` to the hook arguments.
 
-The same paths can be checked in GitHub Actions, including SARIF upload, with
-`lintlang init --github --path <instruction-path>`; see LintLang's
-[CI guide](https://github.com/hermes-labs-ai/lintlang#add-it-to-ci).
+```bash
+lintlang scan AGENTS.md --write-baseline .lintlang-baseline.json
+pre-commit run lintlang --all-files
+```
+
+Commit the reviewed baseline; it acknowledges only the recorded findings, so
+new medium, high, or critical findings still block the hook. The same path can
+run in GitHub Actions with the released action:
+
+```yaml
+- uses: hermes-labs-ai/lintlang@v0.6.0
+  with:
+    path: AGENTS.md
+    baseline: .lintlang-baseline.json
+    fail-on: review
+```
+
+The action also accepts `sarif-file` when the workflow uploads SARIF. See
+LintLang's [baseline and CI guide](https://github.com/hermes-labs-ai/lintlang/blob/v0.6.0/docs/baselines.md).
 
 ### Layer 2: Claude Code Hooks
 
