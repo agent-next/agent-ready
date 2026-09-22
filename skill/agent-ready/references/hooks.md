@@ -165,8 +165,12 @@ Replace `AGENTS.md` with only the instruction paths the repository owns, such
 as `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, or
 `.github/instructions/`. The hook scans those named inputs, not application
 source files. Start with its advisory default. To adopt a blocking gate in an
-existing repository, first review a baseline, then add
-`--baseline, .lintlang-baseline.json, --fail-on, review` to the hook arguments.
+existing repository, first review a baseline, then set the hook arguments to
+the complete list below (replace `AGENTS.md` with the paths your repository owns):
+
+```yaml
+args: [AGENTS.md, --baseline, .lintlang-baseline.json, --fail-on, review]
+```
 
 ```bash
 lintlang scan AGENTS.md --write-baseline .lintlang-baseline.json
