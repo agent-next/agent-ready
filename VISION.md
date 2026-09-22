@@ -1,175 +1,53 @@
-# Agent-Driven Development Vision
+# Repository Readiness Vision
 
-> **The goal**: 1000 imperfect agents working in parallel, safely producing high-quality software.
+> **The design goal:** make it easier to evaluate and improve repositories for AI-assisted development.
 
-## The Problem
+AI coding agents work best when the repository gives them clear guidance, reproducible tools, useful feedback, and explicit security boundaries. As agent work scales, behavioral drift, coordination failures, and unsafe configuration become risks that need deliberate controls.
 
-Today's AI coding agents are "entropy generators":
-- They drift from specifications over time
-- They introduce subtle bugs without understanding context
-- They conflict with each other when working in parallel
-- They lack the guardrails needed for production use
+## What Agent-Ready provides
 
-**Result**: Agents work great for demos, fail at scale.
+Agent-Ready is a knowledge layer and readiness checker for repository infrastructure. It helps teams understand which supporting practices are present and which need attention:
 
-## The Solution: Production Control Layer
+- The Agent-Ready skill explains practices for nine areas: agent guidance, code quality, testing, CI/CD, hooks, branch rulesets, repository templates, devcontainers, and security.
+- The `agent-ready check` CLI reports `present` and `missing` items for those areas, with human-readable or JSON output and an optional strict exit status.
+- The `check_repo_readiness` MCP tool exposes the same structured readiness data to AI agents.
+- The `init` command can generate supported missing configuration files, with a dry-run option for review first.
+- The GitHub Action can run the check and optionally fail when an area has missing items.
 
-Agent-Ready provides the **production control layer** that makes AI-written software safe:
+These features inspect repository files and configuration signals. A complete or partial area describes what the checker found; it does not demonstrate that an agent can safely operate, that a branch rule is enforced, or that a deployment control works at runtime. With `--strict`, partial and missing areas can produce a nonzero exit; `unknown` areas are treated as non-failing by the checker.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    AGENT-DRIVEN DEVELOPMENT                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐  │
-│  │  SPEC    │ -> │  TASKS   │ -> │  AGENTS  │ -> │  VERIFY  │  │
-│  │  .md     │    │  Queue   │    │  Execute │    │  Gates   │  │
-│  └──────────┘    └──────────┘    └──────────┘    └──────────┘  │
-│       │               │               │               │         │
-│       v               v               v               v         │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              FROZEN CONTRACTS (types, schemas)            │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│       │               │               │               │         │
-│       v               v               v               v         │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │                    CI GATEKEEPING                         │  │
-│  │              (tests, lint, security, coverage)            │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
+## The nine areas
 
-## The 5 Maturity Levels (Redefined)
+| Area | Readiness signals |
+|------|-------------------|
+| Agent Guidance | AGENTS.md, CLAUDE.md, Copilot instructions, and related setup files |
+| Code Quality | Linters, formatters, type checking, and editor configuration |
+| Testing | Test directories, test runners, and coverage configuration |
+| CI/CD | Workflow files and `claude.yml` |
+| Hooks | Pre-commit and agent workflow hooks |
+| Branch Rulesets | Not verified by the checker; always reported as `unknown`. Use `gh` or the GitHub API separately |
+| Templates | Issue forms, pull request templates, CODEOWNERS, and security guidance |
+| DevContainer | Reproducible development environment configuration |
+| Security | `dependabot.yml` and `SECURITY.md` presence |
 
-### L1: Agent-Readable
-- Agents can **understand** the codebase
-- CLAUDE.md / AGENTS.md explains structure
-- Basic documentation exists
+The checker identifies repository signals; teams still need to confirm that the corresponding controls are enabled, scoped correctly, and effective.
 
-### L2: Agent-Configurable
-- Agents have **tool configurations**
-- .claude/settings.json, .cursorrules, etc.
-- Permission boundaries defined
+## Recommended workflow
 
-### L3: Agent-Executable
-- Agents can **run tasks**
-- MCP servers for extended capabilities
-- Slash commands for common operations
-- Hooks for workflow integration
+1. Analyze the project and its language, framework, and structure.
+2. Run `npx agent-ready check .` or call `check_repo_readiness`.
+3. Read the reference guidance for each missing area.
+4. Generate supported starter configuration with the CLI or MCP tool, then adapt it to the project.
+5. Run the repository's own lint, tests, and CI checks to verify the result.
 
-### L4: Agent-Coordinated
-- **Multiple agents** can work together
-- Task ownership and boundaries
-- Context injection for shared knowledge
-- Conflict detection mechanisms
+## Parallel-agent design goal
 
-### L5: Agent-Autonomous
-- Agents can **self-improve**
-- Feedback loops from CI/reviews
-- Learning from past mistakes
-- Autonomous workflow execution
+Many imperfect agents may eventually work on the same organization’s repositories. A useful design question is:
 
-## Key Mechanisms
+> Do the repository and delivery controls give each agent clear guidance, bounded permissions, reviewable changes, and feedback when something goes wrong?
 
-### 1. Specification-First
-```
-SPEC.md → TASKS.md → Agent Work → Verification
-```
-Agents work FROM specifications, not just context.
+Agent-Ready helps identify supporting repository signals for that goal. It does not coordinate an agent fleet, enforce patch isolation, or guarantee safe parallel execution. Validate permissions, branch protection, ownership, conflict handling, testing, and deployment controls in the systems that provide them.
 
-### 2. Frozen Contracts
-```typescript
-// These types are FROZEN - agents cannot modify
-export interface ScanResult {
-  level: number;
-  score: number;
-  // ...
-}
-```
-Contract tests verify agents don't break interfaces.
+## Scope boundary
 
-### 3. Task Discovery
-```yaml
-# TASKS.md or GitHub Issues
-- [ ] Implement user authentication (owner: agent-auth)
-- [ ] Add rate limiting (owner: agent-api)
-- [ ] Write integration tests (owner: agent-test)
-```
-Agents claim tasks, avoiding conflicts.
-
-### 4. Verification Gates
-```yaml
-# CI blocks merge unless ALL pass:
-- Type checking
-- Unit tests
-- Contract tests
-- Security scan
-- Coverage threshold
-```
-No agent change reaches main without verification.
-
-### 5. Agent Boundaries
-```json
-// .claude/settings.json
-{
-  "permissions": {
-    "allowedPaths": ["src/**/*"],
-    "deniedPaths": ["src/core/types.ts"],  // Frozen
-    "allowedCommands": ["npm test", "npm run build"]
-  }
-}
-```
-Agents can only modify what they're allowed to.
-
-## Metrics That Matter
-
-| Metric | What It Measures | Target |
-|--------|------------------|--------|
-| **Contract Coverage** | % of interfaces with contract tests | > 90% |
-| **Spec Alignment** | Code traces back to SPEC.md | 100% |
-| **Agent Boundary Coverage** | % of code with ownership defined | > 80% |
-| **CI Gate Strictness** | All PRs must pass all checks | 100% |
-| **Verification Freshness** | How recent is last full verification | < 24h |
-
-## The "1000 Idiots" Test
-
-A codebase is truly agent-ready when:
-
-> **1000 imperfect AI agents can work on it in parallel without destroying it.**
-
-This requires:
-1. Clear specifications (what to build)
-2. Frozen contracts (what not to break)
-3. Strict CI gates (catch all mistakes)
-4. Agent boundaries (who owns what)
-5. Verification loops (continuous checking)
-
-## Roadmap
-
-### Phase 1: Foundation (Current)
-- [x] Basic checks for file existence
-- [x] Project type detection
-- [x] Spec-kit integration (SPEC.md, contracts)
-
-### Phase 2: Agent Control Surface
-- [ ] Agent boundary definitions (.claude/boundaries.json)
-- [ ] Task discovery checks (TASKS.md, issues integration)
-- [ ] Ownership mapping (CODEOWNERS for agents)
-
-### Phase 3: Multi-Agent Coordination
-- [ ] Agent workflow definitions
-- [ ] Conflict detection mechanisms
-- [ ] Shared context protocols
-
-### Phase 4: Autonomous Operations
-- [ ] Self-improvement feedback loops
-- [ ] Automatic task generation from specs
-- [ ] Agent performance metrics
-
----
-
-**Agent-Ready is the missing production control layer for AI-written software.**
-
-Without it: chaos.
-With it: scalable, safe, autonomous development.
+Agent-Ready reports and helps generate repository infrastructure. It does not replace the repository’s CI provider, GitHub settings, container runtime, security tooling, deployment system, or human review. Those systems remain responsible for enforcing the controls on which safe agent-assisted development depends.
