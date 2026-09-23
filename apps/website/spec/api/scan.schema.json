@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.org/schema/scan-api.json",
+  "title": "Scan API Schema",
+  "description": "JSON Schema definitions for the scan API types (v0.0.2 - aligned with CLI)",
+  "definitions": {
+    "ScanRequest": {
+      "type": "object",
+      "required": ["repo_url"],
+      "properties": {
+        "repo_url": {
+          "type": "string",
+          "description": "Git repository URL (HTTPS only)"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Optional branch name (default: main)"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Scan profile (default: 'factory_compat')"
+        }
+      }
+    },
+    "ScanResponse": {
+      "type": "object",
+      "required": ["scan_id", "status", "poll_url"],
+      "properties": {
+        "scan_id": {
+          "type": "string",
+          "description": "Unique scan identifier"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["queued", "cloning", "scanning", "completed", "failed"],
+          "description": "Current scan status"
+        },
+        "poll_url": {
+          "type": "string",
+          "description": "URL for status polling"
+        }
+      }
+    },
+    "ScanStatusBase": {
+      "type": "object",
+      "required": ["scan_id", "repo_url", "created_at"],
+      "properties": {
+        "scan_id": {
+          "type": "string"
+        },
+        "repo_url": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp (if scan started)"
+        },
+        "duration_ms": {
+          "type": "number",
+          "description": "Milliseconds elapsed"
+        }
+      }
+    },
+    "ScanStatusInProgress": {
+      "allOf": [
+        { "$ref": "#/definitions/ScanStatusBase" },
+        {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["queued", "cloning", "scanning"]
+            },
+            "progress": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        }
+      ]
+    },
+    "ScanStatusCompleted": {
+      "allOf": [
+        { "$ref": "#/definitions/ScanStatusBase" },
+        {
+          "type": "object",
+          "required": ["status", "completed_at", "result"],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["completed"]
+            },
+            "completed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "result": {
+              "$ref": "#/definitions/ScanResult"
+            }
+          }
+        }
+      ]
+    },
+    "ScanStatusFailed": {
+      "allOf": [
+        { "$ref": "#/definitions/ScanStatusBase" },
+        {
+          "type": "object",
+          "required": ["status", "completed_at", "error"],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["failed"]
+            },
+            "completed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "PillarResult": {
+      "type": "object",
+      "required": ["pillar", "level_achieved", "score", "icon", "name", "checks_passed", "checks_total"],
+      "properties": {
+        "pillar": {
+          "type": "string",
+          "enum": ["docs", "style", "build", "test", "security", "observability", "env", "task_discovery", "product", "agent_config", "code_quality"]
+        },
+        "level_achieved": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "enum": ["L0", "L1", "L2", "L3", "L4", "L5"] }
+          ],
+          "description": "Level achieved for this pillar ('L1'-'L5' or null if none)"
+        },
+        "score": {
+          "type": "number"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "checks_passed": {
+          "type": "number"
+        },
+        "checks_total": {
+          "type": "number"
+        }
+      }
+    },
+    "CheckResult": {
+      "type": "object",
+      "required": ["id", "name", "passed", "level"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["L0", "L1", "L2", "L3", "L4", "L5"],
+          "description": "Level this check belongs to"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fix": {
+          "type": "string"
+        }
+      }
+    },
+    "ActionItem": {
+      "type": "object",
+      "required": ["pillar", "action", "impact", "effort"],
+      "properties": {
+        "pillar": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "effort": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        }
+      }
+    },
+    "ImprovementRoadmap": {
+      "type": "object",
+      "required": ["quick_wins", "short_term", "medium_term", "long_term"],
+      "properties": {
+        "quick_wins": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ActionItem" }
+        },
+        "short_term": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ActionItem" }
+        },
+        "medium_term": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ActionItem" }
+        },
+        "long_term": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ActionItem" }
+        }
+      }
+    },
+    "ScanResult": {
+      "type": "object",
+      "required": ["meta", "executive_summary", "detailed_analysis", "improvement_roadmap", "charts"],
+      "properties": {
+        "meta": {
+          "type": "object",
+          "required": ["repo", "commit", "timestamp", "scan_duration_ms", "agents_used"],
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "scan_duration_ms": {
+              "type": "number"
+            },
+            "agents_used": {
+              "type": "number"
+            }
+          }
+        },
+        "executive_summary": {
+          "type": "object",
+          "required": ["level", "score", "headline", "key_strengths", "critical_gaps", "next_steps"],
+          "properties": {
+            "level": {
+              "oneOf": [
+                { "type": "null" },
+                { "type": "string", "enum": ["L0", "L1", "L2", "L3", "L4", "L5"] }
+              ],
+              "description": "Overall level achieved ('L1'-'L5' or null if none)"
+            },
+            "score": {
+              "type": "number"
+            },
+            "headline": {
+              "type": "string"
+            },
+            "key_strengths": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "critical_gaps": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "next_steps": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "detailed_analysis": {
+          "type": "object",
+          "required": ["pillars", "cross_pillar_insights", "tech_debt_score"],
+          "properties": {
+            "pillars": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/PillarResult" }
+            },
+            "cross_pillar_insights": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["type", "pillars", "insight", "recommendation"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["risk", "opportunity", "strength"]
+                  },
+                  "pillars": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "insight": {
+                    "type": "string"
+                  },
+                  "recommendation": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "tech_debt_score": {
+              "type": "number"
+            }
+          }
+        },
+        "improvement_roadmap": {
+          "$ref": "#/definitions/ImprovementRoadmap"
+        },
+        "charts": {
+          "type": "object",
+          "required": ["pillar_radar", "level_progress"],
+          "properties": {
+            "pillar_radar": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["pillar", "score"],
+                "properties": {
+                  "pillar": { "type": "string" },
+                  "score": { "type": "number" }
+                }
+              }
+            },
+            "level_progress": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["level", "achieved", "score"],
+                "properties": {
+                  "level": {
+                    "type": "string",
+                    "enum": ["L0", "L1", "L2", "L3", "L4", "L5"],
+                    "description": "Level identifier"
+                  },
+                  "achieved": { "type": "boolean" },
+                  "score": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
