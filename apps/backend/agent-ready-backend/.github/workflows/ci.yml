@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Checkout agent-ready dependency
+        uses: actions/checkout@v6
+        with:
+          repository: robotlearning123/agent-ready
+          path: agent-ready
+
+      - name: Install agent-ready
+        run: |
+          cd agent-ready
+          npm ci
+          npm run build
+
+      - name: Update dependency path
+        run: |
+          sed -i 's|"agent-ready": "file:../agent-ready"|"agent-ready": "file:./agent-ready"|' package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        run: npm run format:check
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Checkout agent-ready dependency
+        uses: actions/checkout@v6
+        with:
+          repository: robotlearning123/agent-ready
+          path: agent-ready
+
+      - name: Install agent-ready
+        run: |
+          cd agent-ready
+          npm ci
+          npm run build
+
+      - name: Update dependency path
+        run: |
+          sed -i 's|"agent-ready": "file:../agent-ready"|"agent-ready": "file:./agent-ready"|' package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit
+
+      - name: Run TypeScript type check
+        run: npm run typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Checkout agent-ready dependency
+        uses: actions/checkout@v6
+        with:
+          repository: robotlearning123/agent-ready
+          path: agent-ready
+
+      - name: Install agent-ready
+        run: |
+          cd agent-ready
+          npm ci
+          npm run build
+
+      - name: Update dependency path
+        run: |
+          sed -i 's|"agent-ready": "file:../agent-ready"|"agent-ready": "file:./agent-ready"|' package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit
+
+      - name: Run tests
+        run: npm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Checkout agent-ready dependency
+        uses: actions/checkout@v6
+        with:
+          repository: robotlearning123/agent-ready
+          path: agent-ready
+
+      - name: Install agent-ready
+        run: |
+          cd agent-ready
+          npm ci
+          npm run build
+
+      - name: Update dependency path
+        run: |
+          sed -i 's|"agent-ready": "file:../agent-ready"|"agent-ready": "file:./agent-ready"|' package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          test -f dist/index.js
+          echo "Build successful!"
