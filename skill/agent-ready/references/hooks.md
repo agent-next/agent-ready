@@ -143,6 +143,55 @@ repos:
 
 Install: `pre-commit install` (add to `Makefile` init target or CI setup step).
 
+#### Optional: lint agent instruction quality
+
+Formatters and code linters cannot check whether the instructions that guide an
+agent define useful stop conditions, distinguish tools, or resolve conflicting
+output requirements. For repositories that keep those instructions in version
+control, add [LintLang](https://github.com/hermes-labs-ai/lintlang) as a
+separate, deterministic pre-commit check:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/hermes-labs-ai/lintlang
+    rev: v0.6.0
+    hooks:
+      - id: lintlang
+        args: [AGENTS.md]
+```
+
+Replace `AGENTS.md` with only the instruction paths the repository owns, such
+as `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, or
+`.github/instructions/`. The hook scans those named inputs, not application
+source files. Start with its advisory default. To adopt a blocking gate in an
+existing repository, first review a baseline, then set the hook arguments to
+the complete list below (replace `AGENTS.md` with the paths your repository owns):
+
+```yaml
+args: [AGENTS.md, --baseline, .lintlang-baseline.json, --fail-on, review]
+```
+
+```bash
+lintlang scan AGENTS.md --write-baseline .lintlang-baseline.json
+pre-commit run lintlang --all-files
+```
+
+Commit the reviewed baseline; it acknowledges only the recorded findings, so
+new medium, high, or critical findings still block the hook. The same path can
+run in GitHub Actions with the released action:
+
+```yaml
+- uses: hermes-labs-ai/lintlang@v0.6.0
+  with:
+    path: AGENTS.md
+    baseline: .lintlang-baseline.json
+    fail-on: review
+```
+
+The action also accepts `sarif-file` when the workflow uploads SARIF. See
+LintLang's [baseline and CI guide](https://github.com/hermes-labs-ai/lintlang/blob/v0.6.0/docs/baselines.md).
+
 ### Layer 2: Claude Code Hooks
 
 Configure in `.claude/settings.json` under the `hooks` key. These run automatically during Claude Code sessions.
