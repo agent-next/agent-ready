@@ -6,7 +6,7 @@ A verification layer above tests that answers "does the product still work for i
 
 ## Why a Release Gate
 
-Unit, integration, BDD, and E2E tests verify that code behaves as written. A release gate asks a different question: does the product still work for the people who use it?
+Unit, integration, behavior-driven (BDT), and E2E tests verify that code behaves as written. A release gate asks a different question: does the product still work for the people who use it?
 
 - Tests check what authors **anticipated**. Release missions check what users **actually do**.
 - A green suite can still ship a broken product: every test passes while the signup flow, the export button, or the admin console is dead.
@@ -68,10 +68,10 @@ Keep two verification lanes, and never mix them.
 | Lane | Contents | Blocking? |
 |------|----------|-----------|
 | Deterministic | lint, typecheck, unit tests, build | Yes — always |
-| Mission | risk-tiered mission pack against a live environment | Advisory (see verdict mapping) |
+| Mission | risk-tiered mission pack against a live environment | Only on `block` — see Three-Way Verdict |
 
 - The deterministic lane stays exactly as strict as it already is. The mission layer does not replace it, weaken it, or gate it.
-- The mission lane produces an **advisory verdict** that informs a human merge decision — it is never an auto-approval.
+- The mission lane blocks only on evidenced failure of a critical mission. Every other outcome is advisory and informs a human merge decision — a `ship` is never an auto-approval.
 - One report artifact covers both lanes so reviewers see a single page.
 
 ---
@@ -115,7 +115,15 @@ The mission lane emits one of three verdicts per change:
 | `ship` | All required missions passed with evidence | Green check + attached evidence report |
 | `investigate` | Missions inconclusive, flaky env, or partial coverage | **Non-blocking** — PR comment, report artifact, or warning annotation. Must NOT fail the build. |
 
-The `investigate` verdict exists because the mission layer runs against real environments, which flake. Flakiness is a signal for a human, not a red X for the pipeline. Never let advisory output fail the build — that trains teams to ignore or delete the gate.
+Roll per-mission results up to the change verdict:
+
+| Per-mission results | Change verdict |
+|---------------------|----------------|
+| Any critical mission `fail` with evidence | `block` |
+| Any mission `blocked` (environment down, timeout), or a non-critical `fail`, or a required mission not run | `investigate` |
+| Every required mission `pass` with evidence | `ship` |
+
+The `investigate` verdict exists because the mission layer runs against real environments, which flake. Flakiness is a signal for a human, not a red X for the pipeline. Never let `investigate` fail the build — that trains teams to ignore or delete the gate. Reserve the red check for `block`, where the evidence shows a real failure.
 
 ---
 
