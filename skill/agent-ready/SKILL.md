@@ -33,6 +33,12 @@ A curated collection of best practices for standard high-quality GitHub repos an
 | DevContainer | `references/devcontainer.md` | .devcontainer for reproducible agent environments |
 | Security | `references/security.md` | Dependabot, push protection, CodeQL, secret scanning |
 
+## Beyond the 9 Areas
+
+| Area | Reference | What It Covers |
+|------|-----------|---------------|
+| Release Gate | `references/release-gate.md` | Release-verification layer above tests: risk classification, bounded missions, oracles, evidence, ship/investigate/block advisory |
+
 ## Quick Reference: Files a Repo Should Have
 
 ### Agent guidance (all tools)
