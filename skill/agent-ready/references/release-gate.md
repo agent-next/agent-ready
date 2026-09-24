@@ -123,6 +123,8 @@ Roll per-mission results up to the change verdict:
 | Any mission `blocked` (environment down, timeout), or a non-critical `fail`, or a required mission not run | `investigate` |
 | Every required mission `pass` with evidence | `ship` |
 
+Evaluate the rows top to bottom; the first match wins. A `fail` without evidence counts as `investigate`, not `block`. T0 changes run no missions, so their result is the deterministic lane alone.
+
 The `investigate` verdict exists because the mission layer runs against real environments, which flake. Flakiness is a signal for a human, not a red X for the pipeline. Never let `investigate` fail the build — that trains teams to ignore or delete the gate. Reserve the red check for `block`, where the evidence shows a real failure.
 
 ---
