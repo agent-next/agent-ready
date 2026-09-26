@@ -18,11 +18,11 @@ describe('Template system', () => {
     it('should include common templates', () => {
       const templates = listTemplates();
 
-      // Should have templates for common files
+      // Should have templates for common files (v2 area-based checkIds)
       const expectedCheckIds = [
-        'docs.agents_md',
-        'docs.contributing',
-        'env.dotenv_example',
+        'agent_guidance.agents_md',
+        'agent_guidance.contributing',
+        'security.dotenv_example',
         'security.gitignore',
       ];
 
@@ -62,10 +62,10 @@ describe('Template system', () => {
 
   describe('getTemplateForCheck', () => {
     it('should return template for valid check ID', async () => {
-      const template = await getTemplateForCheck('docs.agents_md');
+      const template = await getTemplateForCheck('agent_guidance.agents_md');
 
       if (template) {
-        assert.ok(template.checkId === 'docs.agents_md');
+        assert.ok(template.checkId === 'agent_guidance.agents_md');
         assert.ok(template.content, 'Should have content');
       }
     });
@@ -80,7 +80,7 @@ describe('Template system', () => {
 describe('Template content quality', () => {
   describe('AGENTS.md template', () => {
     it('should have AI agent guidance', async () => {
-      const template = await getTemplateForCheck('docs.agents_md');
+      const template = await getTemplateForCheck('agent_guidance.agents_md');
       if (template) {
         assert.ok(template.content.includes('#'), 'Should have heading');
       }
@@ -89,7 +89,7 @@ describe('Template content quality', () => {
 
   describe('.env.example template', () => {
     it('should have example variables', async () => {
-      const template = await getTemplateForCheck('env.dotenv_example');
+      const template = await getTemplateForCheck('security.dotenv_example');
       if (template) {
         assert.ok(template.content.includes('='), 'Should have key=value format');
       }
@@ -110,13 +110,13 @@ describe('Template content quality', () => {
 });
 
 describe('Template check ID conventions', () => {
-  it('should follow pillar.name convention', () => {
+  it('should follow area.name convention', () => {
     const templates = listTemplates();
 
     for (const template of templates) {
       assert.ok(
         template.checkId.includes('.'),
-        `Check ID should have pillar prefix: ${template.checkId}`
+        `Check ID should have area prefix: ${template.checkId}`
       );
     }
   });

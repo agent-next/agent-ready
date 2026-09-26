@@ -5,7 +5,7 @@
  */
 
 import * as path from 'node:path';
-import type { ScanContext, PackageJson } from '../types.js';
+import type { ScanContext, PackageJson, Language } from '../types.js';
 import { readFile, fileExists, directoryExists, findFiles } from '../utils/fs.js';
 import { getCommitSha, getRepoName } from '../utils/git.js';
 import { detectProjectType } from './project-type.js';
@@ -26,6 +26,9 @@ export async function buildScanContext(rootPath: string): Promise<ScanContext> {
   // Detect project type for intelligent check filtering
   const projectType = await detectProjectType(rootPath, packageJson);
 
+  // Detect primary language
+  const language = await detectLanguage(rootPath, packageJson);
+
   return {
     root_path: rootPath,
     repo_name: repoName,
@@ -36,6 +39,7 @@ export async function buildScanContext(rootPath: string): Promise<ScanContext> {
     is_monorepo: isMonorepo,
     monorepo_apps: apps,
     project_type: projectType,
+    language,
   };
 }
 
@@ -122,4 +126,35 @@ async function detectMonorepo(
   }
 
   return { isMonorepo: false, apps: [] };
+}
+
+/**
+ * Detect the primary language of the repository
+ *
+ * Priority:
+ * 1. tsconfig.json exists → 'typescript'
+ * 2. pyproject.toml OR setup.py OR requirements.txt → 'python'
+ * 3. package.json exists (but no tsconfig.json) → 'javascript'
+ * 4. else → 'unknown'
+ */
+async function detectLanguage(rootPath: string, packageJson?: PackageJson): Promise<Language> {
+  // TypeScript: tsconfig.json exists
+  if (await fileExists(path.join(rootPath, 'tsconfig.json'))) {
+    return 'typescript';
+  }
+
+  // Python: pyproject.toml, setup.py, or requirements.txt
+  const pythonMarkers = ['pyproject.toml', 'setup.py', 'requirements.txt'];
+  for (const marker of pythonMarkers) {
+    if (await fileExists(path.join(rootPath, marker))) {
+      return 'python';
+    }
+  }
+
+  // JavaScript: package.json exists (but no tsconfig.json, already checked above)
+  if (packageJson) {
+    return 'javascript';
+  }
+
+  return 'unknown';
 }

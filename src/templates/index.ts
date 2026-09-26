@@ -23,22 +23,22 @@ export interface Template {
   content: string;
 }
 
-// Template definitions
+// Template definitions — checkId maps to v2 area names
 const TEMPLATE_DEFS: Array<Omit<Template, 'content'>> = [
   {
-    checkId: 'docs.agents_md',
+    checkId: 'agent_guidance.agents_md',
     name: 'AGENTS.md',
     description: 'AI agent instructions file',
     targetPath: 'AGENTS.md',
   },
   {
-    checkId: 'docs.contributing',
+    checkId: 'agent_guidance.contributing',
     name: 'CONTRIBUTING.md',
     description: 'Contributing guidelines',
     targetPath: 'CONTRIBUTING.md',
   },
   {
-    checkId: 'env.dotenv_example',
+    checkId: 'security.dotenv_example',
     name: '.env.example',
     description: 'Environment variables template',
     targetPath: '.env.example',
@@ -50,38 +50,37 @@ const TEMPLATE_DEFS: Array<Omit<Template, 'content'>> = [
     targetPath: '.gitignore',
   },
   {
-    checkId: 'build.github_workflow',
+    checkId: 'ci_cd.github_workflow',
     name: 'CI Workflow',
     description: 'GitHub Actions CI workflow',
     targetPath: '.github/workflows/ci.yml',
   },
-  // New templates for Factory parity
   {
-    checkId: 'env.devcontainer',
+    checkId: 'devcontainer.devcontainer',
     name: 'Devcontainer',
     description: 'VS Code development container configuration',
     targetPath: '.devcontainer/devcontainer.json',
   },
   {
-    checkId: 'security.codeowners',
+    checkId: 'templates.codeowners',
     name: 'CODEOWNERS',
     description: 'Code ownership definitions for review routing',
     targetPath: '.github/CODEOWNERS',
   },
   {
-    checkId: 'task_discovery.issue_templates',
+    checkId: 'templates.issue_templates',
     name: 'Issue Templates',
     description: 'GitHub issue templates for bug reports and features',
     targetPath: '.github/ISSUE_TEMPLATE/bug_report.md',
   },
   {
-    checkId: 'task_discovery.pr_template',
+    checkId: 'templates.pr_template',
     name: 'PR Template',
     description: 'Pull request template for consistent contributions',
     targetPath: '.github/PULL_REQUEST_TEMPLATE.md',
   },
   {
-    checkId: 'env.docker_compose',
+    checkId: 'devcontainer.docker_compose',
     name: 'Docker Compose',
     description: 'Local development services configuration',
     targetPath: 'docker-compose.yml',
