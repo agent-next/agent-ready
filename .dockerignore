@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+dist
+coverage
+test
+docs
+examples
+media
+*.gif
+.devcontainer
+.husky
+.claude
+packages
