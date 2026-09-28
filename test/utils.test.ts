@@ -5,10 +5,19 @@
 import { describe, it } from 'node:test';
 import * as assert from 'node:assert';
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { fileExists, readFileCached, findFiles, relativePath, safePath } from '../src/utils/fs.js';
+import {
+  fileExists,
+  readFile,
+  readFileCached,
+  findFiles,
+  relativePath,
+  safePath,
+} from '../src/utils/fs.js';
+import { logger } from '../src/utils/logger.js';
 import { isUnsafeRegex, safeRegex, safeRegexTest } from '../src/utils/regex.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +44,31 @@ describe('fs utilities', () => {
       const exists = await fileExists(FIXTURES_DIR);
       // Depending on implementation, may return true or false for directories
       assert.ok(typeof exists === 'boolean');
+    });
+  });
+
+  describe('ENOENT probes', () => {
+    it('should not log error stacks or absolute paths for missing files', async () => {
+      const missing = path.join(os.tmpdir(), `agent-ready-i82-does-not-exist-${process.pid}`);
+      const records: Record<string, unknown>[] = [];
+      const originalDebug = logger.debug;
+      logger.debug = (obj: unknown) => {
+        records.push(obj as Record<string, unknown>);
+      };
+      try {
+        await fileExists(missing);
+        await readFile(missing);
+      } finally {
+        logger.debug = originalDebug;
+      }
+      for (const record of records) {
+        const err = record.err as { stack?: string } | undefined;
+        assert.strictEqual(err?.stack, undefined, 'ENOENT probe must not log err.stack');
+        assert.ok(
+          !(typeof record.path === 'string' && path.isAbsolute(record.path)),
+          'ENOENT probe must not log an absolute path'
+        );
+      }
     });
   });
 

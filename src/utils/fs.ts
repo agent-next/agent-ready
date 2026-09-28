@@ -15,7 +15,11 @@ export async function fileExists(filePath: string): Promise<boolean> {
     await fs.promises.access(filePath, fs.constants.R_OK);
     return true;
   } catch (err) {
-    logger.debug({ path: filePath, err }, 'File does not exist or is not readable');
+    if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+      logger.trace({ path: filePath }, 'File does not exist or is not readable');
+    } else {
+      logger.debug({ path: filePath, err }, 'File does not exist or is not readable');
+    }
     return false;
   }
 }
@@ -27,7 +31,11 @@ export async function readFile(filePath: string): Promise<string | null> {
   try {
     return await fs.promises.readFile(filePath, 'utf-8');
   } catch (err) {
-    logger.debug({ path: filePath, err }, 'Failed to read file');
+    if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+      logger.trace({ path: filePath }, 'Failed to read file');
+    } else {
+      logger.debug({ path: filePath, err }, 'Failed to read file');
+    }
     return null;
   }
 }
@@ -94,7 +102,11 @@ export async function directoryExists(dirPath: string): Promise<boolean> {
     const stats = await fs.promises.stat(dirPath);
     return stats.isDirectory();
   } catch (err) {
-    logger.debug({ path: dirPath, err }, 'Directory does not exist');
+    if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+      logger.trace({ path: dirPath }, 'Directory does not exist');
+    } else {
+      logger.debug({ path: dirPath, err }, 'Directory does not exist');
+    }
     return false;
   }
 }
