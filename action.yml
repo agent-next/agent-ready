@@ -61,7 +61,7 @@ runs:
         echo "Checking: $SCAN_PATH"
 
         set +e
-        RESULT=$(node "${{ github.action_path }}/dist/index.js" check "$SCAN_PATH" --json $STRICT_FLAG 2>&1)
+        RESULT=$(node "${{ github.action_path }}/dist/index.js" check "$SCAN_PATH" --json $STRICT_FLAG)
         EXIT_CODE=$?
         set -e
 
