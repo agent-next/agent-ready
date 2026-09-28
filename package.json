@@ -29,8 +29,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "test": "tsx --test test/*.test.ts",
-    "test:coverage": "c8 --reporter=text --reporter=lcov tsx --test test/*.test.ts",
+    "test": "npm run build && tsx --test test/*.test.ts test/e2e/*.test.ts",
+    "test:coverage": "npm run build && c8 --reporter=text --reporter=lcov tsx --test test/*.test.ts test/e2e/*.test.ts",
     "test:watch": "tsx --test --watch test/*.test.ts",
     "lint": "eslint src/ test/",
     "lint:fix": "eslint src/ test/ --fix",
