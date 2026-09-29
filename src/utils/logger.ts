@@ -9,15 +9,18 @@ const isTest =
   process.env.NODE_ENV === 'test' || !!process.env.npm_lifecycle_event?.includes('test');
 const isDevelopment = process.env.NODE_ENV !== 'production' && !isTest;
 
-export const logger = pino({
-  level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
-  // Skip pino-pretty in tests and production to avoid dependency issues
-  transport: undefined,
-  base: {
-    app: 'agent-ready',
-    version: '0.0.1',
+export const logger = pino(
+  {
+    level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
+    // Skip pino-pretty in tests and production to avoid dependency issues
+    transport: undefined,
+    base: {
+      app: 'agent-ready',
+      version: '0.0.1',
+    },
   },
-});
+  pino.destination(2)
+);
 
 // Create child loggers for different modules
 export const scannerLogger = logger.child({ module: 'scanner' });
