@@ -207,7 +207,7 @@ describe('CLI entry point (src/index.ts)', () => {
     return spawnSync(
       process.execPath,
       ['--import', 'tsx', path.join(ROOT_DIR, 'src/index.ts'), ...args],
-      { encoding: 'utf-8', cwd }
+      { encoding: 'utf-8', cwd, env: { ...process.env, LOG_LEVEL: 'silent' } }
     );
   }
 
@@ -234,5 +234,22 @@ describe('CLI entry point (src/index.ts)', () => {
     ]);
     assert.strictEqual(r.status, 0);
     assert.match(r.stdout, /AGENTS.md/);
+  });
+});
+
+describe('coverage config (.c8rc.json)', () => {
+  const c8rc = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, '.c8rc.json'), 'utf-8'));
+
+  it('keeps the CLI entry point src/index.ts inside the coverage gate', () => {
+    for (const pattern of c8rc.exclude as string[]) {
+      assert.ok(!path.matchesGlob('src/index.ts', pattern), `${pattern} excludes src/index.ts`);
+    }
+  });
+
+  it('still excludes nested re-export barrels', () => {
+    const excluded = (c8rc.exclude as string[]).some((p) =>
+      path.matchesGlob('src/engine/index.ts', p)
+    );
+    assert.ok(excluded);
   });
 });
