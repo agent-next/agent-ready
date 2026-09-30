@@ -1,0 +1,9 @@
+{
+  "all": true,
+  "src": ["src"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.d.ts", "src/types.ts", "src/lib.ts", "src/**/index.ts"],
+  "check-coverage": true,
+  "lines": 80,
+  "functions": 80
+}
