@@ -252,4 +252,13 @@ describe('coverage config (.c8rc.json)', () => {
     );
     assert.ok(excluded);
   });
+
+  it('keeps src/templates/index.ts (real loader logic) inside the coverage gate', () => {
+    for (const pattern of c8rc.exclude as string[]) {
+      assert.ok(
+        !path.matchesGlob('src/templates/index.ts', pattern),
+        `${pattern} excludes src/templates/index.ts`
+      );
+    }
+  });
 });
