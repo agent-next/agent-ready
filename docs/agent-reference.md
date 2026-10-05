@@ -1,6 +1,6 @@
 # Agent reference
 
-Moved verbatim from CLAUDE.md (architecture, conventions, testing, git); the root AGENTS.md links here.
+Reference detail moved from the former CLAUDE.md (architecture, conventions, testing, git); the must-follow rules are also in the root AGENTS.md. Edits: dropped a stale test count, and `npm run check` wording corrected to match `package.json` and `make check`.
 
 # agent-ready
 
@@ -16,7 +16,7 @@ npm run test:coverage          # coverage with c8
 npm run typecheck              # tsc --noEmit
 npm run lint                   # eslint
 npm run format                 # prettier
-npm run check                  # typecheck + lint + format (all gates)
+npm run check                  # typecheck + lint + format check (no tests; `make check` also runs them)
 npm run build                  # tsc → dist/
 ```
 
@@ -57,5 +57,5 @@ skill/agent-ready/ (SKILL.md + 8 reference docs + BDT testing refs)
 - Atomic commits, one logical change per commit
 - Branch naming: `feat/`, `fix/`, `docs/`, `chore/`
 - PR titles: semantic prefix (`feat:`, `fix:`, `docs:`, etc.)
-- Run `npm run check` before committing
+- Run `make check` before committing
 
