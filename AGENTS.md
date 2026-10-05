@@ -1,182 +1,52 @@
-# AGENTS.md - AI Agent Instructions
+# agent-ready — agent guide
 
-Instructions for AI agents working with the agent-ready codebase.
+Org standard: https://github.com/agent-next/.github/blob/main/AGENT-STANDARD.md
 
-## Project Overview
+## Purpose
 
-**agent-ready** is a repo infrastructure setup tool for agent-guided development. One command to make any repo agent-ready — everything except the code.
+Public npm/TypeScript tool (Node >= 20, Commander CLI) that checks and sets up repo
+infrastructure for agent-guided development: `check` scans a repo for 9 readiness areas,
+`init` generates the missing files. Scanning is local only — no external API calls.
 
-**Version:** 0.1.0
-**Language:** TypeScript
-**Runtime:** Node.js >= 20
+## Orient
 
-## Quick Commands
+- `src/index.ts` CLI entry; `src/commands/{check,init}.ts`; `src/checker.ts` readiness checker;
+  `src/engine/` scan context + project-type detection; `src/templates/` init templates;
+  `src/utils/`; `src/types.ts` (export all types from here).
+- `packages/mcp/` MCP server (`check_repo_readiness`); `skill/agent-ready/` packaged skill;
+  `test/` mirrors `src/` (`test/e2e/`, fixtures in `test/fixtures/`).
+- Architecture diagram and full command list: [docs/agent-reference.md](docs/agent-reference.md).
+- Run the CLI from source: `npm run dev -- check .`
 
-```bash
-npm install                    # Install dependencies
-npm run dev -- scan .          # Scan current directory
-npm test                       # Run tests (152 tests)
-npm run test:coverage          # Coverage with c8
-npm run typecheck              # Type check (tsc --noEmit)
-npm run lint                   # ESLint
-npm run format                 # Prettier
-npm run check                  # All gates: typecheck + lint + format
-npm run build                  # Build for production
-```
+## Setup
 
-## Project Structure
+`make setup` (runs `npm ci`; needs Node >= 20 and npm). A `.devcontainer/` is provided.
 
-```
-agent-readiness/
-├── src/
-│   ├── index.ts           # CLI entry (Commander.js)
-│   ├── scanner.ts         # Main orchestrator
-│   ├── types.ts           # TypeScript interfaces
-│   ├── checks/            # Check implementations
-│   │   ├── index.ts       # Check registry
-│   │   ├── file-exists.ts
-│   │   ├── path-glob.ts
-│   │   ├── any-of.ts
-│   │   ├── github-workflow.ts
-│   │   ├── github-action.ts
-│   │   ├── build-command.ts
-│   │   ├── log-framework.ts
-│   │   └── dependency-detect.ts
-│   ├── engine/
-│   │   ├── index.ts       # Execution engine
-│   │   ├── level-gate.ts  # Level gating logic
-│   │   └── context.ts     # Scan context
-│   ├── output/
-│   │   ├── json.ts        # JSON output
-│   │   └── markdown.ts    # Terminal output
-│   ├── profiles/
-│   │   └── index.ts       # Profile loader
-│   ├── commands/
-│   │   └── init.ts        # Init command
-│   └── utils/
-│       ├── fs.ts
-│       ├── git.ts
-│       └── yaml.ts
-├── profiles/
-│   └── factory_compat.yaml # Default profile (35+ checks)
-├── templates/              # Init command templates
-├── skill/                  # Claude Code skill
-│   └── agent-ready/
-│       └── SKILL.md
-├── docs/
-│   └── index.html         # Landing page
-├── test/
-│   ├── *.test.ts
-│   ├── fixtures/
-│   └── VALIDATION_REPORT.md
-└── agent-ready.skill      # Packaged skill
-```
+## Check
 
-## Key Concepts
+`make check` runs `npm run check` (typecheck + lint + prettier check; no tests) then `npm test`
+(`tsx --test test/*.test.ts`). `npm run check` alone is not the full gate. CI (`.github/workflows/ci.yml`) additionally runs a build job:
+`npm run build`. Coverage: `npm run test:coverage`.
 
-### 9 Setup Categories (Providers)
-| Provider | What It Sets Up |
-|----------|----------------|
-| Agent Guidance | AGENTS.md, CLAUDE.md, copilot-instructions.md, cursor rules |
-| Code Quality | Biome (JS/TS) or Ruff+mypy (Python), .editorconfig |
-| Testing | Test scaffold, BDT branch matrix, coverage config |
-| CI/CD | ci.yml, claude.yml, copilot-setup-steps.yml |
-| Hooks | Lefthook/Husky pre-commit + Claude PostToolUse hooks |
-| Branch Ruleset | GitHub rulesets via API (require PR, reviews, status checks) |
-| Templates | Issue forms (YAML), PR template, CODEOWNERS, SECURITY.md |
-| DevContainer | .devcontainer/devcontainer.json |
-| Security | dependabot.yml, push protection, CodeQL |
+## Conventions
 
-## Code Conventions
+- TypeScript strict mode, interfaces over types, avoid `any`; export all types from `src/types.ts`.
+- Files `kebab-case.ts`, interfaces `PascalCase`, functions `camelCase`.
+- Area names: `agent_guidance`, `code_quality`, `testing`, `ci_cd`, `hooks`, `branch_rulesets`,
+  `templates`, `devcontainer`, `security`.
+- Keep checks pure: no external API calls, scanning is local only.
+- Tests mirror source (`src/checker.ts` -> `test/checker.test.ts`); fixtures in `test/fixtures/`
+  (minimal-repo, standard-repo, l3-repo, monorepo, python-repo, empty-repo). Update tests in the
+  same change as code.
 
-### TypeScript
-- Strict mode enabled
-- Use interfaces over types
-- Export types from `types.ts`
-- Avoid `any` - use `unknown`
+## Boundaries
 
-### Naming
-- Files: `kebab-case.ts`
-- Interfaces: `PascalCase`
-- Functions: `camelCase`
-- Constants: `SCREAMING_SNAKE_CASE`
-- Check IDs: `pillar.check_name`
+- Hard limits (secrets, default-branch force-push, visibility, releases, publishing) are defined in
+  the org standard linked above; follow them.
+- Public repo: never commit secrets, tokens or `.env` files; no internal plans or private links.
 
-### Check Implementation
-```typescript
-export async function executeMyCheck(
-  check: MyCheckConfig,
-  context: ScanContext
-): Promise<CheckResult> {
-  return {
-    check_id: check.id,
-    passed: true,
-    message: 'Check passed',
-    suggestions: []
-  };
-}
-```
+## Done
 
-## Common Tasks
-
-### Add New Check Type
-1. Add to `CheckType` union in `types.ts`
-2. Create interface extending `BaseCheckConfig`
-3. Add to `CheckConfig` union
-4. Implement in `src/checks/new-check.ts`
-5. Register in `src/checks/index.ts`
-
-### Add Check to Profile
-```yaml
-# profiles/factory_compat.yaml
-- id: pillar.check_name
-  name: Human Readable Name
-  type: file_exists
-  path: FILENAME.md
-  pillar: docs
-  level: L2
-  required: false
-```
-
-### Run Tests
-```bash
-npm test                    # All tests
-npm test -- --grep "file"  # Filter tests
-```
-
-### Scan Repository
-```bash
-npm run dev -- scan .                    # Current dir
-npm run dev -- scan /path/to/repo        # Specific path
-npm run dev -- scan . --output json      # JSON only
-npm run dev -- scan . --verbose          # Full output
-```
-
-## Files to Know
-
-| File | Purpose |
-|------|---------|
-| `src/types.ts` | All TypeScript interfaces |
-| `src/checks/index.ts` | Check registry |
-| `src/engine/level-gate.ts` | 80% gating logic |
-| `profiles/factory_compat.yaml` | Default profile |
-| `test/VALIDATION_REPORT.md` | Factory.ai comparison |
-
-## Dependencies
-
-**Runtime:** commander, chalk, glob, js-yaml
-**Dev:** typescript, tsx, eslint, prettier
-
-## Do's and Don'ts
-
-### Do
-- Keep checks simple and focused
-- Add suggestions for failed checks
-- Use `context.root_path` for paths
-- Test with fixtures
-
-### Don't
-- Add external API calls (keep scanning local)
-- Modify types.ts without updating consumers
-- Hardcode absolute paths
-- Skip the `required` field
+- Branch per change (`feat/`, `fix/`, `docs/`, `chore/`) -> PR with a semantic-prefix title (`feat:`, `fix:`, `docs:`); atomic commits, one logical change each.
+- Tests updated in the same change; `make check` green locally and CI green before merge.
+- Receipts (commands + real output) go in the PR body.

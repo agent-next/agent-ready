@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/git:1": {}
   },
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends make && make setup",
   "customizations": {
     "vscode": {
       "extensions": [
