@@ -19,7 +19,7 @@ Org standard (binding): https://github.com/agent-next/.github/blob/main/AGENT-ST
 - `apps/website` — React 19 + Vite + Tailwind frontend (separate package, own AGENTS.md)
 - `apps/backend` — Fastify API + multi-agent scan orchestration (separate package, own AGENTS.md)
 - `test/` — `*.test.ts` plus `e2e/`; repo fixtures in `test/fixtures/`
-- `profiles/`, `templates/` — check profile and `init` file templates
+- `templates/` — `init` file templates
 
 ## Setup
 
