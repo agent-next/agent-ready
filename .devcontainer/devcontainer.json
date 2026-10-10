@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/git:1": {}
   },
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "make setup",
   "customizations": {
     "vscode": {
       "extensions": [

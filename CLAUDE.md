@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # agent-ready
 
 Best practices collection for high-quality GitHub repos + AI coding agent workflows. TypeScript, Node 20+, Commander CLI.
