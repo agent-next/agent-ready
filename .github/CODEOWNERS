@@ -2,27 +2,27 @@
 # These users will be automatically requested for review
 
 # Default owners for everything
-* @anthropics/agent-ready-maintainers
+* @robotlearning123
 
 # Core source code
-/src/ @anthropics/agent-ready-maintainers
+/src/ @robotlearning123
 
 # Check implementations
-/src/checks/ @anthropics/agent-ready-maintainers
+/src/checks/ @robotlearning123
 
 # Profiles and configuration
-/profiles/ @anthropics/agent-ready-maintainers
+/profiles/ @robotlearning123
 
 # Documentation
-*.md @anthropics/agent-ready-maintainers
-/docs/ @anthropics/agent-ready-maintainers
+*.md @robotlearning123
+/docs/ @robotlearning123
 
 # Tests
-/test/ @anthropics/agent-ready-maintainers
+/test/ @robotlearning123
 
 # CI/CD
-/.github/ @anthropics/agent-ready-maintainers
+/.github/ @robotlearning123
 
 # Package configuration
-package.json @anthropics/agent-ready-maintainers
-tsconfig.json @anthropics/agent-ready-maintainers
+package.json @robotlearning123
+tsconfig.json @robotlearning123
